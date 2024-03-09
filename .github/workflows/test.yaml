@@ -44,17 +44,8 @@ jobs:
           version: latest
           only-new-issues: true
           skip-cache: true
-      - name: Run Go unit tests for the SDK
-        run: | 
-          rm cmd/ndc-go-sdk/go.mod
-          rm cmd/ndc-go-sdk/go.sum
-          go mod tidy
-          go test -v -coverpkg=./... -race -timeout 3m -coverprofile=coverage.out ./...
-      - name: Run Go unit tests for the generation example
-        run: |
-          pushd example/codegen
-          go test -v -race -timeout 3m ./...
-          popd
+      - name: Run Go unit tests
+        run: go test -v -coverpkg=./... -race -timeout 3m -coverprofile=coverage.out ./...
       - name: Go coverage format
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -73,7 +64,7 @@ jobs:
           hide_complexity: true
           indicators: true
           output: both
-          thresholds: "20 70"
+          thresholds: "50 70"
       - name: Add Coverage PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         if: ${{ github.event_name == 'pull_request' }}
