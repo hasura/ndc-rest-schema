@@ -82,7 +82,7 @@ func TestDecodeRESTFunctionInfo(t *testing.T) {
 							"name": "limit",
 							"in": "query",
 							"required": false,
-							"schema": { "type": ["integer"], "maximum": 100, "format": "int32" }
+							"schema": { "type": "integer", "maximum": 100, "format": "int32" }
 						}
 					]
 				},
