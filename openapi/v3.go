@@ -227,9 +227,13 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 			return nil, nil, err
 		}
 
+		paramLocation, err := types.ParseParameterLocation(param.In)
+		if err != nil {
+			return nil, nil, err
+		}
 		reqParams = append(reqParams, types.RequestParameter{
 			Name:     paramName,
-			In:       param.In,
+			In:       paramLocation,
 			Required: paramRequired,
 			Schema:   (&types.TypeSchema{}).FromOpenAPIv3Schema(apiSchema),
 		})

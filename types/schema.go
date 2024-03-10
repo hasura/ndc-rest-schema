@@ -3,117 +3,11 @@ package types
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"slices"
 
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
-
-// SchemaSpecType represents the spec enum of schema
-type SchemaSpecType string
-
-const (
-	OpenAPIv3Spec SchemaSpecType = "openapi3"
-	NDCSpec       SchemaSpecType = "ndc"
-)
-
-var schemaSpecType_enums = []SchemaSpecType{OpenAPIv3Spec, NDCSpec}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *SchemaSpecType) UnmarshalJSON(b []byte) error {
-	var rawResult string
-	if err := json.Unmarshal(b, &rawResult); err != nil {
-		return err
-	}
-
-	result, err := ParseSchemaSpecType(rawResult)
-	if err != nil {
-		return err
-	}
-
-	*j = result
-	return nil
-}
-
-// ParseSchemaSpecType parses SchemaSpecType from string
-func ParseSchemaSpecType(value string) (SchemaSpecType, error) {
-	result := SchemaSpecType(value)
-	if !slices.Contains(schemaSpecType_enums, result) {
-		return result, fmt.Errorf("invalid SchemaSpecType. Expected %+v, got <%s>", schemaSpecType_enums, value)
-	}
-	return result, nil
-}
-
-// RequestType represents the request type enum
-type RequestType string
-
-const (
-	RequestTypeREST         RequestType = "rest"
-	RequestTypeHasuraAction RequestType = "hasura_action"
-)
-
-var requestType_enums = []RequestType{RequestTypeREST, RequestTypeHasuraAction}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *RequestType) UnmarshalJSON(b []byte) error {
-	var rawResult string
-	if err := json.Unmarshal(b, &rawResult); err != nil {
-		return err
-	}
-
-	result, err := ParseRequestType(rawResult)
-	if err != nil {
-		return err
-	}
-
-	*j = result
-	return nil
-}
-
-// ParseRequestType parses RequestType from string
-func ParseRequestType(value string) (RequestType, error) {
-	result := RequestType(value)
-	if !slices.Contains(requestType_enums, result) {
-		return result, fmt.Errorf("invalid RequestType. Expected %+v, got <%s>", schemaSpecType_enums, value)
-	}
-	return result, nil
-}
-
-// SchemaFileFormat represents the file format enum for NDC REST schema file
-type SchemaFileFormat string
-
-const (
-	SchemaFileJSON SchemaFileFormat = "json"
-	SchemaFileYAML SchemaFileFormat = "yaml"
-)
-
-var schemaFileFormat_enums = []SchemaFileFormat{SchemaFileYAML, SchemaFileJSON}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (j *SchemaFileFormat) UnmarshalJSON(b []byte) error {
-	var rawResult string
-	if err := json.Unmarshal(b, &rawResult); err != nil {
-		return err
-	}
-
-	result, err := ParseSchemaFileFormat(rawResult)
-	if err != nil {
-		return err
-	}
-
-	*j = result
-	return nil
-}
-
-// ParseSchemaFileFormat parse SchemaFileFormat from file extension
-func ParseSchemaFileFormat(extension string) (SchemaFileFormat, error) {
-	result := SchemaFileFormat(extension)
-	if !slices.Contains(schemaFileFormat_enums, result) {
-		return result, fmt.Errorf("invalid SchemaFileFormat. Expected %+v, got <%s>", schemaFileFormat_enums, extension)
-	}
-	return result, nil
-}
 
 // NDCRestSettings represent global settings of the REST API, including base URL, headers, etc...
 type NDCRestSettings struct {
@@ -189,10 +83,10 @@ type Request struct {
 
 // RequestParameter represents an HTTP request parameter
 type RequestParameter struct {
-	Name     string      `json:"name" yaml:"name" mapstructure:"name"`
-	In       string      `json:"in" yaml:"in" mapstructure:"in"`
-	Required bool        `json:"required" yaml:"required" mapstructure:"required"`
-	Schema   *TypeSchema `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Name     string            `json:"name" yaml:"name" mapstructure:"name"`
+	In       ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
+	Required bool              `json:"required" yaml:"required" mapstructure:"required"`
+	Schema   *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 }
 
 // TypeSchema represents a serializable object of OpenAPI schema
