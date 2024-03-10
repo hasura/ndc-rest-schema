@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/alecthomas/kong v0.8.1
-	github.com/hasura/ndc-sdk-go v0.1.1-0.20240308173755-90a7702a319a
+	github.com/hasura/ndc-sdk-go v0.1.1-0.20240310051825-4890b6a3e6af
 	github.com/pb33f/libopenapi v0.15.14
 	gopkg.in/yaml.v3 v3.0.1
 )
