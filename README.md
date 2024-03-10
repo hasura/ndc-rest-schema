@@ -41,7 +41,7 @@ The NDC REST schema extension add `request` information into `functions` and `pr
     type: rest
     headers:
       Authorization: Bearer xxx
-    timeout: 30
+    timeout: 30 # seconds, default 30s
     parameters:
       - name: petId
         in: path

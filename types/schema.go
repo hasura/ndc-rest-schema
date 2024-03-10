@@ -183,7 +183,8 @@ type Request struct {
 	Type       RequestType        `json:"type,omitempty" yaml:"type,omitempty" mapstructure:"type"`
 	Headers    map[string]string  `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	Parameters []RequestParameter `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
-	Timeout    uint               `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
+	// configure the request timeout in seconds, default 30s
+	Timeout uint `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 }
 
 // RequestParameter represents an HTTP request parameter
