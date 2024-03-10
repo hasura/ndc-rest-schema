@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -80,6 +79,18 @@ type Request struct {
 	Timeout uint `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 }
 
+// Clone copies this instance to a new one
+func (r Request) Clone() *Request {
+	return &Request{
+		URL:        r.URL,
+		Method:     r.Method,
+		Type:       r.Type,
+		Headers:    r.Headers,
+		Parameters: r.Parameters,
+		Timeout:    r.Timeout,
+	}
+}
+
 // RequestParameter represents an HTTP request parameter
 type RequestParameter struct {
 	Name     string            `json:"name" yaml:"name" mapstructure:"name"`
@@ -139,12 +150,12 @@ func (j *RESTFunctionInfo) UnmarshalJSON(b []byte) error {
 	}
 
 	rawReq, ok := raw["request"]
-	if !ok {
-		return errors.New("RESTFunctionInfo.request is required")
-	}
-	var request Request
-	if err := json.Unmarshal(rawReq, &request); err != nil {
-		return err
+	if ok {
+		var request Request
+		if err := json.Unmarshal(rawReq, &request); err != nil {
+			return err
+		}
+		j.Request = &request
 	}
 
 	var function schema.FunctionInfo
@@ -152,7 +163,6 @@ func (j *RESTFunctionInfo) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	j.Request = &request
 	j.FunctionInfo = function
 	return nil
 }
@@ -171,12 +181,12 @@ func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 	}
 
 	rawReq, ok := raw["request"]
-	if !ok {
-		return errors.New("RESTProcedureInfo.request is required")
-	}
-	var request Request
-	if err := json.Unmarshal(rawReq, &request); err != nil {
-		return err
+	if ok {
+		var request Request
+		if err := json.Unmarshal(rawReq, &request); err != nil {
+			return err
+		}
+		j.Request = &request
 	}
 
 	var procedure schema.ProcedureInfo
@@ -184,7 +194,6 @@ func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	j.Request = &request
 	j.ProcedureInfo = procedure
 	return nil
 }

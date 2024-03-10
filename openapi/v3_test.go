@@ -23,6 +23,11 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			Source:   "testdata/petstore/source.yaml",
 			Expected: "testdata/petstore/expected.json",
 		},
+		{
+			Name:     "petstore3",
+			Source:   "testdata/petstore3/source.json",
+			Expected: "testdata/petstore3/expected.json",
+		},
 	}
 
 	for _, tc := range testCases {

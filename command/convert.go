@@ -7,17 +7,16 @@ import (
 	"strings"
 
 	"github.com/hasura/ndc-schema-tool/openapi"
-	"github.com/hasura/ndc-schema-tool/types"
 	"github.com/hasura/ndc-schema-tool/utils"
 )
 
 // ConvertCommandArguments represent available command arguments for the convert command
 type ConvertCommandArguments struct {
-	File     string               `help:"File path needs to be converted." short:"f" required:""`
-	Output   string               `help:"The location where the ndc schema file will be generated" short:"o" default:"output.json"`
-	Spec     types.SchemaSpecType `help:"The API specification of the file, e.g. openapi3" default:"openapi3"`
-	Rest     bool                 `help:"Return REST NDC schema extension" default:"false"`
-	LogLevel string               `help:"Log level." enum:"trace,debug,info,warn,error" default:"info"`
+	File     string `help:"File path needs to be converted." short:"f" required:""`
+	Output   string `help:"The location where the ndc schema file will be generated" short:"o" default:"output.json"`
+	Spec     string `help:"The API specification of the file, e.g. openapi3" default:"openapi3"`
+	Rest     bool   `help:"Return REST NDC schema extension" default:"false"`
+	LogLevel string `help:"Log level." enum:"trace,debug,info,warn,error" default:"info"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
