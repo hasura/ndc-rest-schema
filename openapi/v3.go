@@ -231,11 +231,15 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 		if err != nil {
 			return nil, nil, err
 		}
+		var scalarName string
+		if apiSchema != nil && len(apiSchema.Type) > 0 {
+			scalarName = getScalarNameFromType(apiSchema.Type[0])
+		}
 		reqParams = append(reqParams, types.RequestParameter{
 			Name:     paramName,
 			In:       paramLocation,
 			Required: paramRequired,
-			Schema:   (&types.TypeSchema{}).FromOpenAPIv3Schema(apiSchema),
+			Schema:   (&types.TypeSchema{}).FromOpenAPIv3Schema(apiSchema, scalarName),
 		})
 
 		argument := schema.ArgumentInfo{
@@ -303,26 +307,8 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, fieldPaths 
 	var result schema.TypeEncoder
 	typeName := typeSchema.Type[0]
 	switch typeName {
-	case "boolean":
-		scalarName := "Boolean"
-		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
-			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
-		}
-		result = schema.NewNamedType(scalarName)
-	case "integer":
-		scalarName := "Int"
-		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
-			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
-		}
-		result = schema.NewNamedType(scalarName)
-	case "number":
-		scalarName := "Float"
-		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
-			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
-		}
-		result = schema.NewNamedType(scalarName)
-	case "string":
-		scalarName := "String"
+	case "boolean", "integer", "number", "string":
+		scalarName := getScalarNameFromType(typeName)
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
 		}

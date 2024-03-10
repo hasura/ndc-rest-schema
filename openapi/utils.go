@@ -35,3 +35,18 @@ func getSchemaRefTypeName(name string) string {
 	}
 	return result[1]
 }
+
+func getScalarNameFromType(name string) string {
+	switch name {
+	case "boolean":
+		return "Boolean"
+	case "integer":
+		return "Int"
+	case "number":
+		return "Float"
+	case "string":
+		return "String"
+	default:
+		return "JSON"
+	}
+}

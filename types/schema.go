@@ -3,7 +3,6 @@ package types
 import (
 	"encoding/json"
 	"errors"
-	"slices"
 
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -106,15 +105,7 @@ type TypeSchema struct {
 }
 
 // FromOpenAPIv3Schema applies value from OpenAPI v3 schema object
-func (ps *TypeSchema) FromOpenAPIv3Schema(input *base.Schema) *TypeSchema {
-	var typeName string
-	if len(input.Type) > 0 {
-		typeName = input.Type[0]
-	}
-	// only support primary type validation
-	if slices.Contains([]string{"", "object", "array"}, typeName) {
-		return nil
-	}
+func (ps *TypeSchema) FromOpenAPIv3Schema(input *base.Schema, typeName string) *TypeSchema {
 	ps.Type = typeName
 	ps.Format = input.Format
 	ps.Pattern = input.Pattern
