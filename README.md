@@ -38,6 +38,10 @@ The NDC REST schema extension add `request` information into `functions` and `pr
 - request:
     url: /pets/{petId}
     method: get
+    type: rest
+    headers:
+      Authorization: Bearer xxx
+    timeout: 30
     parameters:
       - name: petId
         in: path
