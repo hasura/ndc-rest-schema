@@ -18,6 +18,7 @@ type ConvertCommandArguments struct {
 	Spec        string            `help:"The API specification of the file, is one of openapi3, openapi2" default:"openapi3"`
 	Format      string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
 	Pure        bool              `help:"Return the pure NDC schema only" default:"false"`
+	TrimPrefix  string            `help:"Trim the prefix in URL, e.g. /v1"`
 	MethodAlias map[string]string `help:"Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser"`
 }
 
@@ -32,11 +33,15 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 
 	var result *schema.NDCRestSchema
 	var errs []error
+	options := &openapi.ConvertOptions{
+		MethodAlias: args.MethodAlias,
+		TrimPrefix:  args.TrimPrefix,
+	}
 	switch args.Spec {
 	case string(schema.OpenAPIv3Spec):
-		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, args.MethodAlias)
+		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, options)
 	case string(schema.OpenAPIv2Spec):
-		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, args.MethodAlias)
+		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
 	default:
 		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
 	}

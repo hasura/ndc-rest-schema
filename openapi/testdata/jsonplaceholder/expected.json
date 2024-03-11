@@ -104,7 +104,7 @@
         }
       },
       "description": "Get comments for a specific post",
-      "name": "PostsIdComments",
+      "name": "getPostsIdComments",
       "result_type": {
         "element_type": {
           "name": "Comment",
@@ -261,7 +261,7 @@
         }
       },
       "description": "Get specific album",
-      "name": "AlbumsId",
+      "name": "getAlbumsId",
       "result_type": {
         "name": "Album",
         "type": "named"
@@ -289,7 +289,7 @@
         }
       },
       "description": "Get photos for a specific album",
-      "name": "AlbumsIdPhotos",
+      "name": "getAlbumsIdPhotos",
       "result_type": {
         "element_type": {
           "name": "Photo",
@@ -524,6 +524,19 @@
       },
       "description": "Get specific user",
       "name": "getUser",
+      "result_type": {
+        "name": "User",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/v1/test",
+        "method": "get"
+      },
+      "arguments": {},
+      "description": "Get test",
+      "name": "getTest",
       "result_type": {
         "name": "User",
         "type": "named"

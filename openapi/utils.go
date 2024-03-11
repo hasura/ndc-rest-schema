@@ -23,9 +23,30 @@ const (
 	ContentTypeJSON   = "application/json"
 )
 
-func buildPathMethodName(apiPath string, method string, methodAlias map[string]string) string {
+// ConvertOptions represent the common convert options for both OpenAPI v2 and v3
+type ConvertOptions struct {
+	MethodAlias map[string]string
+	TrimPrefix  string
+}
+
+func validateConvertOptions(opts *ConvertOptions) (*ConvertOptions, error) {
+	if opts == nil {
+		return &ConvertOptions{
+			MethodAlias: getMethodAlias(),
+		}, nil
+	}
+	return &ConvertOptions{
+		MethodAlias: getMethodAlias(opts.MethodAlias),
+		TrimPrefix:  opts.TrimPrefix,
+	}, nil
+}
+
+func buildPathMethodName(apiPath string, method string, options *ConvertOptions) string {
+	if options.TrimPrefix != "" {
+		apiPath = strings.TrimPrefix(apiPath, options.TrimPrefix)
+	}
 	encodedPath := utils.ToPascalCase(bracketRegexp.ReplaceAllString(strings.TrimLeft(apiPath, "/"), ""))
-	if alias, ok := methodAlias[method]; ok {
+	if alias, ok := options.MethodAlias[method]; ok {
 		method = alias
 	}
 	return utils.ToCamelCase(method + encodedPath)
