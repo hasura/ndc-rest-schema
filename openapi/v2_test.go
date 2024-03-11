@@ -18,6 +18,11 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 	}{
 		{
 			Name:     "petstore2",
+			Source:   "testdata/jsonplaceholder/swagger.json",
+			Expected: "testdata/jsonplaceholder/expected.json",
+		},
+		{
+			Name:     "petstore2",
 			Source:   "testdata/petstore2/swagger.json",
 			Expected: "testdata/petstore2/expected.json",
 		},
