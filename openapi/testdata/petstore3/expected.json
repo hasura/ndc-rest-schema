@@ -1,0 +1,2728 @@
+{
+  "settings": {
+    "url": "https://petstore3.swagger.io/api/v3",
+    "version": "1.0.18"
+  },
+  "collections": [],
+  "functions": [
+    {
+      "request": {
+        "url": "/pet/findByStatus",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "status": {
+          "description": "Status values that need to be considered for filter",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "description": "Finds Pets by status",
+      "name": "findPetsByStatus",
+      "result_type": {
+        "element_type": {
+          "name": "Pet",
+          "type": "named"
+        },
+        "type": "array"
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/findByTags",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "JSON"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "tags": {
+          "description": "Tags to filter by",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      },
+      "description": "Finds Pets by tags",
+      "name": "findPetsByTags",
+      "result_type": {
+        "element_type": {
+          "name": "Pet",
+          "type": "named"
+        },
+        "type": "array"
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/{petId}",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "petId": {
+          "description": "ID of pet to return",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Find pet by ID",
+      "name": "getPetById",
+      "result_type": {
+        "name": "Pet",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/store/inventory",
+        "method": "get"
+      },
+      "arguments": {},
+      "description": "Returns pet inventories by status",
+      "name": "getInventory",
+      "result_type": {
+        "name": "JSON",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/store/order/{orderId}",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "orderId": {
+          "description": "ID of order that needs to be fetched",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Find purchase order by ID",
+      "name": "getOrderById",
+      "result_type": {
+        "name": "Order",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/user/login",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "password": {
+          "description": "The password for login in clear text",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "description": "The user name for login",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "description": "Logs user into the system",
+      "name": "loginUser",
+      "result_type": {
+        "name": "String",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/user/{username}",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "username": {
+          "description": "The name that needs to be fetched. Use user1 for testing. ",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Get user by user name",
+      "name": "getUserByName",
+      "result_type": {
+        "name": "User",
+        "type": "named"
+      }
+    }
+  ],
+  "object_types": {
+    "Address": {
+      "fields": {
+        "city": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AddressCity",
+              "type": "named"
+            }
+          }
+        },
+        "state": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AddressState",
+              "type": "named"
+            }
+          }
+        },
+        "street": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AddressStreet",
+              "type": "named"
+            }
+          }
+        },
+        "zip": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AddressZip",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "AddressCity": {
+      "fields": {
+        "city": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "state": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "street": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "zip": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "AddressState": {
+      "fields": {
+        "city": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "state": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "street": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "zip": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "AddressStreet": {
+      "fields": {
+        "city": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "state": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "street": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "zip": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "AddressZip": {
+      "fields": {
+        "city": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "state": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "street": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "zip": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ApiResponse": {
+      "fields": {
+        "code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ApiResponseCode",
+              "type": "named"
+            }
+          }
+        },
+        "message": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ApiResponseMessage",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ApiResponseType",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ApiResponseCode": {
+      "fields": {
+        "code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "message": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ApiResponseMessage": {
+      "fields": {
+        "code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "message": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ApiResponseType": {
+      "fields": {
+        "code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "message": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "Category": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CategoryId",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CategoryName",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CategoryId": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CategoryName": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "Customer": {
+      "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomerAddress",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomerId",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomerUsername",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomerAddress": {
+      "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Address",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomerId": {
+      "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Address",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomerUsername": {
+      "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Address",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "Order": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderComplete",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderId",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderPetId",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderQuantity",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderShipDate",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "OrderStatus",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderComplete": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderId": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderPetId": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderQuantity": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderShipDate": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OrderStatus": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "Pet": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PetCategory",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PetId",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "PetName",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "name": "PetPhotoUrls",
+            "type": "named"
+          }
+        },
+        "status": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PetStatus",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PetTags",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "PetCategory": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PetId": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PetName": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PetPhotoUrls": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PetStatus": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PetTags": {
+      "fields": {
+        "category": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Category",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "photoUrls": {
+          "type": {
+            "element_type": {
+              "name": "String",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        },
+        "status": {
+          "description": "pet status in the store",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tags": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Tag",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "Tag": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TagId",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TagName",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "TagId": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "TagName": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserEmail",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserFirstName",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserId",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserLastName",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserPassword",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserPhone",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserUserStatus",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UserUsername",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserEmail": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserFirstName": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserId": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserLastName": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserPassword": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserPhone": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserUserStatus": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UserUsername": {
+      "fields": {
+        "email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "firstName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "lastName": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "password": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "userStatus": {
+          "description": "User Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    }
+  },
+  "procedures": [
+    {
+      "request": {
+        "url": "/pet",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /pet",
+          "type": {
+            "name": "Pet",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Add a new pet to the store",
+      "name": "addPet",
+      "result_type": {
+        "name": "Pet",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/pet",
+        "method": "put",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /pet",
+          "type": {
+            "name": "Pet",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Update an existing pet",
+      "name": "updatePet",
+      "result_type": {
+        "name": "Pet",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/{petId}",
+        "method": "post",
+        "headers": {
+          "Content-Type": ""
+        },
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "name": {
+          "description": "Name of pet that needs to be updated",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "description": "ID of pet that needs to be updated",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        },
+        "status": {
+          "description": "Status of pet that needs to be updated",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "description": "Updates a pet in the store with form data",
+      "name": "updatePetWithForm",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/{petId}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": ""
+        },
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          },
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "api_key": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "description": "Pet id to delete",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Deletes a pet",
+      "name": "deletePet",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/{petId}/uploadImage",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/octet-stream"
+        },
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "additionalMetadata",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "additionalMetadata": {
+          "description": "Additional Metadata",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "description": "ID of pet to update",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "uploads an image",
+      "name": "uploadFile",
+      "result_type": {
+        "name": "ApiResponse",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/store/order",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /store/order",
+          "type": {
+            "name": "Order",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Place an order for a pet",
+      "name": "placeOrder",
+      "result_type": {
+        "name": "Order",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/store/order/{orderId}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": ""
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "Int",
+              "format": "int64"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "orderId": {
+          "description": "ID of the order that needs to be deleted",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Delete purchase order by ID",
+      "name": "deleteOrder",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/user/createWithList",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /user/createWithList",
+          "type": {
+            "element_type": {
+              "name": "User",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        }
+      },
+      "description": "Creates list of users with given input array",
+      "name": "createUsersWithListInput",
+      "result_type": {
+        "name": "User",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/user/{username}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": ""
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "String"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "username": {
+          "description": "The name that needs to be deleted",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Delete user",
+      "name": "deleteUser",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    }
+  ],
+  "scalar_types": {
+    "Boolean": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
+    "Int": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
+    "JSON": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
+    "String": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    }
+  }
+}

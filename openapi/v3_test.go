@@ -19,9 +19,9 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 		Expected string
 	}{
 		{
-			Name:     "petstore",
-			Source:   "testdata/petstore/source.yaml",
-			Expected: "testdata/petstore/expected.json",
+			Name:     "petstore3",
+			Source:   "testdata/petstore3/source.json",
+			Expected: "testdata/petstore3/expected.json",
 		},
 	}
 
@@ -41,12 +41,12 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 				t.FailNow()
 			}
 
-			assertDeepEqual(t, expected.Collections, output.Collections)
-			assertDeepEqual(t, expected.Settings, output.Settings)
-			assertDeepEqual(t, expected.ScalarTypes, output.ScalarTypes)
-			assertDeepEqual(t, expected.ObjectTypes, output.ObjectTypes)
-			assertDeepEqual(t, expected.Procedures, output.Procedures)
-			assertDeepEqual(t, expected.Functions, output.Functions)
+			assertDeepEqual(t, expected.Collections, output.Collections, "Collections")
+			assertDeepEqual(t, expected.Settings, output.Settings, "Settings")
+			assertDeepEqual(t, expected.ScalarTypes, output.ScalarTypes, "ScalarTypes")
+			assertDeepEqual(t, expected.ObjectTypes, output.ObjectTypes, "ObjectTypes")
+			assertDeepEqual(t, expected.Procedures, output.Procedures, "Procedures")
+			assertDeepEqual(t, expected.Functions, output.Functions, "Functions")
 		})
 	}
 

@@ -3,6 +3,7 @@ package command
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"testing"
 
@@ -13,11 +14,11 @@ func TestConvertToNDCSchema(t *testing.T) {
 	tempDir := t.TempDir()
 	outputFilePath := fmt.Sprintf("%s/output.json", tempDir)
 	ConvertToNDCSchema(&ConvertCommandArguments{
-		File:     "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
-		Output:   outputFilePath,
-		Rest:     true,
-		LogLevel: "info",
-	})
+		File:   "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
+		Output: outputFilePath,
+		Rest:   true,
+		Spec:   string(types.OpenAPIv3Spec),
+	}, slog.Default())
 
 	outputBytes, err := os.ReadFile(outputFilePath)
 	if err != nil {
