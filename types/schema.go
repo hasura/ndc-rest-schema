@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/hasura/ndc-sdk-go/schema"
-	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
 
 // NDCRestSettings represent global settings of the REST API, including base URL, headers, etc...
@@ -113,27 +112,6 @@ type TypeSchema struct {
 	Enum       []string              `json:"enum,omitempty" yaml:"enum,omitempty" mapstructure:"enum"`
 	Items      *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
 	Properties map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
-}
-
-// FromOpenAPIv3Schema applies value from OpenAPI v3 schema object
-func (ps *TypeSchema) FromOpenAPIv3Schema(input *base.Schema, typeName string) *TypeSchema {
-	ps.Type = typeName
-	ps.Format = input.Format
-	ps.Pattern = input.Pattern
-	ps.Nullable = input.Nullable
-	ps.Maximum = input.Maximum
-	ps.Minimum = input.Minimum
-	ps.MaxLength = input.MaxLength
-	ps.MinLength = input.MinLength
-	enumLength := len(input.Enum)
-	if enumLength > 0 {
-		ps.Enum = make([]string, enumLength)
-		for i, enum := range input.Enum {
-			ps.Enum[i] = enum.Value
-		}
-	}
-
-	return ps
 }
 
 // RESTFunctionInfo extends NDC query function with OpenAPI REST information

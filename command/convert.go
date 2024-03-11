@@ -2,11 +2,13 @@ package command
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
 
 	"github.com/hasura/ndc-schema-tool/openapi"
+	"github.com/hasura/ndc-schema-tool/types"
 	"github.com/hasura/ndc-schema-tool/utils"
 )
 
@@ -14,7 +16,7 @@ import (
 type ConvertCommandArguments struct {
 	File     string `help:"File path needs to be converted." short:"f" required:""`
 	Output   string `help:"The location where the ndc schema file will be generated" short:"o" default:"output.json"`
-	Spec     string `help:"The API specification of the file, e.g. openapi3" default:"openapi3"`
+	Spec     string `help:"The API specification of the file, is one of openapi3, openapi2" default:"openapi3"`
 	Rest     bool   `help:"Return REST NDC schema extension" default:"false"`
 	LogLevel string `help:"Log level." enum:"trace,debug,info,warn,error" default:"info"`
 }
@@ -31,11 +33,21 @@ func ConvertToNDCSchema(args *ConvertCommandArguments) {
 	logger.Info("converting to NDC schema")
 	rawContent, err := utils.ReadFileFromPath(args.File)
 	if err != nil {
+		slog.Error(err.Error())
 		os.Exit(1)
 		return
 	}
 
-	result, errs := openapi.OpenAPIv3ToNDCSchema(rawContent)
+	var result *types.NDCRestSchema
+	var errs []error
+	switch args.Spec {
+	case string(types.OpenAPIv3Spec):
+		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent)
+	case string(types.OpenAPIv2Spec):
+		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent)
+	default:
+		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []types.SchemaSpecType{types.OpenAPIv3Spec, types.OpenAPIv2Spec}))
+	}
 	if len(errs) > 0 {
 		logger.Error(errors.Join(errs...).Error())
 	}

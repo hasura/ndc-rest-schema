@@ -11,10 +11,11 @@ type SchemaSpecType string
 
 const (
 	OpenAPIv3Spec SchemaSpecType = "openapi3"
+	OpenAPIv2Spec SchemaSpecType = "openapi2"
 	NDCSpec       SchemaSpecType = "ndc"
 )
 
-var schemaSpecType_enums = []SchemaSpecType{OpenAPIv3Spec, NDCSpec}
+var schemaSpecType_enums = []SchemaSpecType{OpenAPIv3Spec, OpenAPIv2Spec, NDCSpec}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *SchemaSpecType) UnmarshalJSON(b []byte) error {
@@ -122,9 +123,10 @@ const (
 	InHeader ParameterLocation = "header"
 	InPath   ParameterLocation = "path"
 	InCookie ParameterLocation = "cookie"
+	InBody   ParameterLocation = "body"
 )
 
-var parameterLocation_enums = []ParameterLocation{InQuery, InHeader, InPath, InCookie}
+var parameterLocation_enums = []ParameterLocation{InQuery, InHeader, InPath, InCookie, InBody}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *ParameterLocation) UnmarshalJSON(b []byte) error {

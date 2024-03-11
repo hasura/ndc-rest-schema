@@ -255,7 +255,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Address_city",
+              "name": "AddressCity",
               "type": "named"
             }
           }
@@ -264,7 +264,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Address_state",
+              "name": "AddressState",
               "type": "named"
             }
           }
@@ -273,7 +273,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Address_street",
+              "name": "AddressStreet",
               "type": "named"
             }
           }
@@ -282,14 +282,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Address_zip",
+              "name": "AddressZip",
               "type": "named"
             }
           }
         }
       }
     },
-    "Address_city": {
+    "AddressCity": {
       "fields": {
         "city": {
           "type": {
@@ -329,7 +329,7 @@
         }
       }
     },
-    "Address_state": {
+    "AddressState": {
       "fields": {
         "city": {
           "type": {
@@ -369,7 +369,7 @@
         }
       }
     },
-    "Address_street": {
+    "AddressStreet": {
       "fields": {
         "city": {
           "type": {
@@ -409,7 +409,7 @@
         }
       }
     },
-    "Address_zip": {
+    "AddressZip": {
       "fields": {
         "city": {
           "type": {
@@ -455,7 +455,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "ApiResponse_code",
+              "name": "ApiResponseCode",
               "type": "named"
             }
           }
@@ -464,7 +464,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "ApiResponse_message",
+              "name": "ApiResponseMessage",
               "type": "named"
             }
           }
@@ -473,14 +473,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "ApiResponse_type",
+              "name": "ApiResponseType",
               "type": "named"
             }
           }
         }
       }
     },
-    "ApiResponse_code": {
+    "ApiResponseCode": {
       "fields": {
         "code": {
           "type": {
@@ -511,7 +511,7 @@
         }
       }
     },
-    "ApiResponse_message": {
+    "ApiResponseMessage": {
       "fields": {
         "code": {
           "type": {
@@ -542,7 +542,7 @@
         }
       }
     },
-    "ApiResponse_type": {
+    "ApiResponseType": {
       "fields": {
         "code": {
           "type": {
@@ -579,7 +579,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Category_id",
+              "name": "CategoryId",
               "type": "named"
             }
           }
@@ -588,14 +588,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Category_name",
+              "name": "CategoryName",
               "type": "named"
             }
           }
         }
       }
     },
-    "Category_id": {
+    "CategoryId": {
       "fields": {
         "id": {
           "type": {
@@ -617,7 +617,7 @@
         }
       }
     },
-    "Category_name": {
+    "CategoryName": {
       "fields": {
         "id": {
           "type": {
@@ -645,7 +645,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Customer_address",
+              "name": "CustomerAddress",
               "type": "named"
             }
           }
@@ -654,7 +654,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Customer_id",
+              "name": "CustomerId",
               "type": "named"
             }
           }
@@ -663,14 +663,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Customer_username",
+              "name": "CustomerUsername",
               "type": "named"
             }
           }
         }
       }
     },
-    "Customer_address": {
+    "CustomerAddress": {
       "fields": {
         "address": {
           "type": {
@@ -704,7 +704,7 @@
         }
       }
     },
-    "Customer_id": {
+    "CustomerId": {
       "fields": {
         "address": {
           "type": {
@@ -738,7 +738,7 @@
         }
       }
     },
-    "Customer_username": {
+    "CustomerUsername": {
       "fields": {
         "address": {
           "type": {
@@ -778,7 +778,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_complete",
+              "name": "OrderComplete",
               "type": "named"
             }
           }
@@ -787,7 +787,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_id",
+              "name": "OrderId",
               "type": "named"
             }
           }
@@ -796,7 +796,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_petId",
+              "name": "OrderPetId",
               "type": "named"
             }
           }
@@ -805,7 +805,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_quantity",
+              "name": "OrderQuantity",
               "type": "named"
             }
           }
@@ -814,7 +814,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_shipDate",
+              "name": "OrderShipDate",
               "type": "named"
             }
           }
@@ -823,14 +823,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Order_status",
+              "name": "OrderStatus",
               "type": "named"
             }
           }
         }
       }
     },
-    "Order_complete": {
+    "OrderComplete": {
       "fields": {
         "complete": {
           "type": {
@@ -889,7 +889,7 @@
         }
       }
     },
-    "Order_id": {
+    "OrderId": {
       "fields": {
         "complete": {
           "type": {
@@ -948,7 +948,7 @@
         }
       }
     },
-    "Order_petId": {
+    "OrderPetId": {
       "fields": {
         "complete": {
           "type": {
@@ -1007,7 +1007,7 @@
         }
       }
     },
-    "Order_quantity": {
+    "OrderQuantity": {
       "fields": {
         "complete": {
           "type": {
@@ -1066,7 +1066,7 @@
         }
       }
     },
-    "Order_shipDate": {
+    "OrderShipDate": {
       "fields": {
         "complete": {
           "type": {
@@ -1125,7 +1125,7 @@
         }
       }
     },
-    "Order_status": {
+    "OrderStatus": {
       "fields": {
         "complete": {
           "type": {
@@ -1190,7 +1190,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Pet_category",
+              "name": "PetCategory",
               "type": "named"
             }
           }
@@ -1199,20 +1199,20 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Pet_id",
+              "name": "PetId",
               "type": "named"
             }
           }
         },
         "name": {
           "type": {
-            "name": "Pet_name",
+            "name": "PetName",
             "type": "named"
           }
         },
         "photoUrls": {
           "type": {
-            "name": "Pet_photoUrls",
+            "name": "PetPhotoUrls",
             "type": "named"
           }
         },
@@ -1220,7 +1220,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Pet_status",
+              "name": "PetStatus",
               "type": "named"
             }
           }
@@ -1229,14 +1229,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Pet_tags",
+              "name": "PetTags",
               "type": "named"
             }
           }
         }
       }
     },
-    "Pet_category": {
+    "PetCategory": {
       "fields": {
         "category": {
           "type": {
@@ -1295,7 +1295,7 @@
         }
       }
     },
-    "Pet_id": {
+    "PetId": {
       "fields": {
         "category": {
           "type": {
@@ -1354,7 +1354,7 @@
         }
       }
     },
-    "Pet_name": {
+    "PetName": {
       "fields": {
         "category": {
           "type": {
@@ -1413,7 +1413,7 @@
         }
       }
     },
-    "Pet_photoUrls": {
+    "PetPhotoUrls": {
       "fields": {
         "category": {
           "type": {
@@ -1472,7 +1472,7 @@
         }
       }
     },
-    "Pet_status": {
+    "PetStatus": {
       "fields": {
         "category": {
           "type": {
@@ -1531,7 +1531,7 @@
         }
       }
     },
-    "Pet_tags": {
+    "PetTags": {
       "fields": {
         "category": {
           "type": {
@@ -1596,7 +1596,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Tag_id",
+              "name": "TagId",
               "type": "named"
             }
           }
@@ -1605,14 +1605,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Tag_name",
+              "name": "TagName",
               "type": "named"
             }
           }
         }
       }
     },
-    "Tag_id": {
+    "TagId": {
       "fields": {
         "id": {
           "type": {
@@ -1634,7 +1634,7 @@
         }
       }
     },
-    "Tag_name": {
+    "TagName": {
       "fields": {
         "id": {
           "type": {
@@ -1662,7 +1662,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_email",
+              "name": "UserEmail",
               "type": "named"
             }
           }
@@ -1671,7 +1671,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_firstName",
+              "name": "UserFirstName",
               "type": "named"
             }
           }
@@ -1680,7 +1680,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_id",
+              "name": "UserId",
               "type": "named"
             }
           }
@@ -1689,7 +1689,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_lastName",
+              "name": "UserLastName",
               "type": "named"
             }
           }
@@ -1698,7 +1698,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_password",
+              "name": "UserPassword",
               "type": "named"
             }
           }
@@ -1707,7 +1707,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_phone",
+              "name": "UserPhone",
               "type": "named"
             }
           }
@@ -1716,7 +1716,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_userStatus",
+              "name": "UserUserStatus",
               "type": "named"
             }
           }
@@ -1725,14 +1725,14 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "User_username",
+              "name": "UserUsername",
               "type": "named"
             }
           }
         }
       }
     },
-    "User_email": {
+    "UserEmail": {
       "fields": {
         "email": {
           "type": {
@@ -1809,7 +1809,7 @@
         }
       }
     },
-    "User_firstName": {
+    "UserFirstName": {
       "fields": {
         "email": {
           "type": {
@@ -1886,7 +1886,7 @@
         }
       }
     },
-    "User_id": {
+    "UserId": {
       "fields": {
         "email": {
           "type": {
@@ -1963,7 +1963,7 @@
         }
       }
     },
-    "User_lastName": {
+    "UserLastName": {
       "fields": {
         "email": {
           "type": {
@@ -2040,7 +2040,7 @@
         }
       }
     },
-    "User_password": {
+    "UserPassword": {
       "fields": {
         "email": {
           "type": {
@@ -2117,7 +2117,7 @@
         }
       }
     },
-    "User_phone": {
+    "UserPhone": {
       "fields": {
         "email": {
           "type": {
@@ -2194,7 +2194,7 @@
         }
       }
     },
-    "User_userStatus": {
+    "UserUserStatus": {
       "fields": {
         "email": {
           "type": {
@@ -2271,7 +2271,7 @@
         }
       }
     },
-    "User_username": {
+    "UserUsername": {
       "fields": {
         "email": {
           "type": {
@@ -2359,7 +2359,7 @@
         }
       },
       "arguments": {
-        "data": {
+        "body": {
           "description": "Request body of /pet",
           "type": {
             "name": "Pet",
@@ -2383,7 +2383,7 @@
         }
       },
       "arguments": {
-        "data": {
+        "body": {
           "description": "Request body of /pet",
           "type": {
             "name": "Pet",
@@ -2532,7 +2532,7 @@
         "url": "/pet/{petId}/uploadImage",
         "method": "post",
         "headers": {
-          "Content-Type": ""
+          "Content-Type": "application/octet-stream"
         },
         "parameters": [
           {
@@ -2589,7 +2589,7 @@
         }
       },
       "arguments": {
-        "data": {
+        "body": {
           "description": "Request body of /store/order",
           "type": {
             "name": "Order",
@@ -2651,7 +2651,7 @@
         }
       },
       "arguments": {
-        "data": {
+        "body": {
           "description": "Request body of /user/createWithList",
           "type": {
             "element_type": {

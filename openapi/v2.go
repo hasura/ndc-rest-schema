@@ -11,22 +11,22 @@ import (
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
-	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
+	v2 "github.com/pb33f/libopenapi/datamodel/high/v2"
 	"github.com/pb33f/libopenapi/orderedmap"
 )
 
-type openAPIv3Converter struct {
+type openAPIv2Converter struct {
 	schema *types.NDCRestSchema
 }
 
-// OpenAPIv3ToNDCSchema converts OpenAPI v3 JSON bytes to NDC REST schema
-func OpenAPIv3ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
+// OpenAPIv2ToNDCSchema converts OpenAPI v2 JSON bytes to NDC REST schema
+func OpenAPIv2ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
 	document, err := libopenapi.NewDocument(input)
 	if err != nil {
 		return nil, []error{err}
 	}
 
-	docModel, errs := document.BuildV3Model()
+	docModel, errs := document.BuildV2Model()
 	// The errors won’t prevent the model from building
 	if docModel == nil && len(errs) > 0 {
 		return nil, errs
@@ -36,17 +36,22 @@ func OpenAPIv3ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
 		return nil, append(errs, errors.New("there is no API to be converted"))
 	}
 
-	converter := &openAPIv3Converter{
+	converter := &openAPIv2Converter{
 		schema: types.NewNDCRestSchema(),
 	}
 	if docModel.Model.Info != nil {
 		converter.schema.Settings.Version = docModel.Model.Info.Version
 	}
-	for _, server := range docModel.Model.Servers {
-		if server.URL != "" {
-			converter.schema.Settings.Request.URL = server.URL
-			break
+
+	if docModel.Model.Host != "" {
+		scheme := "https"
+		for _, s := range docModel.Model.Schemes {
+			if strings.HasPrefix(s, "http") {
+				scheme = s
+				break
+			}
 		}
+		converter.schema.Settings.Request.URL = fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath)
 	}
 
 	for iterPath := docModel.Model.Paths.PathItems.First(); iterPath != nil; iterPath = iterPath.Next() {
@@ -55,16 +60,18 @@ func OpenAPIv3ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
 		}
 	}
 
-	for cSchema := docModel.Model.Components.Schemas.First(); cSchema != nil; cSchema = cSchema.Next() {
-		if err := converter.convertComponentSchemas(cSchema); err != nil {
-			return nil, append(errs, err)
+	if docModel.Model.Definitions != nil {
+		for cSchema := docModel.Model.Definitions.Definitions.First(); cSchema != nil; cSchema = cSchema.Next() {
+			if err := converter.convertComponentSchemas(cSchema); err != nil {
+				return nil, append(errs, err)
+			}
 		}
 	}
 
 	return converter.schema, nil
 }
 
-func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.PathItem]) error {
+func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.PathItem]) error {
 	pathKey := pathItem.Key()
 	pathValue := pathItem.Value()
 	if pathValue.Get != nil {
@@ -138,8 +145,8 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 	return nil
 }
 
-func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method string, operation *v3.Operation) (*types.RESTProcedureInfo, error) {
-	if operation == nil {
+func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method string, operation *v2.Operation) (*types.RESTProcedureInfo, error) {
+	if operation == nil || !slices.Contains(operation.Consumes, ContentTypeJSON) {
 		return nil, nil
 	}
 
@@ -162,30 +169,13 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 
-	reqBody, contentType, err := oc.convertRequestBody(operation.RequestBody, []string{procName})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-	if reqBody != nil {
-		description := fmt.Sprintf("Request body of %s", pathKey)
-		// renaming query parameter name `data` if exist to avoid conflicts
-		if paramData, ok := arguments["body"]; ok {
-			arguments["paramBody"] = paramData
-		}
-
-		arguments["body"] = schema.ArgumentInfo{
-			Description: &description,
-			Type:        reqBody.Encode(),
-		}
-	}
-
 	procedure := types.RESTProcedureInfo{
 		Request: &types.Request{
 			URL:        pathKey,
 			Method:     method,
 			Parameters: reqParams,
 			Headers: map[string]string{
-				ContentTypeHeader: contentType,
+				ContentTypeHeader: ContentTypeJSON,
 			},
 		},
 		ProcedureInfo: schema.ProcedureInfo{
@@ -202,14 +192,14 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 	return &procedure, nil
 }
 
-func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPaths []string) (map[string]schema.ArgumentInfo, []types.RequestParameter, error) {
+func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPaths []string) (map[string]schema.ArgumentInfo, []types.RequestParameter, error) {
 
-	arguments := make(map[string]schema.ArgumentInfo)
 	if len(params) == 0 {
-		return arguments, nil, nil
+		return map[string]schema.ArgumentInfo{}, nil, nil
 	}
 
 	var reqParams []types.RequestParameter
+	arguments := make(map[string]schema.ArgumentInfo)
 
 	for _, param := range params {
 		if param == nil {
@@ -219,11 +209,21 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 		if paramName == "" {
 			return nil, nil, errors.New("parameter name is empty")
 		}
+
+		var schemaType schema.TypeEncoder
+		var apiSchema *base.Schema
+		var err error
+
 		paramRequired := false
 		if param.Required != nil && *param.Required {
 			paramRequired = true
 		}
-		schemaType, apiSchema, err := oc.getSchemaTypeFromProxy(param.Schema, !paramRequired, fieldPaths)
+
+		if param.Schema != nil {
+			schemaType, apiSchema, err = oc.getSchemaTypeFromProxy(param.Schema, !paramRequired, fieldPaths)
+		} else {
+			schemaType, err = oc.getSchemaTypeFromParameter(param)
+		}
 		if err != nil {
 			return nil, nil, err
 		}
@@ -236,6 +236,7 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 		if apiSchema != nil && len(apiSchema.Type) > 0 {
 			scalarName = getScalarNameFromType(apiSchema.Type[0])
 		}
+
 		reqParams = append(reqParams, types.RequestParameter{
 			Name:     paramName,
 			In:       paramLocation,
@@ -250,7 +251,12 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 			argument.Description = &param.Description
 		}
 
-		arguments[paramName] = argument
+		switch paramLocation {
+		case types.InBody:
+			arguments["body"] = argument
+		default:
+			arguments[paramName] = argument
+		}
 	}
 
 	return arguments, reqParams, nil
@@ -258,7 +264,8 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, fieldPat
 }
 
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, fieldPaths []string) (schema.TypeEncoder, *base.Schema, error) {
+func (oc *openAPIv2Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, fieldPaths []string) (schema.TypeEncoder, *base.Schema, error) {
+
 	if schemaProxy == nil {
 		return nil, nil, errParameterSchemaEmpty
 	}
@@ -287,8 +294,44 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 	return ndcType, innerSchema, nil
 }
 
+// get and convert an OpenAPI data type to a NDC type from parameter
+func (oc *openAPIv2Converter) getSchemaTypeFromParameter(param *v2.Parameter) (schema.TypeEncoder, error) {
+
+	if param.Type == "" {
+		return nil, errParameterSchemaEmpty
+	}
+
+	var result schema.TypeEncoder
+	switch param.Type {
+	case "boolean", "integer", "number", "string":
+		scalarName := getScalarNameFromType(param.Type)
+		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
+			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
+		}
+		result = schema.NewNamedType(scalarName)
+	// case "null":
+	case "object":
+		return nil, errors.New("unsupported object parameter")
+	case "array":
+		if param.Items == nil && param.Items.Type == "" {
+			return nil, errors.New("array item is empty")
+		}
+
+		itemName := getScalarNameFromType(param.Items.Type)
+		result = schema.NewArrayType(schema.NewNamedType(itemName))
+
+	default:
+		return nil, fmt.Errorf("unsupported schema type %s", param.Type)
+	}
+
+	if param.Required != nil && *param.Required {
+		return schema.NewNullableType(result), nil
+	}
+	return result, nil
+}
+
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, fieldPaths []string) (schema.TypeEncoder, error) {
 
 	if typeSchema == nil {
 		return nil, errParameterSchemaEmpty
@@ -316,7 +359,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, fieldPaths 
 		result = schema.NewNamedType(scalarName)
 	// case "null":
 	case "object":
-		refName := utils.StringSliceToPascalCase(fieldPaths)
+		refName := strings.Join(fieldPaths, "_")
 
 		if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
 			// treat no-property objects as a JSON scalar
@@ -379,54 +422,38 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, fieldPaths 
 	return result, nil
 }
 
-func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, fieldPaths []string) (schema.TypeEncoder, string, error) {
-	if reqBody == nil || reqBody.Content == nil {
-		return nil, "", nil
-	}
-
-	jsonContent, ok := reqBody.Content.Get(ContentTypeJSON)
-	if !ok {
-		return nil, reqBody.Content.First().Key(), nil
-	}
-
-	schemaType, _, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, false, fieldPaths)
-	if err != nil {
-		return nil, "", err
-	}
-	return schemaType, ContentTypeJSON, nil
-}
-
-func (oc *openAPIv3Converter) convertResponse(responses *v3.Responses, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv2Converter) convertResponse(responses *v2.Responses, fieldPaths []string) (schema.TypeEncoder, error) {
 	if responses == nil || responses.Codes == nil || responses.Codes.IsZero() {
 		return nil, nil
 	}
 
-	var resp *v3.Response
-	for _, code := range []int{200, 201, 204} {
-		res := responses.FindResponseByCode(code)
-		if res != nil {
-			resp = res
-			break
+	var resp *v2.Response
+	if responses.Codes == nil || responses.Codes.IsZero() {
+		// the response is alway success
+		resp = responses.Default
+	} else {
+		for _, code := range []string{"200", "201", "204"} {
+			res := responses.Codes.GetOrZero(code)
+			if res != nil {
+				resp = res
+				break
+			}
 		}
 	}
 
 	// return nullable boolean type if the response content is null
-	if resp == nil || resp.Content == nil {
+	if resp == nil || resp.Schema == nil {
 		return schema.NewNullableNamedType("Boolean"), nil
 	}
-	jsonContent, ok := resp.Content.Get("application/json")
-	if !ok {
-		return nil, nil
-	}
 
-	schemaType, _, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, false, fieldPaths)
+	schemaType, _, err := oc.getSchemaTypeFromProxy(resp.Schema, false, fieldPaths)
 	if err != nil {
 		return nil, err
 	}
 	return schemaType, nil
 }
 
-func (oc *openAPIv3Converter) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
+func (oc *openAPIv2Converter) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
 	typeValue := schemaItem.Value()
 	typeSchema := typeValue.Schema()
 

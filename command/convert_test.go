@@ -17,6 +17,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 		Output:   outputFilePath,
 		Rest:     true,
 		LogLevel: "info",
+		Spec:     string(types.OpenAPIv3Spec),
 	})
 
 	outputBytes, err := os.ReadFile(outputFilePath)
