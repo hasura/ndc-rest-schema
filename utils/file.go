@@ -17,13 +17,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// WriteSchemaFile writes the NDC REST schema to file
-func WriteSchemaFile(outputPath string, content any) error {
+// MarshalSchema encodes the NDC REST schema to bytes
+func MarshalSchema(content any, format types.SchemaFileFormat) ([]byte, error) {
 
-	format, err := types.ParseSchemaFileFormat(strings.TrimLeft(filepath.Ext(outputPath), "."))
-	if err != nil {
-		return err
-	}
 	var fileBuffer bytes.Buffer
 	switch format {
 	case types.SchemaFileJSON:
@@ -31,19 +27,35 @@ func WriteSchemaFile(outputPath string, content any) error {
 		encoder.SetIndent("", "  ")
 
 		if err := encoder.Encode(content); err != nil {
-			return fmt.Errorf("failed to encode NDC REST schema: %s", err)
+			return nil, fmt.Errorf("failed to encode NDC REST schema: %s", err)
 		}
 	case types.SchemaFileYAML:
 		encoder := yaml.NewEncoder(&fileBuffer)
 		encoder.SetIndent(2)
 		if err := encoder.Encode(content); err != nil {
-			return fmt.Errorf("failed to encode NDC REST schema: %s", err)
+			return nil, fmt.Errorf("failed to encode NDC REST schema: %s", err)
 		}
 	default:
-		return errors.New("invalid schema file format. Accept json or yaml")
+		return nil, errors.New("invalid schema file format. Accept json or yaml")
 	}
 
-	return os.WriteFile(outputPath, fileBuffer.Bytes(), 0664)
+	return fileBuffer.Bytes(), nil
+}
+
+// WriteSchemaFile writes the NDC REST schema to file
+func WriteSchemaFile(outputPath string, content any) error {
+
+	format, err := types.ParseSchemaFileFormat(strings.TrimLeft(filepath.Ext(outputPath), "."))
+	if err != nil {
+		return err
+	}
+
+	rawBytes, err := MarshalSchema(content, format)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(outputPath, rawBytes, 0664)
 }
 
 // ReadFileFromPath read file content from either file path or URL
