@@ -14,12 +14,16 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 	testCases := []struct {
 		Name     string
 		Source   string
+		Options  *ConvertOptions
 		Expected string
 	}{
 		{
 			Name:     "petstore2",
 			Source:   "testdata/jsonplaceholder/swagger.json",
 			Expected: "testdata/jsonplaceholder/expected.json",
+			Options: &ConvertOptions{
+				TrimPrefix: "/v1",
+			},
 		},
 		{
 			Name:     "petstore2",
@@ -38,7 +42,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
-			output, errs := OpenAPIv2ToNDCSchema(sourceBytes)
+			output, errs := OpenAPIv2ToNDCSchema(sourceBytes, tc.Options)
 			if output == nil {
 				t.Error(errors.Join(errs...))
 				t.FailNow()
@@ -54,7 +58,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 	}
 
 	t.Run("failure_empty", func(t *testing.T) {
-		_, err := OpenAPIv2ToNDCSchema([]byte(""))
+		_, err := OpenAPIv2ToNDCSchema([]byte(""), nil)
 		assertError(t, errors.Join(err...), "there is nothing in the spec, it's empty")
 	})
 }

@@ -23,12 +23,33 @@ const (
 	ContentTypeJSON   = "application/json"
 )
 
-func buildPathMethodName(apiPath string, method string) string {
-	encodedPath := utils.ToPascalCase(bracketRegexp.ReplaceAllString(strings.TrimLeft(apiPath, "/"), ""))
-	if method == "get" {
-		return encodedPath
+// ConvertOptions represent the common convert options for both OpenAPI v2 and v3
+type ConvertOptions struct {
+	MethodAlias map[string]string
+	TrimPrefix  string
+}
+
+func validateConvertOptions(opts *ConvertOptions) (*ConvertOptions, error) {
+	if opts == nil {
+		return &ConvertOptions{
+			MethodAlias: getMethodAlias(),
+		}, nil
 	}
-	return utils.StringSliceToPascalCase([]string{method, encodedPath})
+	return &ConvertOptions{
+		MethodAlias: getMethodAlias(opts.MethodAlias),
+		TrimPrefix:  opts.TrimPrefix,
+	}, nil
+}
+
+func buildPathMethodName(apiPath string, method string, options *ConvertOptions) string {
+	if options.TrimPrefix != "" {
+		apiPath = strings.TrimPrefix(apiPath, options.TrimPrefix)
+	}
+	encodedPath := utils.ToPascalCase(bracketRegexp.ReplaceAllString(strings.TrimLeft(apiPath, "/"), ""))
+	if alias, ok := options.MethodAlias[method]; ok {
+		method = alias
+	}
+	return utils.ToCamelCase(method + encodedPath)
 }
 
 func getSchemaRefTypeNameV2(name string) string {
@@ -85,4 +106,21 @@ func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *sche
 	}
 
 	return ps
+}
+
+// getMethodAlias merge method alias map with default value
+func getMethodAlias(inputs ...map[string]string) map[string]string {
+	methodAlias := map[string]string{
+		"get":    "get",
+		"post":   "post",
+		"put":    "put",
+		"patch":  "patch",
+		"delete": "delete",
+	}
+	for _, input := range inputs {
+		for k, alias := range input {
+			methodAlias[k] = alias
+		}
+	}
+	return methodAlias
 }

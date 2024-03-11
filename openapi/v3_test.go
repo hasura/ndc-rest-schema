@@ -35,7 +35,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
-			output, errs := OpenAPIv3ToNDCSchema(sourceBytes)
+			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, nil)
 			if output == nil {
 				t.Error(errors.Join(errs...))
 				t.FailNow()
@@ -51,7 +51,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 	}
 
 	t.Run("failure_empty", func(t *testing.T) {
-		_, err := OpenAPIv3ToNDCSchema([]byte(""))
+		_, err := OpenAPIv3ToNDCSchema([]byte(""), nil)
 		assertError(t, errors.Join(err...), "there is nothing in the spec, it's empty")
 	})
 }

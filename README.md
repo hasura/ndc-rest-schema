@@ -158,3 +158,21 @@ The tool can parse and convert OpenAPI documentation to NDC functions and proced
 - `anyOf`, `additionalProperties` and others -> `JSON`
 
 > Because NDC schema doesn't support union types it's impossible to convert dynamic schema to a static type. The `JSON` scalar represent as a dynamic JSON field and don't support nested selection.
+
+#### Naming convention
+
+Schema type names are usually matched with the referenced name. Anonymous type names will be generated from the URL path in PascalCase.
+
+If the `operationId` field exists in API operation, it will be used for functions or procedure name. Otherwise the operation name will be generated from URL path with camelCase format:
+
+```sh
+{http_method}{url_path_without_slash}
+
+# GET     /users/{id} => getUsersId
+# POST    /users      => postUsers
+# DELETE  /users      => deleteUsers
+```
+
+You can also change the method alias with `--method-alias=KEY=VALUE;...` flag, for example: `--method-alias=post=create;put=update`.
+
+If the URL path has a prefix such as `/api/v1/users`, you can trim that prefix with `--trim-prefix` flag.
