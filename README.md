@@ -58,7 +58,7 @@ The `--spec` flag represents the input specification:
 - `openapi3`: OpenAPI 3.0 and 3.1 (default)
 - `openapi2`: OpenAPI 2.0
 
-The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can enable the extension with `--rest` flag.
+The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can convert the pure NDC schema with `--pure` flag.
 
 ## NDC REST schema extension
 

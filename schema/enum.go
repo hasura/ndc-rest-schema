@@ -119,14 +119,15 @@ func ParseSchemaFileFormat(extension string) (SchemaFileFormat, error) {
 type ParameterLocation string
 
 const (
-	InQuery  ParameterLocation = "query"
-	InHeader ParameterLocation = "header"
-	InPath   ParameterLocation = "path"
-	InCookie ParameterLocation = "cookie"
-	InBody   ParameterLocation = "body"
+	InQuery    ParameterLocation = "query"
+	InHeader   ParameterLocation = "header"
+	InPath     ParameterLocation = "path"
+	InCookie   ParameterLocation = "cookie"
+	InBody     ParameterLocation = "body"
+	InFormData ParameterLocation = "formData"
 )
 
-var parameterLocation_enums = []ParameterLocation{InQuery, InHeader, InPath, InCookie, InBody}
+var parameterLocation_enums = []ParameterLocation{InQuery, InHeader, InPath, InCookie, InBody, InFormData}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *ParameterLocation) UnmarshalJSON(b []byte) error {
