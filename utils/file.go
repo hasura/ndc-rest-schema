@@ -13,7 +13,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/types"
 	"gopkg.in/yaml.v3"
 )
 

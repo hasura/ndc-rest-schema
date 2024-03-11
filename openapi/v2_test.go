@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/types"
 )
 
 func TestOpenAPIv2ToRESTSchema(t *testing.T) {

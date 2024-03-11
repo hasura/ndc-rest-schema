@@ -6,8 +6,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hasura/ndc-schema-tool/types"
-	"github.com/hasura/ndc-schema-tool/utils"
+	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/utils"
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi"
 	"github.com/pb33f/libopenapi/datamodel/high/base"

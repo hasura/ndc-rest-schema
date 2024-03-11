@@ -7,14 +7,14 @@ import (
 	"strings"
 
 	"github.com/alecthomas/kong"
-	"github.com/hasura/ndc-schema-tool/command"
-	"github.com/hasura/ndc-schema-tool/version"
+	"github.com/hasura/ndc-rest-schema/command"
+	"github.com/hasura/ndc-rest-schema/version"
 )
 
 var cli struct {
 	LogLevel  string                            `help:"Log level." enum:"debug,info,warn,error" default:"info"`
-	Convert   command.ConvertCommandArguments   `cmd:"" help:"Convert API spec to NDC schema. For example:\n ndc-schema-tool convert -f petstore.yaml -o petstore.json"`
-	Json2Yaml command.Json2YamlCommandArguments `cmd:"" name:"json2yaml" help:"Convert JSON file to YAML. For example:\n ndc-schema-tool json2yaml -f petstore.json -o petstore.yaml"`
+	Convert   command.ConvertCommandArguments   `cmd:"" help:"Convert API spec to NDC schema. For example:\n ndc-rest-schema convert -f petstore.yaml -o petstore.json"`
+	Json2Yaml command.Json2YamlCommandArguments `cmd:"" name:"json2yaml" help:"Convert JSON file to YAML. For example:\n ndc-rest-schema json2yaml -f petstore.json -o petstore.yaml"`
 	Version   struct{}                          `cmd:"" help:"Print the CLI version."`
 }
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/types"
 )
 
 func TestConvertToNDCSchema(t *testing.T) {
@@ -16,7 +16,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 	ConvertToNDCSchema(&ConvertCommandArguments{
 		File:   "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
 		Output: outputFilePath,
-		Rest:   true,
+		Pure:   false,
 		Spec:   string(types.OpenAPIv3Spec),
 	}, slog.Default())
 

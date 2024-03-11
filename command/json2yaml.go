@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/hasura/ndc-schema-tool/utils"
+	"github.com/hasura/ndc-rest-schema/utils"
 	"gopkg.in/yaml.v3"
 )
 

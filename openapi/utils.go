@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hasura/ndc-schema-tool/types"
-	"github.com/hasura/ndc-schema-tool/utils"
+	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/utils"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
 

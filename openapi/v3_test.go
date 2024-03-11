@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/types"
 )
 
 func TestOpenAPIv3ToRESTSchema(t *testing.T) {

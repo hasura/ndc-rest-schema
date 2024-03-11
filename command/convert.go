@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/hasura/ndc-schema-tool/openapi"
-	"github.com/hasura/ndc-schema-tool/types"
-	"github.com/hasura/ndc-schema-tool/utils"
+	"github.com/hasura/ndc-rest-schema/openapi"
+	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/utils"
 )
 
 // ConvertCommandArguments represent available command arguments for the convert command
@@ -17,7 +17,7 @@ type ConvertCommandArguments struct {
 	Output string `help:"The location where the ndc schema file will be generated. Print to stdout if not set" short:"o"`
 	Spec   string `help:"The API specification of the file, is one of openapi3, openapi2" default:"openapi3"`
 	Format string `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
-	Rest   bool   `help:"Return REST NDC schema extension" default:"false"`
+	Pure   bool   `help:"Return the pure NDC schema only" default:"false"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
@@ -48,10 +48,10 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	}
 
 	if args.Output != "" {
-		if args.Rest {
-			err = utils.WriteSchemaFile(args.Output, result)
-		} else {
+		if args.Pure {
 			err = utils.WriteSchemaFile(args.Output, result.ToSchemaResponse())
+		} else {
+			err = utils.WriteSchemaFile(args.Output, result)
 		}
 		if err != nil {
 			slog.Error("failed to write schema file: %s", err)
@@ -72,7 +72,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	}
 
 	var rawResult any = result
-	if !args.Rest {
+	if args.Pure {
 		rawResult = result.ToSchemaResponse()
 	}
 
