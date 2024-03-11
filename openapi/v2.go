@@ -359,7 +359,7 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, fieldPaths 
 		result = schema.NewNamedType(scalarName)
 	// case "null":
 	case "object":
-		refName := strings.Join(fieldPaths, "_")
+		refName := utils.StringSliceToPascalCase(fieldPaths)
 
 		if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
 			// treat no-property objects as a JSON scalar
