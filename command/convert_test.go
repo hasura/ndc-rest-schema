@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/schema"
 )
 
 func TestConvertToNDCSchema(t *testing.T) {
@@ -17,7 +17,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 		File:   "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
 		Output: outputFilePath,
 		Pure:   false,
-		Spec:   string(types.OpenAPIv3Spec),
+		Spec:   string(schema.OpenAPIv3Spec),
 	}, slog.Default())
 
 	outputBytes, err := os.ReadFile(outputFilePath)
@@ -25,7 +25,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 		t.Errorf("cannot read the output file at %s", outputFilePath)
 		t.FailNow()
 	}
-	var output types.NDCRestSchema
+	var output schema.NDCRestSchema
 	if err := json.Unmarshal(outputBytes, &output); err != nil {
 		t.Errorf("cannot decode the output file json at %s", outputFilePath)
 		t.FailNow()

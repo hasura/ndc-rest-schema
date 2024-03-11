@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/hasura/ndc-rest-schema/openapi"
-	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
 )
 
@@ -29,15 +29,15 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 		return
 	}
 
-	var result *types.NDCRestSchema
+	var result *schema.NDCRestSchema
 	var errs []error
 	switch args.Spec {
-	case string(types.OpenAPIv3Spec):
+	case string(schema.OpenAPIv3Spec):
 		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent)
-	case string(types.OpenAPIv2Spec):
+	case string(schema.OpenAPIv2Spec):
 		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent)
 	default:
-		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []types.SchemaSpecType{types.OpenAPIv3Spec, types.OpenAPIv2Spec}))
+		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
 	}
 	if len(errs) > 0 {
 		logger.Error(errors.Join(errs...).Error())
@@ -64,7 +64,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	}
 
 	// print to stderr
-	format, err := types.ParseSchemaFileFormat(args.Format)
+	format, err := schema.ParseSchemaFileFormat(args.Format)
 	if err != nil {
 		slog.Error("failed to parse format: %s", err)
 		os.Exit(1)

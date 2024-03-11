@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hasura/ndc-rest-schema/types"
+	"github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
@@ -54,11 +54,11 @@ func getScalarNameFromType(name string) string {
 }
 
 // ParseTypeSchemaFromOpenAPISchema creates a TypeSchema from OpenAPI schema object
-func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *types.TypeSchema {
+func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *schema.TypeSchema {
 	if input == nil {
 		return nil
 	}
-	ps := &types.TypeSchema{}
+	ps := &schema.TypeSchema{}
 	ps.Type = typeName
 	ps.Format = input.Format
 	ps.Pattern = input.Pattern
