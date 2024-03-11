@@ -22,14 +22,14 @@ clean:
 
 .PHONY: build
 build:
-	go build -o _output/ndc-schema-tool .
+	go build -o _output/ndc-rest-schema .
 	
-# build the ndc-schema-tool for all given platform/arch
+# build the ndc-rest-schema for all given platform/arch
 .PHONY: ci-build
 ci-build: export CGO_ENABLED=0
 ci-build: clean
 	go get github.com/mitchellh/gox && \
-	go run github.com/mitchellh/gox -ldflags '-X github.com/hasura/ndc-schema-tool/version.BuildVersion=$(VERSION) -s -w -extldflags "-static"' \
+	go run github.com/mitchellh/gox -ldflags '-X github.com/hasura/ndc-rest-schema/version.BuildVersion=$(VERSION) -s -w -extldflags "-static"' \
 		-osarch="linux/amd64 darwin/amd64 windows/amd64 darwin/arm64" \
-		-output="../../$(OUTPUT_DIR)/$(VERSION)/ndc-schema-tool-{{.OS}}-{{.Arch}}" \
+		-output="../../$(OUTPUT_DIR)/$(VERSION)/ndc-rest-schema-{{.OS}}-{{.Arch}}" \
 		.

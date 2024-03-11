@@ -6,8 +6,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hasura/ndc-schema-tool/types"
-	"github.com/hasura/ndc-schema-tool/utils"
+	rest "github.com/hasura/ndc-rest-schema/schema"
+	"github.com/hasura/ndc-rest-schema/utils"
 	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -16,11 +16,11 @@ import (
 )
 
 type openAPIv2Converter struct {
-	schema *types.NDCRestSchema
+	schema *rest.NDCRestSchema
 }
 
 // OpenAPIv2ToNDCSchema converts OpenAPI v2 JSON bytes to NDC REST schema
-func OpenAPIv2ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
+func OpenAPIv2ToNDCSchema(input []byte) (*rest.NDCRestSchema, []error) {
 	document, err := libopenapi.NewDocument(input)
 	if err != nil {
 		return nil, []error{err}
@@ -37,7 +37,7 @@ func OpenAPIv2ToNDCSchema(input []byte) (*types.NDCRestSchema, []error) {
 	}
 
 	converter := &openAPIv2Converter{
-		schema: types.NewNDCRestSchema(),
+		schema: rest.NewNDCRestSchema(),
 	}
 	if docModel.Model.Info != nil {
 		converter.schema.Settings.Version = docModel.Model.Info.Version
@@ -90,8 +90,8 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 				return fmt.Errorf("%s: %s", funcName, err)
 			}
 
-			function := types.RESTFunctionInfo{
-				Request: &types.Request{
+			function := rest.RESTFunctionInfo{
+				Request: &rest.Request{
 					URL:        pathKey,
 					Method:     "get",
 					Parameters: reqParams,
@@ -145,7 +145,7 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 	return nil
 }
 
-func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method string, operation *v2.Operation) (*types.RESTProcedureInfo, error) {
+func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method string, operation *v2.Operation) (*rest.RESTProcedureInfo, error) {
 	if operation == nil || !slices.Contains(operation.Consumes, ContentTypeJSON) {
 		return nil, nil
 	}
@@ -169,8 +169,8 @@ func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 
-	procedure := types.RESTProcedureInfo{
-		Request: &types.Request{
+	procedure := rest.RESTProcedureInfo{
+		Request: &rest.Request{
 			URL:        pathKey,
 			Method:     method,
 			Parameters: reqParams,
@@ -192,13 +192,13 @@ func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method s
 	return &procedure, nil
 }
 
-func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPaths []string) (map[string]schema.ArgumentInfo, []types.RequestParameter, error) {
+func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPaths []string) (map[string]schema.ArgumentInfo, []rest.RequestParameter, error) {
 
 	if len(params) == 0 {
 		return map[string]schema.ArgumentInfo{}, nil, nil
 	}
 
-	var reqParams []types.RequestParameter
+	var reqParams []rest.RequestParameter
 	arguments := make(map[string]schema.ArgumentInfo)
 
 	for _, param := range params {
@@ -228,7 +228,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPat
 			return nil, nil, err
 		}
 
-		paramLocation, err := types.ParseParameterLocation(param.In)
+		paramLocation, err := rest.ParseParameterLocation(param.In)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -237,7 +237,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPat
 			scalarName = getScalarNameFromType(apiSchema.Type[0])
 		}
 
-		reqParams = append(reqParams, types.RequestParameter{
+		reqParams = append(reqParams, rest.RequestParameter{
 			Name:     paramName,
 			In:       paramLocation,
 			Required: paramRequired,
@@ -252,7 +252,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, fieldPat
 		}
 
 		switch paramLocation {
-		case types.InBody:
+		case rest.InBody:
 			arguments["body"] = argument
 		default:
 			arguments[paramName] = argument

@@ -1,4 +1,4 @@
-# NDC Schema Tool
+# NDC REST Schema
 
 This module includes libraries and tools to convert other API schemas to Native Data Connector (NDC) schema, as well as extend the NDC spec with REST request information.
 
@@ -20,13 +20,13 @@ This module includes libraries and tools to convert other API schemas to Native 
 **Install**
 
 ```go
-go install github.com/hasura/ndc-schema-tool
+go install github.com/hasura/ndc-rest-schema
 ```
 
 ## Quick start
 
 ```sh
-Usage: ndc-schema-tool <command>
+Usage: ndc-rest-schema <command>
 
 Flags:
   -h, --help                Show context-sensitive help.
@@ -36,12 +36,12 @@ Commands:
   convert --file=STRING
     Convert API spec to NDC schema. For example:
 
-        ndc-schema-tool convert -f petstore.yaml -o petstore.json
+        ndc-rest-schema convert -f petstore.yaml -o petstore.json
 
   json2yaml --file=STRING
     Convert JSON file to YAML. For example:
 
-        ndc-schema-tool json2yaml -f petstore.json -o petstore.yaml
+        ndc-rest-schema json2yaml -f petstore.json -o petstore.yaml
 
   version
     Print the CLI version.
@@ -50,7 +50,7 @@ Commands:
 Convert an OpenAPI v3 file to NDC schema with the `convert` command. The tool can accept either file path or URL. The output format can be in JSON or YAML, depending on the file extension:
 
 ```sh
-ndc-schema-tool convert -f https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml -o petstore.json --spec openapi3
+ndc-rest-schema convert -f https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml -o petstore.json --spec openapi3
 ```
 
 The `--spec` flag represents the input specification:

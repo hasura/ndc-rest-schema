@@ -1,4 +1,4 @@
-module github.com/hasura/ndc-schema-tool
+module github.com/hasura/ndc-rest-schema
 
 go 1.21
 

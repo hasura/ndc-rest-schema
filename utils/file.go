@@ -13,23 +13,23 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/schema"
 	"gopkg.in/yaml.v3"
 )
 
 // MarshalSchema encodes the NDC REST schema to bytes
-func MarshalSchema(content any, format types.SchemaFileFormat) ([]byte, error) {
+func MarshalSchema(content any, format schema.SchemaFileFormat) ([]byte, error) {
 
 	var fileBuffer bytes.Buffer
 	switch format {
-	case types.SchemaFileJSON:
+	case schema.SchemaFileJSON:
 		encoder := json.NewEncoder(&fileBuffer)
 		encoder.SetIndent("", "  ")
 
 		if err := encoder.Encode(content); err != nil {
 			return nil, fmt.Errorf("failed to encode NDC REST schema: %s", err)
 		}
-	case types.SchemaFileYAML:
+	case schema.SchemaFileYAML:
 		encoder := yaml.NewEncoder(&fileBuffer)
 		encoder.SetIndent(2)
 		if err := encoder.Encode(content); err != nil {
@@ -45,7 +45,7 @@ func MarshalSchema(content any, format types.SchemaFileFormat) ([]byte, error) {
 // WriteSchemaFile writes the NDC REST schema to file
 func WriteSchemaFile(outputPath string, content any) error {
 
-	format, err := types.ParseSchemaFileFormat(strings.TrimLeft(filepath.Ext(outputPath), "."))
+	format, err := schema.ParseSchemaFileFormat(strings.TrimLeft(filepath.Ext(outputPath), "."))
 	if err != nil {
 		return err
 	}

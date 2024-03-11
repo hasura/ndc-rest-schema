@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hasura/ndc-schema-tool/types"
+	"github.com/hasura/ndc-rest-schema/schema"
 )
 
 func TestOpenAPIv2ToRESTSchema(t *testing.T) {
@@ -30,7 +30,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 
 			expectedBytes, err := os.ReadFile(tc.Expected)
 			assertNoError(t, err)
-			var expected types.NDCRestSchema
+			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
 			output, errs := OpenAPIv2ToNDCSchema(sourceBytes)
