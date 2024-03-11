@@ -266,7 +266,7 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 	if innerSchema == nil {
 		return nil, nil, fmt.Errorf("cannot get schema from proxy: %s", schemaProxy.GetReference())
 	}
-	refName := getSchemaRefTypeName(schemaProxy.GetReference())
+	refName := getSchemaRefTypeNameV3(schemaProxy.GetReference())
 	var ndcType schema.TypeEncoder
 	var err error
 	// return early object from ref
@@ -351,7 +351,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, fieldPaths 
 			return nil, errors.New("array item is empty")
 		}
 
-		itemName := getSchemaRefTypeName(typeSchema.Items.A.GetReference())
+		itemName := getSchemaRefTypeNameV3(typeSchema.Items.A.GetReference())
 		if itemName != "" {
 			result = schema.NewArrayType(schema.NewNamedType(itemName))
 		} else {

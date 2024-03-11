@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	bracketRegexp       = regexp.MustCompile(`[\{\}]`)
-	schemaRefNameRegexp = regexp.MustCompile(`#/components/schemas/([\w]+)`)
+	bracketRegexp         = regexp.MustCompile(`[\{\}]`)
+	schemaRefNameV2Regexp = regexp.MustCompile(`#/definitions/([\w]+)`)
+	schemaRefNameV3Regexp = regexp.MustCompile(`#/components/schemas/([\w]+)`)
 
 	errParameterSchemaEmpty = errors.New("parameter schema is empty")
 )
@@ -30,8 +31,16 @@ func buildPathMethodName(apiPath string, method string) string {
 	return utils.StringSliceToPascalCase([]string{method, encodedPath})
 }
 
-func getSchemaRefTypeName(name string) string {
-	result := schemaRefNameRegexp.FindStringSubmatch(name)
+func getSchemaRefTypeNameV2(name string) string {
+	result := schemaRefNameV2Regexp.FindStringSubmatch(name)
+	if len(result) < 2 {
+		return ""
+	}
+	return result[1]
+}
+
+func getSchemaRefTypeNameV3(name string) string {
+	result := schemaRefNameV3Regexp.FindStringSubmatch(name)
 	if len(result) < 2 {
 		return ""
 	}
