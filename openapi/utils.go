@@ -23,12 +23,12 @@ const (
 	ContentTypeJSON   = "application/json"
 )
 
-func buildPathMethodName(apiPath string, method string) string {
+func buildPathMethodName(apiPath string, method string, methodAlias map[string]string) string {
 	encodedPath := utils.ToPascalCase(bracketRegexp.ReplaceAllString(strings.TrimLeft(apiPath, "/"), ""))
-	if method == "get" {
-		return encodedPath
+	if alias, ok := methodAlias[method]; ok {
+		method = alias
 	}
-	return utils.StringSliceToPascalCase([]string{method, encodedPath})
+	return utils.ToCamelCase(method + encodedPath)
 }
 
 func getSchemaRefTypeNameV2(name string) string {
@@ -85,4 +85,21 @@ func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *sche
 	}
 
 	return ps
+}
+
+// getMethodAlias merge method alias map with default value
+func getMethodAlias(inputs ...map[string]string) map[string]string {
+	methodAlias := map[string]string{
+		"get":    "get",
+		"post":   "post",
+		"put":    "put",
+		"patch":  "patch",
+		"delete": "delete",
+	}
+	for _, input := range inputs {
+		for k, alias := range input {
+			methodAlias[k] = alias
+		}
+	}
+	return methodAlias
 }

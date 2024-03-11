@@ -16,11 +16,12 @@ import (
 )
 
 type openAPIv3Converter struct {
-	schema *rest.NDCRestSchema
+	schema      *rest.NDCRestSchema
+	methodAlias map[string]string
 }
 
 // OpenAPIv3ToNDCSchema converts OpenAPI v3 JSON bytes to NDC REST schema
-func OpenAPIv3ToNDCSchema(input []byte) (*rest.NDCRestSchema, []error) {
+func OpenAPIv3ToNDCSchema(input []byte, methodAlias map[string]string) (*rest.NDCRestSchema, []error) {
 	document, err := libopenapi.NewDocument(input)
 	if err != nil {
 		return nil, []error{err}
@@ -37,7 +38,8 @@ func OpenAPIv3ToNDCSchema(input []byte) (*rest.NDCRestSchema, []error) {
 	}
 
 	converter := &openAPIv3Converter{
-		schema: rest.NewNDCRestSchema(),
+		schema:      rest.NewNDCRestSchema(),
+		methodAlias: getMethodAlias(methodAlias),
 	}
 	if docModel.Model.Info != nil {
 		converter.schema.Settings.Version = docModel.Model.Info.Version
@@ -71,7 +73,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		itemGet := pathValue.Get
 		funcName := itemGet.OperationId
 		if funcName == "" {
-			funcName = buildPathMethodName(pathKey, "get")
+			funcName = buildPathMethodName(pathKey, "get", oc.methodAlias)
 		}
 		resultType, err := oc.convertResponse(itemGet.Responses, []string{funcName, "Result"})
 		if err != nil {
@@ -145,7 +147,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 
 	procName := operation.OperationId
 	if procName == "" {
-		procName = buildPathMethodName(pathKey, "get")
+		procName = buildPathMethodName(pathKey, method, oc.methodAlias)
 	}
 
 	resultType, err := oc.convertResponse(operation.Responses, []string{procName, "Result"})

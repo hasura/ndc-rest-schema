@@ -13,11 +13,12 @@ import (
 
 // ConvertCommandArguments represent available command arguments for the convert command
 type ConvertCommandArguments struct {
-	File   string `help:"File path needs to be converted." short:"f" required:""`
-	Output string `help:"The location where the ndc schema file will be generated. Print to stdout if not set" short:"o"`
-	Spec   string `help:"The API specification of the file, is one of openapi3, openapi2" default:"openapi3"`
-	Format string `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
-	Pure   bool   `help:"Return the pure NDC schema only" default:"false"`
+	File        string            `help:"File path needs to be converted." short:"f" required:""`
+	Output      string            `help:"The location where the ndc schema file will be generated. Print to stdout if not set" short:"o"`
+	Spec        string            `help:"The API specification of the file, is one of openapi3, openapi2" default:"openapi3"`
+	Format      string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
+	Pure        bool              `help:"Return the pure NDC schema only" default:"false"`
+	MethodAlias map[string]string `help:"Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
@@ -33,9 +34,9 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	var errs []error
 	switch args.Spec {
 	case string(schema.OpenAPIv3Spec):
-		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent)
+		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, args.MethodAlias)
 	case string(schema.OpenAPIv2Spec):
-		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent)
+		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, args.MethodAlias)
 	default:
 		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
 	}
