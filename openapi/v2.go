@@ -152,7 +152,8 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 }
 
 func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method string, operation *v2.Operation) (*rest.RESTProcedureInfo, error) {
-	if operation == nil || !slices.Contains(operation.Consumes, ContentTypeJSON) {
+
+	if operation == nil {
 		return nil, nil
 	}
 
@@ -167,6 +168,11 @@ func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method s
 	}
 
 	if resultType == nil {
+		return nil, nil
+	}
+
+	if len(operation.Consumes) > 0 && !slices.Contains(operation.Consumes, ContentTypeJSON) {
+		oc.Logger.Warn(fmt.Sprintf("Unsupported content types: %v", operation.Consumes))
 		return nil, nil
 	}
 

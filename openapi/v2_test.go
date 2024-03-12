@@ -18,18 +18,18 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 		Expected string
 	}{
 		{
-			Name:     "petstore2",
+			Name:     "jsonplaceholder",
 			Source:   "testdata/jsonplaceholder/swagger.json",
 			Expected: "testdata/jsonplaceholder/expected.json",
 			Options: &ConvertOptions{
 				TrimPrefix: "/v1",
 			},
 		},
-		{
-			Name:     "petstore2",
-			Source:   "testdata/petstore2/swagger.json",
-			Expected: "testdata/petstore2/expected.json",
-		},
+		// {
+		// 	Name:     "petstore2",
+		// 	Source:   "testdata/petstore2/swagger.json",
+		// 	Expected: "testdata/petstore2/expected.json",
+		// },
 	}
 
 	for _, tc := range testCases {

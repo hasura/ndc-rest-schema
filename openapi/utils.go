@@ -2,6 +2,7 @@ package openapi
 
 import (
 	"errors"
+	"log/slog"
 	"regexp"
 	"strings"
 
@@ -27,17 +28,24 @@ const (
 type ConvertOptions struct {
 	MethodAlias map[string]string
 	TrimPrefix  string
+	Logger      *slog.Logger
 }
 
 func validateConvertOptions(opts *ConvertOptions) (*ConvertOptions, error) {
+	logger := slog.Default()
 	if opts == nil {
 		return &ConvertOptions{
 			MethodAlias: getMethodAlias(),
+			Logger:      logger,
 		}, nil
+	}
+	if opts.Logger != nil {
+		logger = opts.Logger
 	}
 	return &ConvertOptions{
 		MethodAlias: getMethodAlias(opts.MethodAlias),
 		TrimPrefix:  opts.TrimPrefix,
+		Logger:      logger,
 	}, nil
 }
 
