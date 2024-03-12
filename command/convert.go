@@ -36,6 +36,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	options := &openapi.ConvertOptions{
 		MethodAlias: args.MethodAlias,
 		TrimPrefix:  args.TrimPrefix,
+		Logger:      logger,
 	}
 	switch args.Spec {
 	case string(schema.OpenAPIv3Spec):
@@ -43,7 +44,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	case string(schema.OpenAPIv2Spec):
 		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
 	default:
-		slog.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
+		logger.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
 	}
 	if len(errs) > 0 {
 		logger.Error(errors.Join(errs...).Error())

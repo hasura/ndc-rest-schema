@@ -966,6 +966,132 @@
         "name": "Post",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/posts/{id}",
+        "method": "put",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "JSON"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "body": {
+          "description": "Post object that needs to be updated",
+          "type": {
+            "name": "Post",
+            "type": "named"
+          }
+        },
+        "id": {
+          "description": "The ID of the post to retrieve",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Update specific post",
+      "name": "updatePostById",
+      "result_type": {
+        "name": "Post",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/posts/{id}",
+        "method": "patch",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "JSON"
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "body": {
+          "description": "Post object that needs to be updated",
+          "type": {
+            "name": "Post",
+            "type": "named"
+          }
+        },
+        "id": {
+          "description": "The ID of the post to retrieve",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "patch specific post",
+      "name": "patchPostById",
+      "result_type": {
+        "name": "Post",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/posts/{id}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ]
+      },
+      "arguments": {
+        "id": {
+          "description": "The ID of the post to retrieve",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Delete specific post",
+      "name": "deletePostById",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
     }
   ],
   "scalar_types": {

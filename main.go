@@ -9,6 +9,7 @@ import (
 	"github.com/alecthomas/kong"
 	"github.com/hasura/ndc-rest-schema/command"
 	"github.com/hasura/ndc-rest-schema/version"
+	"github.com/lmittmann/tint"
 )
 
 var cli struct {
@@ -47,8 +48,9 @@ func initLogger(logLevel string) (*slog.Logger, error) {
 		return nil, err
 	}
 
-	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
-		Level: level,
+	logger := slog.New(tint.NewHandler(os.Stderr, &tint.Options{
+		Level:      level,
+		TimeFormat: "15:04",
 	}))
 	slog.SetDefault(logger)
 
