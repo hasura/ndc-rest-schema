@@ -57,7 +57,9 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 				break
 			}
 		}
-		converter.schema.Settings.Request.URL = fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath)
+		converter.schema.Settings.Servers = append(converter.schema.Settings.Servers, rest.ServerConfig{
+			URL: fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath),
+		})
 	}
 
 	for iterPath := docModel.Model.Paths.PathItems.First(); iterPath != nil; iterPath = iterPath.Next() {

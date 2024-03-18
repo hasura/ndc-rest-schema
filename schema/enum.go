@@ -46,11 +46,10 @@ func ParseSchemaSpecType(value string) (SchemaSpecType, error) {
 type RequestType string
 
 const (
-	RequestTypeREST         RequestType = "rest"
-	RequestTypeHasuraAction RequestType = "hasura_action"
+	RequestTypeREST RequestType = "rest"
 )
 
-var requestType_enums = []RequestType{RequestTypeREST, RequestTypeHasuraAction}
+var requestType_enums = []RequestType{RequestTypeREST}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *RequestType) UnmarshalJSON(b []byte) error {

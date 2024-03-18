@@ -1,6 +1,30 @@
 {
   "settings": {
-    "url": "https://petstore3.swagger.io/api/v3",
+    "servers": [
+      {
+        "url": "https://petstore3.swagger.io/api/v3"
+      }
+    ],
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "value": "{{PET_STORE_API_KEY}}",
+        "in": "header",
+        "name": "api_key"
+      },
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+            "scopes": {
+              "read:pets": "read your pets",
+              "write:pets": "modify pets in your account"
+            }
+          }
+        }
+      }
+    },
     "version": "1.0.18"
   },
   "collections": [],

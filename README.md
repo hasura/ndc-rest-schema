@@ -60,9 +60,9 @@ The `--spec` flag represents the input specification:
 
 The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can convert the pure NDC schema with `--pure` flag.
 
-## NDC REST schema extension
+## NDC REST configuration
 
-The NDC REST schema extension add `request` information into `functions` and `procedures` so the connector can have more context to initiate HTTP requests to the remote REST service.
+The NDC REST configuration adds `request` information into `functions` and `procedures` so the connector can have more context to initiate HTTP requests to the remote REST service. The request schema is inspired of [OpenAPI 3 paths and operations](https://swagger.io/docs/specification/paths-and-operations/).
 
 ```yaml
 - request:
@@ -70,7 +70,7 @@ The NDC REST schema extension add `request` information into `functions` and `pr
     method: get
     type: rest
     headers:
-      Authorization: Bearer xxx
+      Foo: bar
     timeout: 30 # seconds, default 30s
     parameters:
       - name: petId

@@ -19,11 +19,22 @@ type ConvertCommandArguments struct {
 	Format      string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
 	Pure        bool              `help:"Return the pure NDC schema only" default:"false"`
 	TrimPrefix  string            `help:"Trim the prefix in URL, e.g. /v1"`
+	EnvPrefix   string            `help:"The environment variable prefix for security values, e.g. PET_STORE"`
 	MethodAlias map[string]string `help:"Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
 func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
+	logger.Debug(
+		"converting OpenAPI definition to NDC REST schema",
+		slog.String("file", args.File),
+		slog.String("output", args.Output),
+		slog.String("spec", args.Spec),
+		slog.String("format", args.Format),
+		slog.String("trim_prefix", args.TrimPrefix),
+		slog.String("env_prefix", args.EnvPrefix),
+		slog.Bool("pure", args.Pure),
+	)
 	rawContent, err := utils.ReadFileFromPath(args.File)
 	if err != nil {
 		slog.Error(err.Error())
@@ -36,6 +47,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	options := &openapi.ConvertOptions{
 		MethodAlias: args.MethodAlias,
 		TrimPrefix:  args.TrimPrefix,
+		EnvPrefix:   args.EnvPrefix,
 		Logger:      logger,
 	}
 	switch args.Spec {
