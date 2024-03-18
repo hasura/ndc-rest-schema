@@ -1,6 +1,6 @@
 {
   "settings": {
-    "url": "https://jsonplaceholder.typicode.com",
+    "servers": [{ "url": "https://jsonplaceholder.typicode.com" }],
     "version": "1.0.0"
   },
   "collections": [],

@@ -1317,5 +1317,6 @@
       },
       "api_key": { "type": "apiKey", "name": "api_key", "in": "header" }
     }
-  }
+  },
+  "security": [{}, { "petstore_auth": ["write:pets", "read:pets"] }]
 }

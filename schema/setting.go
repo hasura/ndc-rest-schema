@@ -7,7 +7,7 @@ type NDCRestSettings struct {
 	// configure the request timeout in seconds, default 30s
 	Timeout         uint                      `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 	SecuritySchemes map[string]SecurityScheme `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty" mapstructure:"securitySchemes"`
-	Security        map[string][]string       `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
+	Security        []map[string][]string     `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 	Version         string                    `json:"version,omitempty" yaml:"version,omitempty" mapstructure:"version"`
 }
 

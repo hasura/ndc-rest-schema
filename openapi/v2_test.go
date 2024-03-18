@@ -25,11 +25,11 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 				TrimPrefix: "/v1",
 			},
 		},
-		// {
-		// 	Name:     "petstore2",
-		// 	Source:   "testdata/petstore2/swagger.json",
-		// 	Expected: "testdata/petstore2/expected.json",
-		// },
+		{
+			Name:     "petstore2",
+			Source:   "testdata/petstore2/swagger.json",
+			Expected: "testdata/petstore2/expected.json",
+		},
 	}
 
 	for _, tc := range testCases {

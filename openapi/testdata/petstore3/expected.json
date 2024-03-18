@@ -25,6 +25,15 @@
         }
       }
     },
+    "security": [
+      {},
+      {
+        "petstore_auth": [
+          "write:pets",
+          "read:pets"
+        ]
+      }
+    ],
     "version": "1.0.18"
   },
   "collections": [],
@@ -46,6 +55,14 @@
                 "sold"
               ]
             }
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -83,6 +100,14 @@
             "schema": {
               "type": "JSON"
             }
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -125,6 +150,17 @@
               "format": "int64"
             }
           }
+        ],
+        "security": [
+          {
+            "api_key": null
+          },
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
         ]
       },
       "arguments": {
@@ -146,7 +182,12 @@
     {
       "request": {
         "url": "/store/inventory",
-        "method": "get"
+        "method": "get",
+        "security": [
+          {
+            "api_key": null
+          }
+        ]
       },
       "arguments": {},
       "description": "Returns pet inventories by status",
@@ -2380,7 +2421,15 @@
         "method": "post",
         "headers": {
           "Content-Type": "application/json"
-        }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
       },
       "arguments": {
         "body": {
@@ -2404,7 +2453,15 @@
         "method": "put",
         "headers": {
           "Content-Type": "application/json"
-        }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
       },
       "arguments": {
         "body": {
@@ -2454,6 +2511,14 @@
             "schema": {
               "type": "String"
             }
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2521,6 +2586,14 @@
               "format": "int64"
             }
           }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
         ]
       },
       "arguments": {
@@ -2575,6 +2648,14 @@
             "schema": {
               "type": "String"
             }
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },

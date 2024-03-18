@@ -187,3 +187,25 @@ func toSnakeCase(input string) string {
 func toConstantCase(input string) string {
 	return strings.ToUpper(toSnakeCase(input))
 }
+
+func convertSecurities(securities []*base.SecurityRequirement) []map[string][]string {
+	var results []map[string][]string
+	for _, security := range securities {
+		s := convertSecurity(security)
+		if s != nil {
+			results = append(results, s)
+		}
+	}
+	return results
+}
+
+func convertSecurity(security *base.SecurityRequirement) map[string][]string {
+	if security == nil {
+		return nil
+	}
+	results := make(map[string][]string)
+	for s := security.Requirements.First(); s != nil; s = s.Next() {
+		results[s.Key()] = s.Value()
+	}
+	return results
+}

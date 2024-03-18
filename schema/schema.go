@@ -63,12 +63,12 @@ func (ndc NDCRestSchema) ToSchemaResponse() *schema.SchemaResponse {
 
 // Request represents the HTTP request information of the webhook
 type Request struct {
-	URL        string              `json:"url,omitempty" yaml:"url,omitempty" mapstructure:"url"`
-	Method     string              `json:"method,omitempty" yaml:"method,omitempty" mapstructure:"method"`
-	Type       RequestType         `json:"type,omitempty" yaml:"type,omitempty" mapstructure:"type"`
-	Headers    map[string]string   `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
-	Parameters []RequestParameter  `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
-	Security   map[string][]string `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
+	URL        string                `json:"url,omitempty" yaml:"url,omitempty" mapstructure:"url"`
+	Method     string                `json:"method,omitempty" yaml:"method,omitempty" mapstructure:"method"`
+	Type       RequestType           `json:"type,omitempty" yaml:"type,omitempty" mapstructure:"type"`
+	Headers    map[string]string     `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
+	Parameters []RequestParameter    `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
+	Security   []map[string][]string `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 	// configure the request timeout in seconds, default 30s
 	Timeout uint `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 }

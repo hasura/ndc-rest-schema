@@ -1,6 +1,30 @@
 {
   "settings": {
-    "url": "https://petstore.swagger.io/v2",
+    "servers": [
+      {
+        "url": "https://petstore.swagger.io/v2"
+      }
+    ],
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "value": "{{API_KEY}}",
+        "in": "header",
+        "name": "api_key"
+      },
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://petstore.swagger.io/oauth/authorize",
+            "scopes": {
+              "read:pets": "read your pets",
+              "write:pets": "modify pets in your account"
+            }
+          }
+        }
+      }
+    },
     "version": "1.0.6"
   },
   "collections": [],
@@ -14,6 +38,14 @@
             "name": "status",
             "in": "query",
             "required": true
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -49,6 +81,14 @@
             "in": "query",
             "required": true
           }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
         ]
       },
       "arguments": {
@@ -82,6 +122,11 @@
             "name": "petId",
             "in": "path",
             "required": true
+          }
+        ],
+        "security": [
+          {
+            "api_key": null
           }
         ]
       },
@@ -132,7 +177,12 @@
     {
       "request": {
         "url": "/store/inventory",
-        "method": "get"
+        "method": "get",
+        "security": [
+          {
+            "api_key": null
+          }
+        ]
       },
       "arguments": {},
       "description": "Returns pet inventories by status",
@@ -500,6 +550,14 @@
               "type": "JSON"
             }
           }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
         ]
       },
       "arguments": {
@@ -537,6 +595,14 @@
               "type": "JSON"
             }
           }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
         ]
       },
       "arguments": {
@@ -550,6 +616,62 @@
       },
       "description": "Update an existing pet",
       "name": "updatePet",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/{petId}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": false
+          },
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      },
+      "arguments": {
+        "api_key": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "description": "Pet id to delete",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Deletes a pet",
+      "name": "deletePet",
       "result_type": {
         "type": "nullable",
         "underlying_type": {
@@ -594,6 +716,40 @@
     },
     {
       "request": {
+        "url": "/store/order/{orderId}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true
+          }
+        ]
+      },
+      "arguments": {
+        "orderId": {
+          "description": "ID of the order that needs to be deleted",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Delete purchase order by ID",
+      "name": "deleteOrder",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
         "url": "/user/{username}",
         "method": "put",
         "headers": {
@@ -633,6 +789,40 @@
       },
       "description": "Updated user",
       "name": "updateUser",
+      "result_type": {
+        "type": "nullable",
+        "underlying_type": {
+          "name": "Boolean",
+          "type": "named"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/user/{username}",
+        "method": "delete",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true
+          }
+        ]
+      },
+      "arguments": {
+        "username": {
+          "description": "The name that needs to be deleted",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      },
+      "description": "Delete user",
+      "name": "deleteUser",
       "result_type": {
         "type": "nullable",
         "underlying_type": {

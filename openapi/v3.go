@@ -85,6 +85,7 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 			}
 		}
 	}
+	converter.schema.Settings.Security = convertSecurities(docModel.Model.Security)
 
 	return converter.schema, nil
 }
@@ -177,6 +178,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 					URL:        pathKey,
 					Method:     "get",
 					Parameters: reqParams,
+					Security:   convertSecurities(itemGet.Security),
 				},
 				FunctionInfo: schema.FunctionInfo{
 					Name:       funcName,
@@ -273,6 +275,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 			URL:        pathKey,
 			Method:     method,
 			Parameters: reqParams,
+			Security:   convertSecurities(operation.Security),
 			Headers: map[string]string{
 				ContentTypeHeader: contentType,
 			},
