@@ -180,3 +180,69 @@ type OAuthConfig struct {
 type OpenIDConfig struct {
 	OpenIDConnectURL string `json:"openIdConnectUrl" yaml:"openIdConnectUrl" mapstructure:"openIdConnectUrl"`
 }
+
+// AuthSecurity wraps the raw security requirement with helpers
+type AuthSecurity map[string][]string
+
+// NewAuthSecurity creates an AuthSecurity instance from name and scope
+func NewAuthSecurity(name string, scopes []string) AuthSecurity {
+	return AuthSecurity{
+		name: scopes,
+	}
+}
+
+// Name returns the name of security requirement
+func (as AuthSecurity) Name() string {
+	if len(as) > 0 {
+		for k := range as {
+			return k
+		}
+	}
+	return ""
+}
+
+// Scopes returns scopes of security requirement
+func (as AuthSecurity) Scopes() []string {
+	if len(as) > 0 {
+		for _, scopes := range as {
+			return scopes
+		}
+	}
+	return []string{}
+}
+
+// IsOptional checks if the security is optional
+func (as AuthSecurity) IsOptional() bool {
+	return len(as) == 0
+}
+
+// AuthSecurities wraps list of security requirements with helpers
+type AuthSecurities []AuthSecurity
+
+// IsOptional checks if the security is optional
+func (ass AuthSecurities) IsOptional() bool {
+	if len(ass) == 0 {
+		return true
+	}
+	for _, as := range ass {
+		if as.IsOptional() {
+			return true
+		}
+	}
+	return false
+}
+
+// Add adds a security with name and scope
+func (ass *AuthSecurities) Add(item AuthSecurity) {
+	*ass = append(*ass, item)
+}
+
+// Get gets a security by name
+func (ass AuthSecurities) Get(name string) (AuthSecurity, bool) {
+	for _, as := range ass {
+		if as.Name() == name {
+			return as, true
+		}
+	}
+	return nil, false
+}

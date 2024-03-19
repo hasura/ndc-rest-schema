@@ -188,8 +188,8 @@ func toConstantCase(input string) string {
 	return strings.ToUpper(toSnakeCase(input))
 }
 
-func convertSecurities(securities []*base.SecurityRequirement) []map[string][]string {
-	var results []map[string][]string
+func convertSecurities(securities []*base.SecurityRequirement) schema.AuthSecurities {
+	var results schema.AuthSecurities
 	for _, security := range securities {
 		s := convertSecurity(security)
 		if s != nil {
@@ -199,7 +199,7 @@ func convertSecurities(securities []*base.SecurityRequirement) []map[string][]st
 	return results
 }
 
-func convertSecurity(security *base.SecurityRequirement) map[string][]string {
+func convertSecurity(security *base.SecurityRequirement) schema.AuthSecurity {
 	if security == nil {
 		return nil
 	}
