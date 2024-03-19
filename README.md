@@ -106,6 +106,10 @@ The `settings` object contains global configuration about servers, authenticatio
 - `securitySchemes`: global configurations for authentication, follow the [security scheme](https://swagger.io/docs/specification/authentication/) of OpenAPI 3.
 - `security`: default [authentication requirements](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-requirement-object) will be applied to all requests.
 
+### Environment variable template
+
+Environment variable template which is in `{{CONSTANT_CASE}}` format can be replaced with value in the runtime. The wrapper should be double-brackets to avoid mistaking with OpenAPI variable template which is single.
+
 ### Full example
 
 ```yaml
