@@ -205,7 +205,11 @@ func convertSecurity(security *base.SecurityRequirement) schema.AuthSecurity {
 	}
 	results := make(map[string][]string)
 	for s := security.Requirements.First(); s != nil; s = s.Next() {
-		results[s.Key()] = s.Value()
+		v := s.Value()
+		if v == nil {
+			v = []string{}
+		}
+		results[s.Key()] = v
 	}
 	return results
 }

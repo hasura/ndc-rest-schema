@@ -28,10 +28,7 @@
     "security": [
       {},
       {
-        "petstore_auth": [
-          "write:pets",
-          "read:pets"
-        ]
+        "petstore_auth": ["write:pets", "read:pets"]
       }
     ],
     "version": "1.0.18"
@@ -49,20 +46,13 @@
             "required": false,
             "schema": {
               "type": "String",
-              "enum": [
-                "available",
-                "pending",
-                "sold"
-              ]
+              "enum": ["available", "pending", "sold"]
             }
           }
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -104,10 +94,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -153,13 +140,10 @@
         ],
         "security": [
           {
-            "api_key": null
+            "api_key": []
           },
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -185,7 +169,7 @@
         "method": "get",
         "security": [
           {
-            "api_key": null
+            "api_key": []
           }
         ]
       },
@@ -2424,10 +2408,7 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -2456,10 +2437,7 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -2515,10 +2493,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -2589,10 +2564,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -2652,10 +2624,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
