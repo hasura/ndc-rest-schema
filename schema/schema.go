@@ -6,12 +6,6 @@ import (
 	"github.com/hasura/ndc-sdk-go/schema"
 )
 
-// NDCRestSettings represent global settings of the REST API, including base URL, headers, etc...
-type NDCRestSettings struct {
-	Request
-	Version string `json:"version,omitempty" yaml:"version,omitempty" mapstructure:"version"`
-}
-
 // NDCRestSchema extends the [NDC SchemaResponse] with OpenAPI REST information
 //
 // [NDC schema]: https://github.com/hasura/ndc-sdk-go/blob/1d3339db29e13a170aa8be5ff7fae8394cba0e49/schema/schema.generated.go#L887
@@ -74,6 +68,7 @@ type Request struct {
 	Type       RequestType        `json:"type,omitempty" yaml:"type,omitempty" mapstructure:"type"`
 	Headers    map[string]string  `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	Parameters []RequestParameter `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
+	Security   AuthSecurities     `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 	// configure the request timeout in seconds, default 30s
 	Timeout uint `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 }

@@ -57,7 +57,9 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 				break
 			}
 		}
-		converter.schema.Settings.Request.URL = fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath)
+		converter.schema.Settings.Servers = append(converter.schema.Settings.Servers, rest.ServerConfig{
+			URL: fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath),
+		})
 	}
 
 	for iterPath := docModel.Model.Paths.PathItems.First(); iterPath != nil; iterPath = iterPath.Next() {
@@ -74,7 +76,84 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		}
 	}
 
+	if docModel.Model.SecurityDefinitions != nil && docModel.Model.SecurityDefinitions.Definitions != nil {
+		converter.schema.Settings.SecuritySchemes = make(map[string]rest.SecurityScheme)
+		for scheme := docModel.Model.SecurityDefinitions.Definitions.First(); scheme != nil; scheme = scheme.Next() {
+			err := converter.convertSecuritySchemes(scheme)
+			if err != nil {
+				return nil, append(errs, err)
+			}
+		}
+	}
+
+	converter.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+
 	return converter.schema, nil
+}
+
+func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[string, *v2.SecurityScheme]) error {
+	key := scheme.Key()
+	security := scheme.Value()
+	if security == nil {
+		return nil
+	}
+	result := rest.SecurityScheme{}
+	switch security.Type {
+	case "apiKey":
+		result.Type = rest.APIKeyScheme
+		inLocation, err := rest.ParseAPIKeyLocation(security.In)
+		if err != nil {
+			return err
+		}
+		apiConfig := rest.APIKeyAuthConfig{
+			In:   inLocation,
+			Name: security.Name,
+		}
+		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key))
+		result.APIKeyAuthConfig = &apiConfig
+	case "basic":
+		httpConfig := rest.HTTPAuthConfig{
+			Scheme: "Basic",
+			Header: "Authorization",
+		}
+		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key), "TOKEN")
+		result.HTTPAuthConfig = &httpConfig
+	case "oauth2":
+		var flowType rest.OAuthFlowType
+		switch security.Flow {
+		case "accessCode":
+			flowType = rest.AuthorizationCodeFlow
+		case "implicit":
+			flowType = rest.ImplicitFlow
+		case "password":
+			flowType = rest.PasswordFlow
+		case "application":
+			flowType = rest.ClientCredentialsFlow
+		}
+		flow := rest.OAuthFlow{
+			AuthorizationURL: security.AuthorizationUrl,
+			TokenURL:         security.TokenUrl,
+		}
+
+		if security.Scopes != nil {
+			scopes := make(map[string]string)
+			for scope := security.Scopes.Values.First(); scope != nil; scope = scope.Next() {
+				scopes[scope.Key()] = scope.Value()
+			}
+			flow.Scopes = scopes
+		}
+		result.Type = rest.OAuth2Scheme
+		result.OAuthConfig = &rest.OAuthConfig{
+			Flows: map[rest.OAuthFlowType]rest.OAuthFlow{
+				flowType: flow,
+			},
+		}
+	default:
+		return fmt.Errorf("invalid security scheme: %s", security.Type)
+	}
+
+	oc.schema.Settings.SecuritySchemes[key] = result
+	return nil
 }
 
 func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.PathItem]) error {
@@ -101,6 +180,7 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 					URL:        pathKey,
 					Method:     "get",
 					Parameters: reqParams,
+					Security:   convertSecurities(itemGet.Security),
 				},
 				FunctionInfo: schema.FunctionInfo{
 					Name:       funcName,
@@ -186,6 +266,7 @@ func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method s
 			URL:        pathKey,
 			Method:     method,
 			Parameters: reqParams,
+			Security:   convertSecurities(operation.Security),
 			Headers: map[string]string{
 				ContentTypeHeader: ContentTypeJSON,
 			},

@@ -51,7 +51,9 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 	}
 	for _, server := range docModel.Model.Servers {
 		if server.URL != "" {
-			converter.schema.Settings.Request.URL = server.URL
+			converter.schema.Settings.Servers = append(converter.schema.Settings.Servers, rest.ServerConfig{
+				URL: server.URL,
+			})
 			break
 		}
 	}
@@ -62,13 +64,94 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		}
 	}
 
-	for cSchema := docModel.Model.Components.Schemas.First(); cSchema != nil; cSchema = cSchema.Next() {
-		if err := converter.convertComponentSchemas(cSchema); err != nil {
-			return nil, append(errs, err)
+	if docModel.Model.Components == nil {
+		return converter.schema, nil
+	}
+
+	if docModel.Model.Components.Schemas != nil {
+		for cSchema := docModel.Model.Components.Schemas.First(); cSchema != nil; cSchema = cSchema.Next() {
+			if err := converter.convertComponentSchemas(cSchema); err != nil {
+				return nil, append(errs, err)
+			}
 		}
 	}
 
+	if docModel.Model.Components.SecuritySchemes != nil {
+		converter.schema.Settings.SecuritySchemes = make(map[string]rest.SecurityScheme)
+		for scheme := docModel.Model.Components.SecuritySchemes.First(); scheme != nil; scheme = scheme.Next() {
+			err := converter.convertSecuritySchemes(scheme)
+			if err != nil {
+				return nil, append(errs, err)
+			}
+		}
+	}
+	converter.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+
 	return converter.schema, nil
+}
+
+func (oc *openAPIv3Converter) convertSecuritySchemes(scheme orderedmap.Pair[string, *v3.SecurityScheme]) error {
+	key := scheme.Key()
+	security := scheme.Value()
+	if security == nil {
+		return nil
+	}
+	securityType, err := rest.ParseSecuritySchemeType(security.Type)
+	if err != nil {
+		return err
+	}
+	result := rest.SecurityScheme{
+		Type: securityType,
+	}
+	switch securityType {
+	case rest.APIKeyScheme:
+		inLocation, err := rest.ParseAPIKeyLocation(security.In)
+		if err != nil {
+			return err
+		}
+		apiConfig := rest.APIKeyAuthConfig{
+			In:   inLocation,
+			Name: security.Name,
+		}
+		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key))
+		result.APIKeyAuthConfig = &apiConfig
+	case rest.HTTPScheme:
+		httpConfig := rest.HTTPAuthConfig{
+			Scheme: security.Scheme,
+			Header: "Authorization",
+		}
+		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key), "TOKEN")
+		result.HTTPAuthConfig = &httpConfig
+	case rest.OAuth2Scheme:
+		if security.Flows == nil {
+			return fmt.Errorf("flows of security scheme %s is required", key)
+		}
+		oauthConfig := rest.OAuthConfig{
+			Flows: make(map[rest.OAuthFlowType]rest.OAuthFlow),
+		}
+		if security.Flows.Implicit != nil {
+			oauthConfig.Flows[rest.ImplicitFlow] = *convertV3OAuthFLow(security.Flows.Implicit)
+		}
+		if security.Flows.AuthorizationCode != nil {
+			oauthConfig.Flows[rest.AuthorizationCodeFlow] = *convertV3OAuthFLow(security.Flows.AuthorizationCode)
+		}
+		if security.Flows.ClientCredentials != nil {
+			oauthConfig.Flows[rest.ClientCredentialsFlow] = *convertV3OAuthFLow(security.Flows.ClientCredentials)
+		}
+		if security.Flows.Password != nil {
+			oauthConfig.Flows[rest.PasswordFlow] = *convertV3OAuthFLow(security.Flows.Password)
+		}
+		result.OAuthConfig = &oauthConfig
+	case rest.OpenIDConnectScheme:
+		result.OpenIDConfig = &rest.OpenIDConfig{
+			OpenIDConnectURL: security.OpenIdConnectUrl,
+		}
+	default:
+		return fmt.Errorf("invalid security scheme: %s", security.Type)
+	}
+
+	oc.schema.Settings.SecuritySchemes[key] = result
+	return nil
 }
 
 func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.PathItem]) error {
@@ -95,6 +178,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 					URL:        pathKey,
 					Method:     "get",
 					Parameters: reqParams,
+					Security:   convertSecurities(itemGet.Security),
 				},
 				FunctionInfo: schema.FunctionInfo{
 					Name:       funcName,
@@ -191,6 +275,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 			URL:        pathKey,
 			Method:     method,
 			Parameters: reqParams,
+			Security:   convertSecurities(operation.Security),
 			Headers: map[string]string{
 				ContentTypeHeader: contentType,
 			},
@@ -442,4 +527,27 @@ func (oc *openAPIv3Converter) convertComponentSchemas(schemaItem orderedmap.Pair
 	}
 	_, err := oc.getSchemaType(typeSchema, []string{schemaItem.Key()})
 	return err
+}
+
+func convertV3OAuthFLow(input *v3.OAuthFlow) *rest.OAuthFlow {
+	result := &rest.OAuthFlow{
+		AuthorizationURL: input.AuthorizationUrl,
+		TokenURL:         input.TokenUrl,
+		RefreshURL:       input.RefreshUrl,
+	}
+
+	if input.Scopes != nil {
+		scopes := make(map[string]string)
+		for iter := input.Scopes.First(); iter != nil; iter = iter.Next() {
+			key := iter.Key()
+			value := iter.Value()
+			if key == "" || value == "" {
+				continue
+			}
+			scopes[key] = value
+		}
+		result.Scopes = scopes
+	}
+
+	return result
 }

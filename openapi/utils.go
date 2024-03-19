@@ -2,9 +2,11 @@ package openapi
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
@@ -28,6 +30,7 @@ const (
 type ConvertOptions struct {
 	MethodAlias map[string]string
 	TrimPrefix  string
+	EnvPrefix   string
 	Logger      *slog.Logger
 }
 
@@ -45,6 +48,7 @@ func validateConvertOptions(opts *ConvertOptions) (*ConvertOptions, error) {
 	return &ConvertOptions{
 		MethodAlias: getMethodAlias(opts.MethodAlias),
 		TrimPrefix:  opts.TrimPrefix,
+		EnvPrefix:   opts.EnvPrefix,
 		Logger:      logger,
 	}, nil
 }
@@ -131,4 +135,81 @@ func getMethodAlias(inputs ...map[string]string) map[string]string {
 		}
 	}
 	return methodAlias
+}
+
+func buildEnvVariableName(prefix string, names ...string) string {
+	if prefix == "" {
+		return fmt.Sprintf("{{%s}}", strings.Join(names, "_"))
+	}
+	return fmt.Sprintf("{{%s_%s}}", prefix, strings.Join(names, "_"))
+}
+
+func toSnakeCase(input string) string {
+	var sb strings.Builder
+	inputLen := len(input)
+	for i := 0; i < inputLen; i++ {
+		char := rune(input[i])
+		if char == '_' || char == '-' {
+			sb.WriteRune('_')
+			continue
+		}
+		if unicode.IsDigit(char) || unicode.IsLower(char) {
+			sb.WriteRune(char)
+			continue
+		}
+
+		if unicode.IsUpper(char) {
+			if i == 0 {
+				sb.WriteRune(unicode.ToLower(char))
+				continue
+			}
+			lastChar := rune(input[i-1])
+			if unicode.IsDigit(lastChar) || unicode.IsLower(lastChar) {
+				sb.WriteRune('_')
+				sb.WriteRune(unicode.ToLower(char))
+				continue
+			}
+			if i < inputLen-1 {
+				nextChar := rune(input[i+1])
+				if unicode.IsUpper(lastChar) && !unicode.IsUpper(nextChar) {
+					sb.WriteRune('_')
+					sb.WriteRune(unicode.ToLower(char))
+					continue
+				}
+			}
+
+			sb.WriteRune(unicode.ToLower(char))
+		}
+	}
+	return sb.String()
+}
+
+func toConstantCase(input string) string {
+	return strings.ToUpper(toSnakeCase(input))
+}
+
+func convertSecurities(securities []*base.SecurityRequirement) schema.AuthSecurities {
+	var results schema.AuthSecurities
+	for _, security := range securities {
+		s := convertSecurity(security)
+		if s != nil {
+			results = append(results, s)
+		}
+	}
+	return results
+}
+
+func convertSecurity(security *base.SecurityRequirement) schema.AuthSecurity {
+	if security == nil {
+		return nil
+	}
+	results := make(map[string][]string)
+	for s := security.Requirements.First(); s != nil; s = s.Next() {
+		v := s.Value()
+		if v == nil {
+			v = []string{}
+		}
+		results[s.Key()] = v
+	}
+	return results
 }

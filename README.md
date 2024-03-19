@@ -60,9 +60,11 @@ The `--spec` flag represents the input specification:
 
 The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can convert the pure NDC schema with `--pure` flag.
 
-## NDC REST schema extension
+## NDC REST configuration
 
-The NDC REST schema extension add `request` information into `functions` and `procedures` so the connector can have more context to initiate HTTP requests to the remote REST service.
+### Request
+
+The NDC REST configuration adds `request` information into `functions` and `procedures` so the connector can have more context to initiate HTTP requests to the remote REST service. The request schema is inspired of [OpenAPI 3 paths and operations](https://swagger.io/docs/specification/paths-and-operations/).
 
 ```yaml
 - request:
@@ -70,7 +72,7 @@ The NDC REST schema extension add `request` information into `functions` and `pr
     method: get
     type: rest
     headers:
-      Authorization: Bearer xxx
+      Foo: bar
     timeout: 30 # seconds, default 30s
     parameters:
       - name: petId
@@ -78,65 +80,120 @@ The NDC REST schema extension add `request` information into `functions` and `pr
         required: true
         schema:
           type: string
+    security:
+      - api_key: []
 ```
 
 The URL can be a relative path or absolute URL. If the URL the relative, there must be a base URL in `settings`:
 
 ```yaml
 settings:
-  url: http://petstore.swagger.io/v1
+  servers:
+    - url: http://petstore.swagger.io/v1
 ```
 
 `parameters` include the list of URL and query parameters so the connector can replace values from request arguments.
 
 For procedures, the `body` argument is always treated as the request body. If there is a parameter which has the same name, the tool will rename it to `paramBody`.
 
-Full example:
+### Settings
+
+The `settings` object contains global configuration about servers, authentication and other information.
+
+- `servers`: list of servers that serve the API service, with base URL.
+- `headers`: default headers will be injected into all requests.
+- `timeout`: default timeout for all requests
+- `securitySchemes`: global configurations for authentication, follow the [security scheme](https://swagger.io/docs/specification/authentication/) of OpenAPI 3.
+- `security`: default [authentication requirements](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#security-requirement-object) will be applied to all requests.
+
+### Environment variable template
+
+Environment variable template which is in `{{CONSTANT_CASE}}` format can be replaced with value in the runtime. The wrapper should be double-brackets to avoid mistaking with OpenAPI variable template which is single.
+
+### Full example
 
 ```yaml
 settings:
-  url: http://petstore.swagger.io/v1
+  servers:
+    - url: https://petstore3.swagger.io/api/v3
+  timeout: 30
+  headers:
+    foo: bar
+  securitySchemes:
+    api_key:
+      type: apiKey
+      value: "{{PET_STORE_API_KEY}}"
+      in: header
+      name: api_key
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            read:pets: read your pets
+            write:pets: modify pets in your account
+  security:
+    - {}
+    - petstore_auth:
+        - write:pets
+        - read:pets
+  version: 1.0.18
 collections: []
 functions:
   - request:
-      url: /pets/{petId}
+      url: "/pet/findByStatus"
       method: get
       parameters:
-        - name: petId
-          in: path
-          required: true
+        - name: status
+          in: query
+          required: false
           schema:
-            type: string
+            type: String
+            enum:
+              - available
+              - pending
+              - sold
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
     arguments:
-      petId:
-        description: The id of the pet to retrieve
+      status:
+        description: Status values that need to be considered for filter
         type:
-          name: String
-          type: named
-    description: Info for a specific pet
-    name: showPetById
+          type: nullable
+          underlying_type:
+            name: String
+            type: named
+    description: Finds Pets by status
+    name: findPetsByStatus
     result_type:
-      name: Pet
-      type: named
+      element_type:
+        name: Pet
+        type: named
+      type: array
 procedures:
   - request:
-      url: /pets
+      url: "/pet"
       method: post
       headers:
         Content-Type: application/json
+      security:
+        - petstore_auth:
+            - write:pets
+            - read:pets
     arguments:
       body:
-        description: Request body of /pets
+        description: Request body of /pet
         type:
           name: Pet
           type: named
-    description: Create a pet
-    name: createPets
+    description: Add a new pet to the store
+    name: addPet
     result_type:
-      type: nullable
-      underlying_type:
-        name: Boolean
-        type: named
+      name: Pet
+      type: named
 ```
 
 ## Supported specs
@@ -176,3 +233,59 @@ If the `operationId` field exists in API operation, it will be used for function
 You can also change the method alias with `--method-alias=KEY=VALUE;...` flag, for example: `--method-alias=post=create;put=update`.
 
 If the URL path has a prefix such as `/api/v1/users`, you can trim that prefix with `--trim-prefix` flag.
+
+#### Authentication
+
+If the OpenAPI definition has authentication (or security), the tool converts them to `settings` object. The schema is similar to [OpenAPI 3.0 authentication](https://swagger.io/docs/specification/authentication/) with extra configuration fields.
+
+**API Keys**
+
+There is an extra `value` field with environment variable template to be able to replaced in runtime. The name of variable is generated from the security scheme key. For example:
+
+```json
+{
+  "securitySchemes": {
+    "api_key": {
+      "type": "apiKey",
+      "value": "{{API_KEY}}", // the constant case of api_key
+      "in": "header",
+      "name": "api_key"
+    }
+  }
+}
+```
+
+> You can set the prefix for environment variables with `--env-prefix` flag.
+
+**Auth Token**
+
+This is the general authentication for [Basic](https://swagger.io/docs/specification/authentication/basic-authentication), [Bearer](https://swagger.io/docs/specification/authentication/bearer-authentication/) or any token with scheme. The output credential will be the combination of `scheme` and `value`.
+
+```json
+{
+  "securitySchemes": {
+    "bearer_auth": {
+      "type": "http",
+      "scheme": "bearer",
+      "value": "{{BEARER_AUTH_TOKEN}}", // the constant case of bearer_auth + _TOKEN suffix
+      "header": "Authentication"
+    }
+  }
+}
+```
+
+```
+Authentication: Bearer {{BEARER_AUTH_TOKEN}}
+```
+
+The environment variable name of `value` field is the constant case of the security scheme key with `_TOKEN` suffix.
+
+> You can set the prefix for environment variables with `--env-prefix` flag.
+
+**OAuth 2.0**
+
+See [OAuth 2.0](https://swagger.io/docs/specification/authentication/oauth2) section of OpenAPI 3.
+
+**OpenID Connect Discovery**
+
+See [OpenID Connect Discovery](https://swagger.io/docs/specification/authentication/oauth2) section of OpenAPI 3.

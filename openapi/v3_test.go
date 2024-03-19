@@ -35,7 +35,9 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
-			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, nil)
+			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, &ConvertOptions{
+				EnvPrefix: "PET_STORE",
+			})
 			if output == nil {
 				t.Error(errors.Join(errs...))
 				t.FailNow()
@@ -59,7 +61,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 func assertNoError(t *testing.T, err error) {
 	if err != nil {
 		t.Errorf("expected no error, got: %s", err)
-		t.FailNow()
+		panic(err)
 	}
 }
 
