@@ -246,3 +246,11 @@ func (ass AuthSecurities) Get(name string) (AuthSecurity, bool) {
 	}
 	return nil, false
 }
+
+// First returns the first security
+func (ass AuthSecurities) First() (AuthSecurity, bool) {
+	for _, as := range ass {
+		return as, true
+	}
+	return nil, false
+}
