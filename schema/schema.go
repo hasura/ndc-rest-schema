@@ -119,7 +119,7 @@ type RESTFunctionInfo struct {
 func (j *RESTFunctionInfo) UnmarshalJSON(b []byte) error {
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(b, &raw); err != nil {
-		return nil
+		return err
 	}
 
 	rawReq, ok := raw["request"]
@@ -150,7 +150,7 @@ type RESTProcedureInfo struct {
 func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 	var raw map[string]json.RawMessage
 	if err := json.Unmarshal(b, &raw); err != nil {
-		return nil
+		return err
 	}
 
 	rawReq, ok := raw["request"]

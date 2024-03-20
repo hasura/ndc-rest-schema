@@ -143,7 +143,7 @@ func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 			flow.Scopes = scopes
 		}
 		result.Type = rest.OAuth2Scheme
-		result.OAuthConfig = &rest.OAuthConfig{
+		result.OAuth2Config = &rest.OAuth2Config{
 			Flows: map[rest.OAuthFlowType]rest.OAuthFlow{
 				flowType: flow,
 			},
