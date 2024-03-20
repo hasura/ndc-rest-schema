@@ -3,6 +3,7 @@ package utils
 import (
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 var nonAlphaDigitRegex = regexp.MustCompile(`[^\w]+`)
@@ -43,4 +44,50 @@ func StringSliceToPascalCase(inputs []string) string {
 		results[i] = ToPascalCase(item)
 	}
 	return strings.Join(results, "")
+}
+
+// ToSnakeCase converts string to snake_case
+func ToSnakeCase(input string) string {
+	var sb strings.Builder
+	inputLen := len(input)
+	for i := 0; i < inputLen; i++ {
+		char := rune(input[i])
+		if char == '_' || char == '-' {
+			sb.WriteRune('_')
+			continue
+		}
+		if unicode.IsDigit(char) || unicode.IsLower(char) {
+			sb.WriteRune(char)
+			continue
+		}
+
+		if unicode.IsUpper(char) {
+			if i == 0 {
+				sb.WriteRune(unicode.ToLower(char))
+				continue
+			}
+			lastChar := rune(input[i-1])
+			if unicode.IsDigit(lastChar) || unicode.IsLower(lastChar) {
+				sb.WriteRune('_')
+				sb.WriteRune(unicode.ToLower(char))
+				continue
+			}
+			if i < inputLen-1 {
+				nextChar := rune(input[i+1])
+				if unicode.IsUpper(lastChar) && !unicode.IsUpper(nextChar) {
+					sb.WriteRune('_')
+					sb.WriteRune(unicode.ToLower(char))
+					continue
+				}
+			}
+
+			sb.WriteRune(unicode.ToLower(char))
+		}
+	}
+	return sb.String()
+}
+
+// ToConstantCase converts string to CONSTANT_CASE
+func ToConstantCase(input string) string {
+	return strings.ToUpper(ToSnakeCase(input))
 }

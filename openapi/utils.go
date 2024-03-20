@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"regexp"
 	"strings"
-	"unicode"
 
 	"github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
@@ -142,50 +141,6 @@ func buildEnvVariableName(prefix string, names ...string) string {
 		return fmt.Sprintf("{{%s}}", strings.Join(names, "_"))
 	}
 	return fmt.Sprintf("{{%s_%s}}", prefix, strings.Join(names, "_"))
-}
-
-func toSnakeCase(input string) string {
-	var sb strings.Builder
-	inputLen := len(input)
-	for i := 0; i < inputLen; i++ {
-		char := rune(input[i])
-		if char == '_' || char == '-' {
-			sb.WriteRune('_')
-			continue
-		}
-		if unicode.IsDigit(char) || unicode.IsLower(char) {
-			sb.WriteRune(char)
-			continue
-		}
-
-		if unicode.IsUpper(char) {
-			if i == 0 {
-				sb.WriteRune(unicode.ToLower(char))
-				continue
-			}
-			lastChar := rune(input[i-1])
-			if unicode.IsDigit(lastChar) || unicode.IsLower(lastChar) {
-				sb.WriteRune('_')
-				sb.WriteRune(unicode.ToLower(char))
-				continue
-			}
-			if i < inputLen-1 {
-				nextChar := rune(input[i+1])
-				if unicode.IsUpper(lastChar) && !unicode.IsUpper(nextChar) {
-					sb.WriteRune('_')
-					sb.WriteRune(unicode.ToLower(char))
-					continue
-				}
-			}
-
-			sb.WriteRune(unicode.ToLower(char))
-		}
-	}
-	return sb.String()
-}
-
-func toConstantCase(input string) string {
-	return strings.ToUpper(toSnakeCase(input))
 }
 
 func convertSecurities(securities []*base.SecurityRequirement) schema.AuthSecurities {
