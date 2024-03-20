@@ -238,19 +238,19 @@ func (ass *AuthSecurities) Add(item AuthSecurity) {
 }
 
 // Get gets a security by name
-func (ass AuthSecurities) Get(name string) (AuthSecurity, bool) {
+func (ass AuthSecurities) Get(name string) AuthSecurity {
 	for _, as := range ass {
 		if as.Name() == name {
-			return as, true
+			return as
 		}
 	}
-	return nil, false
+	return nil
 }
 
 // First returns the first security
-func (ass AuthSecurities) First() (AuthSecurity, bool) {
+func (ass AuthSecurities) First() AuthSecurity {
 	for _, as := range ass {
-		return as, true
+		return as
 	}
-	return nil, false
+	return nil
 }
