@@ -227,7 +227,7 @@ func (ass AuthSecurities) IsEmpty() bool {
 // IsOptional checks if the security is optional
 func (ass AuthSecurities) IsOptional() bool {
 	if ass.IsEmpty() {
-		return false
+		return true
 	}
 	for _, as := range ass {
 		if as.IsOptional() {
