@@ -219,10 +219,15 @@ func (as AuthSecurity) IsOptional() bool {
 // AuthSecurities wraps list of security requirements with helpers
 type AuthSecurities []AuthSecurity
 
+// IsEmpty checks if there is no security
+func (ass AuthSecurities) IsEmpty() bool {
+	return len(ass) == 0
+}
+
 // IsOptional checks if the security is optional
 func (ass AuthSecurities) IsOptional() bool {
-	if len(ass) == 0 {
-		return true
+	if ass.IsEmpty() {
+		return false
 	}
 	for _, as := range ass {
 		if as.IsOptional() {
