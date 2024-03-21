@@ -113,20 +113,20 @@ func (oc *openAPIv3Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key))
+		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key))
 		result.APIKeyAuthConfig = &apiConfig
-	case rest.HTTPScheme:
+	case rest.HTTPAuthScheme:
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: security.Scheme,
 			Header: "Authorization",
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key), "TOKEN")
+		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key), "TOKEN")
 		result.HTTPAuthConfig = &httpConfig
 	case rest.OAuth2Scheme:
 		if security.Flows == nil {
 			return fmt.Errorf("flows of security scheme %s is required", key)
 		}
-		oauthConfig := rest.OAuthConfig{
+		oauthConfig := rest.OAuth2Config{
 			Flows: make(map[rest.OAuthFlowType]rest.OAuthFlow),
 		}
 		if security.Flows.Implicit != nil {
@@ -141,7 +141,7 @@ func (oc *openAPIv3Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 		if security.Flows.Password != nil {
 			oauthConfig.Flows[rest.PasswordFlow] = *convertV3OAuthFLow(security.Flows.Password)
 		}
-		result.OAuthConfig = &oauthConfig
+		result.OAuth2Config = &oauthConfig
 	case rest.OpenIDConnectScheme:
 		result.OpenIDConfig = &rest.OpenIDConfig{
 			OpenIDConnectURL: security.OpenIdConnectUrl,

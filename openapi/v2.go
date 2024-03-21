@@ -109,14 +109,14 @@ func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key))
+		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key))
 		result.APIKeyAuthConfig = &apiConfig
 	case "basic":
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: "Basic",
 			Header: "Authorization",
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, toConstantCase(key), "TOKEN")
+		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key), "TOKEN")
 		result.HTTPAuthConfig = &httpConfig
 	case "oauth2":
 		var flowType rest.OAuthFlowType
@@ -143,7 +143,7 @@ func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 			flow.Scopes = scopes
 		}
 		result.Type = rest.OAuth2Scheme
-		result.OAuthConfig = &rest.OAuthConfig{
+		result.OAuth2Config = &rest.OAuth2Config{
 			Flows: map[rest.OAuthFlowType]rest.OAuthFlow{
 				flowType: flow,
 			},
