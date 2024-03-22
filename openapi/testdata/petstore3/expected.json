@@ -28,7 +28,10 @@
     "security": [
       {},
       {
-        "petstore_auth": ["write:pets", "read:pets"]
+        "petstore_auth": [
+          "write:pets",
+          "read:pets"
+        ]
       }
     ],
     "version": "1.0.18"
@@ -46,13 +49,20 @@
             "required": false,
             "schema": {
               "type": "String",
-              "enum": ["available", "pending", "sold"]
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
             }
           }
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -94,7 +104,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -143,7 +156,10 @@
             "api_key": []
           },
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -293,6 +309,19 @@
       "name": "getUserByName",
       "result_type": {
         "name": "User",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "get"
+      },
+      "arguments": {},
+      "description": "Get snake object",
+      "name": "getSnake",
+      "result_type": {
+        "name": "SnakeObject",
         "type": "named"
       }
     }
@@ -1639,6 +1668,78 @@
         }
       }
     },
+    "SnakeObject": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "SnakeObjectId",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "SnakeObjectId": {
+      "fields": {
+        "complete": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "petId": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "shipDate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Order Status",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "Tag": {
       "fields": {
         "id": {
@@ -2408,7 +2509,10 @@
         },
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2437,7 +2541,10 @@
         },
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2493,7 +2600,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2564,7 +2674,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2624,7 +2737,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -2778,6 +2894,22 @@
           "name": "Boolean",
           "type": "named"
         }
+      }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "post",
+        "headers": {
+          "Content-Type": ""
+        }
+      },
+      "arguments": {},
+      "description": "Add snake object",
+      "name": "addSnake",
+      "result_type": {
+        "name": "SnakeObject",
+        "type": "named"
       }
     }
   ],

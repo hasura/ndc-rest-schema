@@ -371,7 +371,7 @@ func (oc *openAPIv2Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 	var err error
 	// return early object from ref
 	if refName != "" && len(innerSchema.Type) > 0 && innerSchema.Type[0] == "object" {
-		ndcType = schema.NewNamedType(refName)
+		ndcType = schema.NewNamedType(utils.ToPascalCase(refName))
 	} else {
 		if innerSchema.Title != "" && !strings.Contains(innerSchema.Title, " ") {
 			fieldPaths = []string{utils.ToPascalCase(innerSchema.Title)}

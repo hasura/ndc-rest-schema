@@ -42,7 +42,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -81,7 +84,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -251,6 +257,19 @@
       "name": "loginUser",
       "result_type": {
         "name": "String",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "get"
+      },
+      "arguments": {},
+      "description": "Get snake",
+      "name": "getSnake",
+      "result_type": {
+        "name": "SnakeObject",
         "type": "named"
       }
     }
@@ -427,6 +446,28 @@
         }
       }
     },
+    "SnakeObject": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "Tag": {
       "fields": {
         "id": {
@@ -547,7 +588,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -589,7 +633,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -633,7 +680,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -814,6 +864,22 @@
           "name": "Boolean",
           "type": "named"
         }
+      }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {},
+      "description": "Create snake",
+      "name": "addSnake",
+      "result_type": {
+        "name": "SnakeObject",
+        "type": "named"
       }
     }
   ],
