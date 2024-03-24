@@ -380,7 +380,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "OrderStatus",
               "type": "named"
             }
           }
@@ -427,7 +427,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "PetStatus",
               "type": "named"
             }
           }
@@ -886,19 +886,52 @@
   "scalar_types": {
     "Boolean": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "boolean"
+      }
     },
     "Int": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "integer"
+      }
     },
     "JSON": {
       "aggregate_functions": {},
       "comparison_operators": {}
     },
+    "OrderStatus": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
+        "type": "enum"
+      }
+    },
+    "PetStatus": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "available",
+          "pending",
+          "sold"
+        ],
+        "type": "enum"
+      }
+    },
     "String": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
     }
   }
 }
