@@ -230,13 +230,6 @@ func getMethodAlias(inputs ...map[string]string) map[string]string {
 	return methodAlias
 }
 
-func buildEnvVariableName(prefix string, names ...string) string {
-	if prefix == "" {
-		return fmt.Sprintf("{{%s}}", strings.Join(names, "_"))
-	}
-	return fmt.Sprintf("{{%s_%s}}", prefix, strings.Join(names, "_"))
-}
-
 func convertSecurities(securities []*base.SecurityRequirement) rest.AuthSecurities {
 	var results rest.AuthSecurities
 	for _, security := range securities {

@@ -57,8 +57,10 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 				break
 			}
 		}
+		envName := utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "SERVER_URL"})
+		serverURL := fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath)
 		converter.schema.Settings.Servers = append(converter.schema.Settings.Servers, rest.ServerConfig{
-			URL: fmt.Sprintf("%s://%s%s", scheme, docModel.Model.Host, docModel.Model.BasePath),
+			URL: rest.NewEnvTemplateWithDefault(envName, serverURL).String(),
 		})
 	}
 
@@ -109,14 +111,18 @@ func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key))
+		result.Value = rest.EnvTemplate{
+			Name: utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key}),
+		}.String()
 		result.APIKeyAuthConfig = &apiConfig
 	case "basic":
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: "Basic",
 			Header: "Authorization",
 		}
-		result.Value = buildEnvVariableName(oc.EnvPrefix, utils.ToConstantCase(key), "TOKEN")
+		result.Value = rest.EnvTemplate{
+			Name: utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"}),
+		}.String()
 		result.HTTPAuthConfig = &httpConfig
 	case "oauth2":
 		var flowType rest.OAuthFlowType

@@ -64,7 +64,15 @@ func (ss ServerConfig) Validate() error {
 		return errors.New("url is required for server")
 	}
 
-	if _, err := parseHttpURL(ss.URL); err != nil {
+	uri := ss.URL
+	if env := FindEnvTemplate(ss.URL); env != nil {
+		if env.DefaultValue == nil {
+			return nil
+		}
+		uri = *env.DefaultValue
+	}
+
+	if _, err := parseHttpURL(uri); err != nil {
 		return fmt.Errorf("server url: %s", err)
 	}
 	return nil
