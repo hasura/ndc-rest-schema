@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"os"
 
 	"github.com/hasura/ndc-rest-schema/openapi"
 	"github.com/hasura/ndc-rest-schema/schema"
@@ -24,7 +23,7 @@ type ConvertCommandArguments struct {
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
-func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
+func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) error {
 	logger.Debug(
 		"converting OpenAPI definition to NDC REST schema",
 		slog.String("file", args.File),
@@ -38,8 +37,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	rawContent, err := utils.ReadFileFromPath(args.File)
 	if err != nil {
 		slog.Error(err.Error())
-		os.Exit(1)
-		return
+		return err
 	}
 
 	var result *schema.NDCRestSchema
@@ -56,14 +54,15 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	case string(schema.OpenAPIv2Spec):
 		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
 	default:
-		logger.Error(fmt.Sprintf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec}))
+		err := fmt.Errorf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec})
+		logger.Error(err.Error())
+		return err
 	}
 	if len(errs) > 0 {
 		logger.Error(errors.Join(errs...).Error())
 	}
 	if result == nil {
-		os.Exit(1)
-		return
+		return errors.Join(errs...)
 	}
 
 	if args.Output != "" {
@@ -74,20 +73,18 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 		}
 		if err != nil {
 			slog.Error("failed to write schema file: %s", err)
-			os.Exit(1)
-			return
+			return err
 		}
 
 		logger.Info("generated successfully")
-		return
+		return nil
 	}
 
 	// print to stderr
 	format, err := schema.ParseSchemaFileFormat(args.Format)
 	if err != nil {
 		slog.Error("failed to parse format: %s", err)
-		os.Exit(1)
-		return
+		return err
 	}
 
 	var rawResult any = result
@@ -98,9 +95,9 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) {
 	resultBytes, err := utils.MarshalSchema(rawResult, format)
 	if err != nil {
 		slog.Error("failed to encode schema: %s", err)
-		os.Exit(1)
-		return
+		return err
 	}
 
 	fmt.Print(string(resultBytes))
+	return nil
 }

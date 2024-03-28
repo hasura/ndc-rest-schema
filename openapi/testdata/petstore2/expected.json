@@ -2,7 +2,7 @@
   "settings": {
     "servers": [
       {
-        "url": "https://petstore.swagger.io/v2"
+        "url": "{{SERVER_URL:-https://petstore.swagger.io/v2}}"
       }
     ],
     "securitySchemes": {
@@ -253,6 +253,19 @@
         "name": "String",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "get"
+      },
+      "arguments": {},
+      "description": "Get snake",
+      "name": "getSnake",
+      "result_type": {
+        "name": "SnakeObject",
+        "type": "named"
+      }
     }
   ],
   "object_types": {
@@ -361,7 +374,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "OrderStatus",
               "type": "named"
             }
           }
@@ -408,7 +421,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "PetStatus",
               "type": "named"
             }
           }
@@ -422,6 +435,28 @@
                 "type": "named"
               },
               "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "SnakeObject": {
+      "fields": {
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int",
+              "type": "named"
+            }
+          }
+        },
+        "username": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
             }
           }
         }
@@ -815,24 +850,65 @@
           "type": "named"
         }
       }
+    },
+    {
+      "request": {
+        "url": "/snake",
+        "method": "post",
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      },
+      "arguments": {},
+      "description": "Create snake",
+      "name": "addSnake",
+      "result_type": {
+        "name": "SnakeObject",
+        "type": "named"
+      }
     }
   ],
   "scalar_types": {
     "Boolean": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "boolean"
+      }
     },
     "Int": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "integer"
+      }
     },
     "JSON": {
       "aggregate_functions": {},
       "comparison_operators": {}
     },
+    "OrderStatus": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": ["placed", "approved", "delivered"],
+        "type": "enum"
+      }
+    },
+    "PetStatus": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": ["available", "pending", "sold"],
+        "type": "enum"
+      }
+    },
     "String": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
     }
   }
 }

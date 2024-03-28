@@ -7,9 +7,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hasura/ndc-rest-schema/schema"
+	rest "github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
+	"github.com/hasura/ndc-sdk-go/schema"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
+	"gopkg.in/yaml.v3"
 )
 
 var (
@@ -24,6 +26,30 @@ const (
 	ContentTypeHeader = "Content-Type"
 	ContentTypeJSON   = "application/json"
 )
+
+var defaultScalarTypes = map[string]*schema.ScalarType{
+	"String": {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationString().Encode(),
+	},
+	"Int": {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationInteger().Encode(),
+	},
+	"Float": {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationNumber().Encode(),
+	},
+	"Boolean": {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationBoolean().Encode(),
+	},
+	"JSON": schema.NewScalarType(),
+}
 
 // ConvertOptions represent the common convert options for both OpenAPI v2 and v3
 type ConvertOptions struct {
@@ -79,27 +105,95 @@ func getSchemaRefTypeNameV3(name string) string {
 	return result[1]
 }
 
-func getScalarNameFromType(name string) string {
+func getScalarFromType(sm *rest.NDCRestSchema, name string, enumNodes []*yaml.Node, apiPath string, fieldPaths []string) string {
+	var scalarName string
+	var scalarType *schema.ScalarType
+
 	switch name {
 	case "boolean":
-		return "Boolean"
+		scalarName = "Boolean"
+		scalarType = defaultScalarTypes[scalarName]
 	case "integer":
-		return "Int"
+		scalarName = "Int"
+		scalarType = defaultScalarTypes[scalarName]
 	case "number":
-		return "Float"
+		scalarName = "Float"
+		scalarType = defaultScalarTypes[scalarName]
 	case "string":
-		return "String"
+		scalarName = "String"
+		scalarType = defaultScalarTypes[scalarName]
+
+		schemaEnumLength := len(enumNodes)
+		if schemaEnumLength > 0 {
+			enums := make([]string, schemaEnumLength)
+			for i, enum := range enumNodes {
+				enums[i] = enum.Value
+			}
+			scalarType = schema.NewScalarType()
+			scalarType.Representation = schema.NewTypeRepresentationEnum(enums).Encode()
+
+			// build scalar name strategies
+			// 1. combine resource name and field name
+			apiPath = strings.TrimPrefix(apiPath, "/")
+			if apiPath != "" {
+				apiPaths := strings.Split(apiPath, "/")
+				resourceName := fieldPaths[0]
+				if len(apiPaths) > 0 {
+					resourceName = apiPaths[0]
+				}
+				enumName := "Enum"
+				if len(fieldPaths) > 1 {
+					enumName = fieldPaths[len(fieldPaths)-1]
+				}
+
+				scalarName = utils.StringSliceToPascalCase([]string{resourceName, enumName})
+				if canSetEnumToSchema(sm, scalarName, enums) {
+					sm.ScalarTypes[scalarName] = *scalarType
+					return scalarName
+				}
+			}
+
+			// 2. if the scalar type exists, fallback to field paths
+			scalarName = utils.StringSliceToPascalCase(fieldPaths)
+			if canSetEnumToSchema(sm, scalarName, enums) {
+				sm.ScalarTypes[scalarName] = *scalarType
+				return scalarName
+			}
+
+			// 3. Reuse above name with Enum suffix
+			scalarName = fmt.Sprintf("%sEnum", scalarName)
+		}
 	default:
-		return "JSON"
+		scalarName = "JSON"
+		scalarType = defaultScalarTypes[scalarName]
 	}
+
+	if _, ok := sm.ScalarTypes[scalarName]; !ok {
+		sm.ScalarTypes[scalarName] = *scalarType
+	}
+	return scalarName
+}
+
+func canSetEnumToSchema(sm *rest.NDCRestSchema, scalarName string, enums []string) bool {
+	existedScalar, ok := sm.ScalarTypes[scalarName]
+	if !ok {
+		return true
+	}
+
+	existedEnum, err := existedScalar.Representation.AsEnum()
+	if err == nil && utils.SliceUnorderedEqual(enums, existedEnum.OneOf) {
+		return true
+	}
+
+	return false
 }
 
 // ParseTypeSchemaFromOpenAPISchema creates a TypeSchema from OpenAPI schema object
-func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *schema.TypeSchema {
+func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest.TypeSchema {
 	if input == nil {
 		return nil
 	}
-	ps := &schema.TypeSchema{}
+	ps := &rest.TypeSchema{}
 	ps.Type = typeName
 	ps.Format = input.Format
 	ps.Pattern = input.Pattern
@@ -136,15 +230,8 @@ func getMethodAlias(inputs ...map[string]string) map[string]string {
 	return methodAlias
 }
 
-func buildEnvVariableName(prefix string, names ...string) string {
-	if prefix == "" {
-		return fmt.Sprintf("{{%s}}", strings.Join(names, "_"))
-	}
-	return fmt.Sprintf("{{%s_%s}}", prefix, strings.Join(names, "_"))
-}
-
-func convertSecurities(securities []*base.SecurityRequirement) schema.AuthSecurities {
-	var results schema.AuthSecurities
+func convertSecurities(securities []*base.SecurityRequirement) rest.AuthSecurities {
+	var results rest.AuthSecurities
 	for _, security := range securities {
 		s := convertSecurity(security)
 		if s != nil {
@@ -154,7 +241,7 @@ func convertSecurities(securities []*base.SecurityRequirement) schema.AuthSecuri
 	return results
 }
 
-func convertSecurity(security *base.SecurityRequirement) schema.AuthSecurity {
+func convertSecurity(security *base.SecurityRequirement) rest.AuthSecurity {
 	if security == nil {
 		return nil
 	}

@@ -1,6 +1,8 @@
 {
   "settings": {
-    "servers": [{ "url": "https://jsonplaceholder.typicode.com" }],
+    "servers": [
+      { "url": "{{SERVER_URL:-https://jsonplaceholder.typicode.com}}" }
+    ],
     "version": "1.0.0"
   },
   "collections": [],
@@ -1097,19 +1099,20 @@
   "scalar_types": {
     "Boolean": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": { "type": "boolean" }
     },
     "Int": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": { "type": "integer" }
     },
-    "NotFoundError": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
-    },
+    "JSON": { "aggregate_functions": {}, "comparison_operators": {} },
+    "NotFoundError": { "aggregate_functions": {}, "comparison_operators": {} },
     "String": {
       "aggregate_functions": {},
-      "comparison_operators": {}
+      "comparison_operators": {},
+      "representation": { "type": "string" }
     }
   }
 }

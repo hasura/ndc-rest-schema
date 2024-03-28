@@ -6,7 +6,9 @@ import (
 	"unicode"
 )
 
-var nonAlphaDigitRegex = regexp.MustCompile(`[^\w]+`)
+var (
+	nonAlphaDigitRegex = regexp.MustCompile(`[^\w]+`)
+)
 
 // ToCamelCase convert a string to camelCase
 func ToCamelCase(input string) string {
@@ -33,17 +35,26 @@ func ToPascalCase(input string) string {
 	return strings.Join(parts, "")
 }
 
-// StringSliceToPascalCase convert a slice of string to PascalCase
-func StringSliceToPascalCase(inputs []string) string {
+// stringSliceToCase convert a slice of string with a transform function
+func stringSliceToCase(inputs []string, convert func(string) string, sep string) string {
 	if len(inputs) == 0 {
 		return ""
 	}
 
-	results := make([]string, len(inputs))
-	for i, item := range inputs {
-		results[i] = ToPascalCase(item)
+	var results []string
+	for _, item := range inputs {
+		trimmed := strings.TrimSpace(item)
+		if trimmed == "" {
+			continue
+		}
+		results = append(results, convert(trimmed))
 	}
-	return strings.Join(results, "")
+	return strings.Join(results, sep)
+}
+
+// StringSliceToPascalCase convert a slice of string to PascalCase
+func StringSliceToPascalCase(inputs []string) string {
+	return stringSliceToCase(inputs, ToPascalCase, "")
 }
 
 // ToSnakeCase converts string to snake_case
@@ -66,15 +77,15 @@ func ToSnakeCase(input string) string {
 				sb.WriteRune(unicode.ToLower(char))
 				continue
 			}
-			lastChar := rune(input[i-1])
-			if unicode.IsDigit(lastChar) || unicode.IsLower(lastChar) {
+			prevChar := rune(input[i-1])
+			if unicode.IsDigit(prevChar) || unicode.IsLower(prevChar) {
 				sb.WriteRune('_')
 				sb.WriteRune(unicode.ToLower(char))
 				continue
 			}
 			if i < inputLen-1 {
 				nextChar := rune(input[i+1])
-				if unicode.IsUpper(lastChar) && !unicode.IsUpper(nextChar) {
+				if unicode.IsUpper(prevChar) && unicode.IsLetter(nextChar) && !unicode.IsUpper(nextChar) {
 					sb.WriteRune('_')
 					sb.WriteRune(unicode.ToLower(char))
 					continue
@@ -87,7 +98,17 @@ func ToSnakeCase(input string) string {
 	return sb.String()
 }
 
+// StringSliceToSnakeCase convert a slice of string to snake_case
+func StringSliceToSnakeCase(inputs []string) string {
+	return stringSliceToCase(inputs, ToSnakeCase, "_")
+}
+
 // ToConstantCase converts string to CONSTANT_CASE
 func ToConstantCase(input string) string {
 	return strings.ToUpper(ToSnakeCase(input))
+}
+
+// StringSliceToConstantCase convert a slice of string to PascalCase
+func StringSliceToConstantCase(inputs []string) string {
+	return strings.ToUpper(StringSliceToSnakeCase(inputs))
 }

@@ -30,13 +30,17 @@ func main() {
 
 	switch cmd.Command() {
 	case "convert":
-		command.ConvertToNDCSchema(&cli.Convert, logger)
+		err = command.ConvertToNDCSchema(&cli.Convert, logger)
 	case "json2yaml":
-		command.Json2Yaml(&cli.Json2Yaml, logger)
+		err = command.Json2Yaml(&cli.Json2Yaml, logger)
 	case "version":
 		_, _ = fmt.Print(version.BuildVersion)
 	default:
 		logger.Error(fmt.Sprintf("unknown command <%s>", cmd.Command()))
+		os.Exit(1)
+	}
+
+	if err != nil {
 		os.Exit(1)
 	}
 }

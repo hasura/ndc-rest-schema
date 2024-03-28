@@ -100,7 +100,8 @@ For procedures, the `body` argument is always treated as the request body. If th
 
 The `settings` object contains global configuration about servers, authentication and other information.
 
-- `servers`: list of servers that serve the API service, with base URL.
+- `servers`: list of servers that serve the API service.
+  - `url`: the base URL of the API server.
 - `headers`: default headers will be injected into all requests.
 - `timeout`: default timeout for all requests
 - `securitySchemes`: global configurations for authentication, follow the [security scheme](https://swagger.io/docs/specification/authentication/) of OpenAPI 3.
@@ -108,14 +109,14 @@ The `settings` object contains global configuration about servers, authenticatio
 
 ### Environment variable template
 
-Environment variable template which is in `{{CONSTANT_CASE}}` format can be replaced with value in the runtime. The wrapper should be double-brackets to avoid mistaking with OpenAPI variable template which is single.
+Environment variable template which is in `{{CONSTANT_CASE}}` or `{{CONSTANT_CASE:-some_default_value}}` format can be replaced with value in the runtime. The wrapper should be double-brackets to avoid mistaking with OpenAPI variable template which is single.
 
 ### Full example
 
 ```yaml
 settings:
   servers:
-    - url: https://petstore3.swagger.io/api/v3
+    - url: "{{PET_STORE_SERVER_URL:-https://petstore3.swagger.io/api/v3}}"
   timeout: 30
   headers:
     foo: bar

@@ -18,19 +18,17 @@ type Json2YamlCommandArguments struct {
 }
 
 // Json2Yaml converts a JSON file to YAML
-func Json2Yaml(args *Json2YamlCommandArguments, logger *slog.Logger) {
+func Json2Yaml(args *Json2YamlCommandArguments, logger *slog.Logger) error {
 	rawContent, err := utils.ReadFileFromPath(args.File)
 	if err != nil {
 		slog.Error(err.Error())
-		os.Exit(1)
-		return
+		return err
 	}
 
 	var jsonContent any
 	if err := json.Unmarshal(rawContent, &jsonContent); err != nil {
 		slog.Error(err.Error())
-		os.Exit(1)
-		return
+		return err
 	}
 
 	var buf bytes.Buffer
@@ -38,19 +36,18 @@ func Json2Yaml(args *Json2YamlCommandArguments, logger *slog.Logger) {
 	encoder.SetIndent(2)
 	if err := encoder.Encode(jsonContent); err != nil {
 		slog.Error(err.Error())
-		os.Exit(1)
-		return
+		return err
 	}
 
 	if args.Output != "" {
 		if err := os.WriteFile(args.Output, buf.Bytes(), 0664); err != nil {
 			slog.Error(err.Error())
-			os.Exit(1)
-			return
+			return err
 		}
 		logger.Info(fmt.Sprintf("generated successfully to %s", args.Output))
-		return
+		return nil
 	}
 
 	fmt.Print(buf.String())
+	return nil
 }
