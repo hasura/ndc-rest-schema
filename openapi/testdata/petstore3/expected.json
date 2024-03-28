@@ -3,6 +3,9 @@
     "servers": [
       {
         "url": "{{PET_STORE_SERVER_URL:-https://petstore3.swagger.io/api/v3}}"
+      },
+      {
+        "url": "{{PET_STORE_SERVER_URL_2:-https://petstore3.swagger.io/api/v3.1}}"
       }
     ],
     "securitySchemes": {
