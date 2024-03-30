@@ -70,19 +70,23 @@ type Request struct {
 	Parameters []RequestParameter `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
 	Security   AuthSecurities     `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 	// configure the request timeout in seconds, default 30s
-	Timeout uint `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
+	Timeout     uint           `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
+	Servers     []ServerConfig `json:"servers,omitempty" yaml:"servers,omitempty" mapstructure:"servers"`
+	RequestBody *RequestBody   `json:"requestBody,omitempty" yaml:"requestBody,omitempty" mapstructure:"requestBody"`
 }
 
 // Clone copies this instance to a new one
 func (r Request) Clone() *Request {
 	return &Request{
-		URL:        r.URL,
-		Method:     r.Method,
-		Type:       r.Type,
-		Headers:    r.Headers,
-		Parameters: r.Parameters,
-		Timeout:    r.Timeout,
-		Security:   r.Security,
+		URL:         r.URL,
+		Method:      r.Method,
+		Type:        r.Type,
+		Headers:     r.Headers,
+		Parameters:  r.Parameters,
+		Timeout:     r.Timeout,
+		Security:    r.Security,
+		Servers:     r.Servers,
+		RequestBody: r.RequestBody,
 	}
 }
 
@@ -108,6 +112,13 @@ type TypeSchema struct {
 	Enum       []string              `json:"enum,omitempty" yaml:"enum,omitempty" mapstructure:"enum"`
 	Items      *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
 	Properties map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
+}
+
+// RequestBody defines flexible request body with content types
+type RequestBody struct {
+	Required    bool        `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
+	ContentType string      `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
+	Schema      *TypeSchema `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 }
 
 // RESTFunctionInfo extends NDC query function with OpenAPI REST information

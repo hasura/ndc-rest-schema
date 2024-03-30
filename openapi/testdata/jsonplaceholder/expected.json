@@ -1,7 +1,9 @@
 {
   "settings": {
     "servers": [
-      { "url": "{{SERVER_URL:-https://jsonplaceholder.typicode.com}}" }
+      {
+        "url": "{{SERVER_URL:-https://jsonplaceholder.typicode.com}}"
+      }
     ],
     "version": "1.0.0"
   },
@@ -15,12 +17,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -64,7 +74,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -92,7 +106,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -123,12 +141,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "postId",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -172,7 +198,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -200,12 +230,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -249,7 +287,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -277,7 +319,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -308,12 +354,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "albumId",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -357,7 +411,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -385,12 +443,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -434,7 +500,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -462,12 +532,20 @@
           {
             "name": "id",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           },
           {
             "name": "email",
             "in": "query",
-            "required": false
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true
+            }
           }
         ]
       },
@@ -511,7 +589,11 @@
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -552,7 +634,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -570,7 +652,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -601,7 +683,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -619,7 +701,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -632,7 +714,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -641,7 +723,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -650,7 +732,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "URI",
               "type": "named"
             }
           }
@@ -668,7 +750,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "URI",
               "type": "named"
             }
           }
@@ -690,7 +772,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -708,7 +790,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -730,7 +812,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -748,7 +830,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -788,7 +870,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -939,19 +1021,13 @@
       "request": {
         "url": "/posts",
         "method": "post",
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "JSON"
-            }
+        "requestBody": {
+          "required": true,
+          "contentType": "application/json",
+          "schema": {
+            "type": "JSON"
           }
-        ]
+        }
       },
       "arguments": {
         "body": {
@@ -973,24 +1049,23 @@
       "request": {
         "url": "/posts/{id}",
         "method": "put",
-        "headers": {
-          "Content-Type": "application/json"
-        },
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "type": "JSON"
+              "type": "integer",
+              "nullable": false
             }
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "schema": {
+            "type": "JSON"
+          }
+        }
       },
       "arguments": {
         "body": {
@@ -1019,24 +1094,23 @@
       "request": {
         "url": "/posts/{id}",
         "method": "patch",
-        "headers": {
-          "Content-Type": "application/json"
-        },
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
             "required": true,
             "schema": {
-              "type": "JSON"
+              "type": "integer",
+              "nullable": false
             }
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "schema": {
+            "type": "JSON"
+          }
+        }
       },
       "arguments": {
         "body": {
@@ -1065,14 +1139,15 @@
       "request": {
         "url": "/posts/{id}",
         "method": "delete",
-        "headers": {
-          "Content-Type": "application/json"
-        },
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "required": true
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "nullable": false
+            }
           }
         ]
       },
@@ -1097,22 +1172,45 @@
     }
   ],
   "scalar_types": {
+    "BigInt": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": { "type": "boolean" }
+      "representation": {
+        "type": "boolean"
+      }
     },
     "Int": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": { "type": "integer" }
+      "representation": {
+        "type": "integer"
+      }
     },
-    "JSON": { "aggregate_functions": {}, "comparison_operators": {} },
-    "NotFoundError": { "aggregate_functions": {}, "comparison_operators": {} },
+    "JSON": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
+    "NotFoundError": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
     "String": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": { "type": "string" }
+      "representation": {
+        "type": "string"
+      }
+    },
+    "URI": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
     }
   }
 }

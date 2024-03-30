@@ -17,6 +17,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 		Options  *ConvertOptions
 		Expected string
 	}{
+		// go run . convert -f ./openapi/testdata/jsonplaceholder/swagger.json -o ./openapi/testdata/jsonplaceholder/expected.json --spec openapi2 --trim-prefix /v1
 		{
 			Name:     "jsonplaceholder",
 			Source:   "testdata/jsonplaceholder/swagger.json",
@@ -25,6 +26,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 				TrimPrefix: "/v1",
 			},
 		},
+		// go run . convert -f ./openapi/testdata/petstore2/swagger.json -o ./openapi/testdata/petstore2/expected.json --spec openapi2
 		{
 			Name:     "petstore2",
 			Source:   "testdata/petstore2/swagger.json",

@@ -49,9 +49,9 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 		Logger:      logger,
 	}
 	switch args.Spec {
-	case string(schema.OpenAPIv3Spec):
+	case string(schema.OpenAPIv3Spec), string(schema.OAS3Spec):
 		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, options)
-	case string(schema.OpenAPIv2Spec):
+	case string(schema.OpenAPIv2Spec), string(schema.OAS2Spec):
 		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
 	default:
 		err := fmt.Errorf("invalid spec %s, expected %+v", args.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec})

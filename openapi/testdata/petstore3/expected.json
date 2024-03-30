@@ -31,7 +31,10 @@
     "security": [
       {},
       {
-        "petstore_auth": ["write:pets", "read:pets"]
+        "petstore_auth": [
+          "write:pets",
+          "read:pets"
+        ]
       }
     ],
     "version": "1.0.19"
@@ -49,13 +52,20 @@
             "required": false,
             "schema": {
               "type": "PetStatus",
-              "enum": ["available", "pending", "sold"]
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
             }
           }
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -97,7 +107,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -136,7 +149,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           }
@@ -146,7 +159,10 @@
             "api_key": []
           },
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -154,7 +170,7 @@
         "petId": {
           "description": "ID of pet to return",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         }
@@ -194,7 +210,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           }
@@ -204,7 +220,7 @@
         "orderId": {
           "description": "ID of order that needs to be fetched",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         }
@@ -391,7 +407,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -425,7 +441,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -437,6 +453,17 @@
               "name": "String",
               "type": "named"
             }
+          }
+        }
+      }
+    },
+    "Error": {
+      "description": "An error response from the Stripe API",
+      "fields": {
+        "error": {
+          "type": {
+            "name": "String",
+            "type": "named"
           }
         }
       }
@@ -456,7 +483,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -465,7 +492,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -483,7 +510,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "DateTime",
               "type": "named"
             }
           }
@@ -515,7 +542,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -587,7 +614,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -596,7 +623,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -614,7 +641,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "String",
+              "name": "DateTime",
               "type": "named"
             }
           }
@@ -637,7 +664,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -648,6 +675,214 @@
             "underlying_type": {
               "name": "String",
               "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "TreasuryInboundTransfer": {
+      "description": "Use [InboundTransfers](https://stripe.com/docs/treasury/moving-money/financial-accounts/into/inbound-transfers) to add funds to your [FinancialAccount](https://stripe.com/docs/api#financial_accounts) via a PaymentMethod that is owned by you. The funds will be transferred via an ACH debit.",
+      "fields": {
+        "amount": {
+          "description": "Amount (in cents) transferred.",
+          "type": {
+            "name": "Int",
+            "type": "named"
+          }
+        },
+        "cancelable": {
+          "description": "Returns `true` if the InboundTransfer is able to be canceled.",
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        },
+        "created": {
+          "description": "Time at which the object was created. Measured in seconds since the Unix epoch.",
+          "type": {
+            "name": "UnixTime",
+            "type": "named"
+          }
+        },
+        "currency": {
+          "description": "Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "description": {
+          "description": "An arbitrary string attached to the object. Often useful for displaying to users.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "String",
+                "type": "named"
+              }
+            }
+          }
+        },
+        "failure_details": {
+          "description": "Details about this InboundTransfer's failure. Only set when status is `failed`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "financial_account": {
+          "description": "The FinancialAccount that received the funds.",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "hosted_regulatory_receipt_url": {
+          "description": "A [hosted transaction receipt](https://stripe.com/docs/treasury/moving-money/regulatory-receipts) URL that is provided when money movement is considered regulated under Stripe's money transmission licenses.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "String",
+                "type": "named"
+              }
+            }
+          }
+        },
+        "id": {
+          "description": "Unique identifier for the object.",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "livemode": {
+          "description": "Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.",
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        },
+        "metadata": {
+          "description": "Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format.",
+          "type": {
+            "name": "JSON",
+            "type": "named"
+          }
+        },
+        "object": {
+          "description": "String representing the object's type. Objects of the same type share the same value.",
+          "type": {
+            "name": "TreasuryInboundTransferObject",
+            "type": "named"
+          }
+        },
+        "origin_payment_method": {
+          "description": "The origin payment method to be debited for an InboundTransfer.",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "returned": {
+          "description": "Returns `true` if the funds for an InboundTransfer were returned after the InboundTransfer went to the `succeeded` state.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "Boolean",
+                "type": "named"
+              }
+            }
+          }
+        },
+        "statement_descriptor": {
+          "description": "Statement descriptor shown when funds are debited from the source. Not all payment networks support `statement_descriptor`.",
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "status": {
+          "description": "Status of the InboundTransfer: `processing`, `succeeded`, `failed`, and `canceled`. An InboundTransfer is `processing` if it is created and pending. The status changes to `succeeded` once the funds have been \"confirmed\" and a `transaction` is created and posted. The status changes to `failed` if the transfer fails.",
+          "type": {
+            "name": "TreasuryInboundTransferStatus",
+            "type": "named"
+          }
+        },
+        "status_transitions": {
+          "type": {
+            "name": "TreasuryInboundTransfersResourceInboundTransferResourceStatusTransitions",
+            "type": "named"
+          }
+        },
+        "transaction": {
+          "description": "The Transaction associated with this object.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "TreasuryInboundTransfersResourceFailureDetails": {
+      "fields": {
+        "code": {
+          "description": "Reason for the failure.",
+          "type": {
+            "name": "TreasuryInboundTransfersResourceFailureDetailsCode",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "TreasuryInboundTransfersResourceInboundTransferResourceStatusTransitions": {
+      "fields": {
+        "canceled_at": {
+          "description": "Timestamp describing when an InboundTransfer changed status to `canceled`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "UnixTime",
+                "type": "named"
+              }
+            }
+          }
+        },
+        "failed_at": {
+          "description": "Timestamp describing when an InboundTransfer changed status to `failed`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "UnixTime",
+                "type": "named"
+              }
+            }
+          }
+        },
+        "succeeded_at": {
+          "description": "Timestamp describing when an InboundTransfer changed status to `succeeded`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "type": "nullable",
+              "underlying_type": {
+                "name": "UnixTime",
+                "type": "named"
+              }
             }
           }
         }
@@ -677,7 +912,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "BigInt",
               "type": "named"
             }
           }
@@ -736,14 +971,21 @@
       "request": {
         "url": "/pet",
         "method": "post",
-        "headers": {
-          "Content-Type": "application/json"
-        },
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "contentType": "application/json",
+          "schema": {
+            "type": "Pet"
+          }
+        }
       },
       "arguments": {
         "body": {
@@ -765,14 +1007,21 @@
       "request": {
         "url": "/pet",
         "method": "put",
-        "headers": {
-          "Content-Type": "application/json"
-        },
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "contentType": "application/json",
+          "schema": {
+            "type": "Pet"
+          }
+        }
       },
       "arguments": {
         "body": {
@@ -794,16 +1043,13 @@
       "request": {
         "url": "/pet/{petId}",
         "method": "post",
-        "headers": {
-          "Content-Type": ""
-        },
         "parameters": [
           {
             "name": "petId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           },
@@ -826,7 +1072,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -844,7 +1093,7 @@
         "petId": {
           "description": "ID of pet that needs to be updated",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         },
@@ -873,9 +1122,6 @@
       "request": {
         "url": "/pet/{petId}",
         "method": "delete",
-        "headers": {
-          "Content-Type": ""
-        },
         "parameters": [
           {
             "name": "api_key",
@@ -890,14 +1136,17 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           }
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -914,7 +1163,7 @@
         "petId": {
           "description": "Pet id to delete",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         }
@@ -933,16 +1182,13 @@
       "request": {
         "url": "/pet/{petId}/uploadImage",
         "method": "post",
-        "headers": {
-          "Content-Type": "application/octet-stream"
-        },
         "parameters": [
           {
             "name": "petId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           },
@@ -957,9 +1203,19 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
-        ]
+        ],
+        "requestBody": {
+          "contentType": "application/octet-stream",
+          "schema": {
+            "type": "Base64",
+            "format": "binary"
+          }
+        }
       },
       "arguments": {
         "additionalMetadata": {
@@ -972,10 +1228,17 @@
             }
           }
         },
+        "body": {
+          "description": "Request body of /pet/{petId}/uploadImage",
+          "type": {
+            "name": "Base64",
+            "type": "named"
+          }
+        },
         "petId": {
           "description": "ID of pet to update",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         }
@@ -991,8 +1254,11 @@
       "request": {
         "url": "/store/order",
         "method": "post",
-        "headers": {
-          "Content-Type": "application/json"
+        "requestBody": {
+          "contentType": "application/json",
+          "schema": {
+            "type": "Order"
+          }
         }
       },
       "arguments": {
@@ -1015,16 +1281,13 @@
       "request": {
         "url": "/store/order/{orderId}",
         "method": "delete",
-        "headers": {
-          "Content-Type": ""
-        },
         "parameters": [
           {
             "name": "orderId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "Int",
+              "type": "BigInt",
               "format": "int64"
             }
           }
@@ -1034,7 +1297,7 @@
         "orderId": {
           "description": "ID of the order that needs to be deleted",
           "type": {
-            "name": "Int",
+            "name": "BigInt",
             "type": "named"
           }
         }
@@ -1053,8 +1316,11 @@
       "request": {
         "url": "/user/createWithList",
         "method": "post",
-        "headers": {
-          "Content-Type": "application/json"
+        "requestBody": {
+          "contentType": "application/json",
+          "schema": {
+            "type": "array"
+          }
         }
       },
       "arguments": {
@@ -1080,9 +1346,6 @@
       "request": {
         "url": "/user/{username}",
         "method": "delete",
-        "headers": {
-          "Content-Type": ""
-        },
         "parameters": [
           {
             "name": "username",
@@ -1116,10 +1379,7 @@
     {
       "request": {
         "url": "/snake",
-        "method": "post",
-        "headers": {
-          "Content-Type": ""
-        }
+        "method": "post"
       },
       "arguments": {},
       "description": "Add snake object",
@@ -1128,14 +1388,75 @@
         "name": "SnakeObject",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/test_helpers/treasury/inbound_transfers/{id}/fail",
+        "method": "post",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "String",
+              "maxLength": 5000
+            }
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/x-www-form-urlencoded",
+          "schema": {
+            "type": "JSON"
+          }
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /test_helpers/treasury/inbound_transfers/{id}/fail",
+          "type": {
+            "name": "JSON",
+            "type": "named"
+          }
+        },
+        "id": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      },
+      "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
+      "result_type": {
+        "name": "TreasuryInboundTransfer",
+        "type": "named"
+      }
     }
   ],
   "scalar_types": {
+    "Base64": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
+    },
+    "BigInt": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
         "type": "boolean"
+      }
+    },
+    "DateTime": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
       }
     },
     "Int": {
@@ -1153,7 +1474,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -1161,7 +1486,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["available", "pending", "sold"],
+        "one_of": [
+          "available",
+          "pending",
+          "sold"
+        ],
         "type": "enum"
       }
     },
@@ -1169,7 +1498,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -1178,6 +1511,58 @@
       "comparison_operators": {},
       "representation": {
         "type": "string"
+      }
+    },
+    "TreasuryInboundTransferObject": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "treasury.inbound_transfer"
+        ],
+        "type": "enum"
+      }
+    },
+    "TreasuryInboundTransferStatus": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "canceled",
+          "failed",
+          "processing",
+          "succeeded"
+        ],
+        "type": "enum"
+      }
+    },
+    "TreasuryInboundTransfersResourceFailureDetailsCode": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "account_closed",
+          "account_frozen",
+          "bank_account_restricted",
+          "bank_ownership_changed",
+          "debit_not_authorized",
+          "incorrect_account_holder_address",
+          "incorrect_account_holder_name",
+          "incorrect_account_holder_tax_id",
+          "insufficient_funds",
+          "invalid_account_number",
+          "invalid_currency",
+          "no_account",
+          "other"
+        ],
+        "type": "enum"
+      }
+    },
+    "UnixTime": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "integer"
       }
     }
   }

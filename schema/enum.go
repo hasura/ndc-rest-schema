@@ -12,6 +12,8 @@ type SchemaSpecType string
 const (
 	OpenAPIv3Spec SchemaSpecType = "openapi3"
 	OpenAPIv2Spec SchemaSpecType = "openapi2"
+	OAS3Spec      SchemaSpecType = "oas3"
+	OAS2Spec      SchemaSpecType = "oas2"
 	NDCSpec       SchemaSpecType = "ndc"
 )
 
@@ -152,3 +154,34 @@ func ParseParameterLocation(input string) (ParameterLocation, error) {
 	}
 	return result, nil
 }
+
+// ScalarType defines supported scalar type enums of the OpenAPI spec
+type ScalarType string
+
+const (
+	ScalarTypeString   ScalarType = "String"
+	ScalarTypeInt      ScalarType = "Int"
+	ScalarTypeBigInt   ScalarType = "BigInt"
+	ScalarTypeFloat    ScalarType = "Float"
+	ScalarTypeBoolean  ScalarType = "Boolean"
+	ScalarTypeJSON     ScalarType = "JSON"
+	ScalarTypeDate     ScalarType = "Date"
+	ScalarTypeDateTime ScalarType = "DateTime"
+	ScalarTypeBase64   ScalarType = "Base64"
+	ScalarTypeUnixTime ScalarType = "UnixTime"
+	ScalarTypeEmail    ScalarType = "Email"
+	ScalarTypeUUID     ScalarType = "UUID"
+	ScalarTypeURI      ScalarType = "URI"
+	ScalarTypeIPV4     ScalarType = "ipv4"
+	ScalarTypeIPV6     ScalarType = "ipv6"
+)
+
+const (
+	ContentTypeHeader            = "Content-Type"
+	ContentTypeJSON              = "application/json"
+	ContentTypeXML               = "application/xml"
+	ContentTypeFormURLEncoded    = "application/x-www-form-urlencoded"
+	ContentTypeMultipartFormData = "multipart/form-data"
+	ContentTypeTextPlain         = "text/plain"
+	ContentTypeTextHTML          = "text/html"
+)
