@@ -241,7 +241,7 @@ func (ss OAuthFlow) Validate(flowType OAuthFlowType) error {
 		if slices.Contains([]OAuthFlowType{ImplicitFlow, AuthorizationCodeFlow}, flowType) {
 			return fmt.Errorf("authorizationUrl is required for oauth2 %s security", flowType)
 		}
-	} else if _, err := parseHttpURL(ss.AuthorizationURL); err != nil {
+	} else if _, err := parseRelativeOrHttpURL(ss.AuthorizationURL); err != nil {
 		return fmt.Errorf("authorizationUrl: %s", err)
 	}
 
@@ -249,11 +249,11 @@ func (ss OAuthFlow) Validate(flowType OAuthFlowType) error {
 		if slices.Contains([]OAuthFlowType{PasswordFlow, ClientCredentialsFlow, AuthorizationCodeFlow}, flowType) {
 			return fmt.Errorf("tokenUrl is required for oauth2 %s security", flowType)
 		}
-	} else if _, err := parseHttpURL(ss.TokenURL); err != nil {
+	} else if _, err := parseRelativeOrHttpURL(ss.TokenURL); err != nil {
 		return fmt.Errorf("tokenUrl: %s", err)
 	}
 	if ss.RefreshURL != "" {
-		if _, err := parseHttpURL(ss.RefreshURL); err != nil {
+		if _, err := parseRelativeOrHttpURL(ss.RefreshURL); err != nil {
 			return fmt.Errorf("refreshUrl: %s", err)
 		}
 	}
@@ -294,7 +294,7 @@ func (ss OpenIDConfig) Validate() error {
 		return errors.New("openIdConnectUrl is required for oidc security")
 	}
 
-	if _, err := parseHttpURL(ss.OpenIDConnectURL); err != nil {
+	if _, err := parseRelativeOrHttpURL(ss.OpenIDConnectURL); err != nil {
 		return fmt.Errorf("openIdConnectUrl: %s", err)
 	}
 	return nil

@@ -61,6 +61,7 @@ func TestDecodeRESTProcedureInfo(t *testing.T) {
 				t.FailNow()
 			}
 			assertDeepEqual(t, tc.expected, procedure)
+			assertDeepEqual(t, tc.expected.Request.Clone(), procedure.Request.Clone())
 		})
 	}
 }
@@ -136,12 +137,14 @@ func TestDecodeRESTFunctionInfo(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			var procedure RESTFunctionInfo
-			if err := json.Unmarshal([]byte(tc.raw), &procedure); err != nil {
+			var fn RESTFunctionInfo
+			if err := json.Unmarshal([]byte(tc.raw), &fn); err != nil {
 				t.Errorf("failed to unmarshal: %s", err)
 				t.FailNow()
 			}
-			assertDeepEqual(t, tc.expected, procedure)
+			assertDeepEqual(t, tc.expected, fn)
+			assertDeepEqual(t, tc.expected.Request.Clone(), fn.Request.Clone())
+
 		})
 	}
 }
