@@ -186,6 +186,9 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 		case "number":
 			scalarName = "Float"
 			scalarType = defaultScalarTypes[rest.ScalarTypeFloat]
+		case "file":
+			scalarName = string(rest.ScalarTypeBase64)
+			scalarType = defaultScalarTypes[rest.ScalarTypeBase64]
 		case "string":
 			schemaEnumLength := len(enumNodes)
 			if schemaEnumLength > 0 {
@@ -239,7 +242,7 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 			case "date-time":
 				scalarName = string(rest.ScalarTypeDateTime)
 				scalarType = defaultScalarTypes[rest.ScalarTypeDateTime]
-			case "byte", "binary", "file":
+			case "byte", "binary":
 				scalarName = string(rest.ScalarTypeBase64)
 				scalarType = defaultScalarTypes[rest.ScalarTypeBase64]
 			case "uuid":
@@ -284,13 +287,16 @@ func canSetEnumToSchema(sm *rest.NDCRestSchema, scalarName string, enums []strin
 	return false
 }
 
-// ParseTypeSchemaFromOpenAPISchema creates a TypeSchema from OpenAPI schema object
-func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest.TypeSchema {
-	if input == nil {
-		return nil
-	}
+func createSchemaFromOpenAPISchema(input *base.Schema) *rest.TypeSchema {
 	ps := &rest.TypeSchema{}
-	ps.Type = typeName
+	if input == nil {
+		return ps
+	}
+	if len(input.Type) > 1 {
+		ps.Type = string(rest.ScalarTypeJSON)
+	} else if len(input.Type) > 0 {
+		ps.Type = input.Type[0]
+	}
 	ps.Format = input.Format
 	ps.Pattern = input.Pattern
 	ps.Nullable = input.Nullable
@@ -298,6 +304,8 @@ func ParseTypeSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest
 	ps.Minimum = input.Minimum
 	ps.MaxLength = input.MaxLength
 	ps.MinLength = input.MinLength
+	ps.Description = input.Description
+
 	enumLength := len(input.Enum)
 	if enumLength > 0 {
 		ps.Enum = make([]string, enumLength)

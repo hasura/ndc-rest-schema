@@ -659,7 +659,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "Base64",
               "type": "named"
             }
           }
@@ -695,7 +695,7 @@
           "required": true,
           "contentType": "application/json",
           "schema": {
-            "type": "JSON"
+            "type": "Pet"
           }
         }
       },
@@ -734,7 +734,7 @@
           "required": true,
           "contentType": "application/json",
           "schema": {
-            "type": "JSON"
+            "type": "Pet"
           }
         }
       },
@@ -908,7 +908,7 @@
           "required": true,
           "contentType": "application/json",
           "schema": {
-            "type": "JSON"
+            "type": "Order"
           }
         }
       },
@@ -984,7 +984,7 @@
           "required": true,
           "contentType": "application/json",
           "schema": {
-            "type": "JSON"
+            "type": "User"
           }
         }
       },
@@ -1064,6 +1064,13 @@
     }
   ],
   "scalar_types": {
+    "Base64": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
+    },
     "BigInt": {
       "aggregate_functions": {},
       "comparison_operators": {}

@@ -1025,7 +1025,7 @@
           "required": true,
           "contentType": "application/json",
           "schema": {
-            "type": "JSON"
+            "type": "Post"
           }
         }
       },
@@ -1063,7 +1063,7 @@
         "requestBody": {
           "required": true,
           "schema": {
-            "type": "JSON"
+            "type": "Post"
           }
         }
       },
@@ -1108,7 +1108,7 @@
         "requestBody": {
           "required": true,
           "schema": {
-            "type": "JSON"
+            "type": "Post"
           }
         }
       },
@@ -1189,10 +1189,6 @@
       "representation": {
         "type": "integer"
       }
-    },
-    "JSON": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
     },
     "NotFoundError": {
       "aggregate_functions": {},

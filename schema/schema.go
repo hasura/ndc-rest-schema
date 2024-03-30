@@ -101,24 +101,48 @@ type RequestParameter struct {
 // TypeSchema represents a serializable object of OpenAPI schema
 // that is used for validation
 type TypeSchema struct {
-	Type       string                `json:"type" yaml:"type" mapstructure:"type"`
-	Format     string                `json:"format,omitempty" yaml:"format,omitempty" mapstructure:"format"`
-	Pattern    string                `json:"pattern,omitempty" yaml:"pattern,omitempty" mapstructure:"pattern"`
-	Nullable   *bool                 `json:"nullable,omitempty" yaml:"nullable,omitempty" mapstructure:"nullable"`
-	Maximum    *float64              `json:"maximum,omitempty" yaml:"maximum,omitempty" mapstructure:"maximum"`
-	Minimum    *float64              `json:"minimum,omitempty," yaml:"minimum,omitempty" mapstructure:"minimum"`
-	MaxLength  *int64                `json:"maxLength,omitempty" yaml:"maxLength,omitempty" mapstructure:"maxLength"`
-	MinLength  *int64                `json:"minLength,omitempty" yaml:"minLength,omitempty" mapstructure:"minLength"`
-	Enum       []string              `json:"enum,omitempty" yaml:"enum,omitempty" mapstructure:"enum"`
-	Items      *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
-	Properties map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
+	Type        string                `json:"type" yaml:"type" mapstructure:"type"`
+	Format      string                `json:"format,omitempty" yaml:"format,omitempty" mapstructure:"format"`
+	Pattern     string                `json:"pattern,omitempty" yaml:"pattern,omitempty" mapstructure:"pattern"`
+	Nullable    *bool                 `json:"nullable,omitempty" yaml:"nullable,omitempty" mapstructure:"nullable"`
+	Maximum     *float64              `json:"maximum,omitempty" yaml:"maximum,omitempty" mapstructure:"maximum"`
+	Minimum     *float64              `json:"minimum,omitempty," yaml:"minimum,omitempty" mapstructure:"minimum"`
+	MaxLength   *int64                `json:"maxLength,omitempty" yaml:"maxLength,omitempty" mapstructure:"maxLength"`
+	MinLength   *int64                `json:"minLength,omitempty" yaml:"minLength,omitempty" mapstructure:"minLength"`
+	Enum        []string              `json:"enum,omitempty" yaml:"enum,omitempty" mapstructure:"enum"`
+	Items       *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
+	Properties  map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
+	Description string                `json:"-" yaml:"-"`
+}
+
+// RequestBodyEncoding represents the [Encoding Object] that contains serialization strategy for application/x-www-form-urlencoded
+//
+// [Encoding Object]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#encoding-object
+type RequestBodyEncoding struct {
+	// Describes how a specific property value will be serialized depending on its type.
+	// See Parameter Object for details on the style property.
+	// The behavior follows the same values as query parameters, including default values.
+	// This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.
+	// If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored
+	Style string `json:"style,omitempty" yaml:"style,omitempty" mapstructure:"style"`
+	// When this is true, property values of type array or object generate separate parameters for each value of the array, or key-value-pair of the map.
+	// For other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
+	// This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.
+	// If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored
+	Explode bool `json:"explode,omitempty" yaml:"explode,omitempty" mapstructure:"explode"`
+	// By default, reserved characters :/?#[]@!$&'()*+,;= in form field values within application/x-www-form-urlencoded bodies are percent-encoded when sent.
+	// AllowReserved allows these characters to be sent as is:
+	AllowReserved bool `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty" mapstructure:"allowReserved"`
+	// For more complex scenarios, such as nested arrays or JSON in form data, use the contentType keyword to specify the media type for encoding the value of a complex field.
+	ContentType string `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
 }
 
 // RequestBody defines flexible request body with content types
 type RequestBody struct {
-	Required    bool        `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
-	ContentType string      `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
-	Schema      *TypeSchema `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Required    bool                           `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
+	ContentType string                         `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
+	Schema      *TypeSchema                    `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Encoding    map[string]RequestBodyEncoding `json:"encoding,omitempty" yaml:"encoding,omitempty" mapstructure:"encoding"`
 }
 
 // RESTFunctionInfo extends NDC query function with OpenAPI REST information

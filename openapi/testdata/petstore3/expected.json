@@ -51,7 +51,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "PetStatus",
+              "type": "string",
               "enum": [
                 "available",
                 "pending",
@@ -101,7 +101,10 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "JSON"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ],
@@ -149,7 +152,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           }
@@ -210,7 +213,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           }
@@ -242,7 +245,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           },
           {
@@ -250,7 +253,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           }
         ]
@@ -294,7 +297,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           }
         ]
@@ -468,6 +471,20 @@
         }
       }
     },
+    "FailureDetailsParams": {
+      "description": "Details about a failed InboundTransfer.",
+      "fields": {
+        "code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TestHelpersCode",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "Order": {
       "fields": {
         "complete": {
@@ -581,6 +598,33 @@
                 "type": "named"
               },
               "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PostTestHelpersTreasuryInboundTransfersIdFail": {
+      "fields": {
+        "expand": {
+          "description": "Specifies which fields in the response should be expanded.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "failure_details": {
+          "description": "Details about a failed InboundTransfer.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "FailureDetailsParams",
+              "type": "named"
             }
           }
         }
@@ -1049,7 +1093,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           },
@@ -1058,7 +1102,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           },
           {
@@ -1066,7 +1110,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           }
         ],
@@ -1128,7 +1172,7 @@
             "in": "header",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           },
           {
@@ -1136,7 +1180,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           }
@@ -1188,7 +1232,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           },
@@ -1197,7 +1241,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           }
         ],
@@ -1212,7 +1256,7 @@
         "requestBody": {
           "contentType": "application/octet-stream",
           "schema": {
-            "type": "Base64",
+            "type": "string",
             "format": "binary"
           }
         }
@@ -1287,7 +1331,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "BigInt",
+              "type": "integer",
               "format": "int64"
             }
           }
@@ -1352,7 +1396,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "String"
+              "type": "string"
             }
           }
         ]
@@ -1399,7 +1443,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "String",
+              "type": "string",
               "maxLength": 5000
             }
           }
@@ -1407,7 +1451,49 @@
         "requestBody": {
           "contentType": "application/x-www-form-urlencoded",
           "schema": {
-            "type": "JSON"
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 5000
+                }
+              },
+              "failure_details": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": [
+                      "account_closed",
+                      "account_frozen",
+                      "bank_account_restricted",
+                      "bank_ownership_changed",
+                      "debit_not_authorized",
+                      "incorrect_account_holder_address",
+                      "incorrect_account_holder_name",
+                      "incorrect_account_holder_tax_id",
+                      "insufficient_funds",
+                      "invalid_account_number",
+                      "invalid_currency",
+                      "no_account",
+                      "other"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "encoding": {
+            "expand": {
+              "style": "deepObject",
+              "explode": true
+            },
+            "failure_details": {
+              "style": "deepObject",
+              "explode": true
+            }
           }
         }
       },
@@ -1415,7 +1501,7 @@
         "body": {
           "description": "Request body of /test_helpers/treasury/inbound_transfers/{id}/fail",
           "type": {
-            "name": "JSON",
+            "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
             "type": "named"
           }
         },
@@ -1511,6 +1597,28 @@
       "comparison_operators": {},
       "representation": {
         "type": "string"
+      }
+    },
+    "TestHelpersCode": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "account_closed",
+          "account_frozen",
+          "bank_account_restricted",
+          "bank_ownership_changed",
+          "debit_not_authorized",
+          "incorrect_account_holder_address",
+          "incorrect_account_holder_name",
+          "incorrect_account_holder_tax_id",
+          "insufficient_funds",
+          "invalid_account_number",
+          "invalid_currency",
+          "no_account",
+          "other"
+        ],
+        "type": "enum"
       }
     },
     "TreasuryInboundTransferObject": {

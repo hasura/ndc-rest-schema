@@ -337,15 +337,11 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 		if err != nil {
 			return nil, nil, err
 		}
-		var scalarName string
-		if apiSchema != nil && len(apiSchema.Type) > 0 {
-			scalarName = getScalarFromType(oc.schema, apiSchema.Type, apiSchema.Format, apiSchema.Enum, oc.trimPathPrefix(apiPath), paramPaths)
-		}
 		reqParams = append(reqParams, rest.RequestParameter{
 			Name:     paramName,
 			In:       paramLocation,
 			Required: paramRequired,
-			Schema:   ParseTypeSchemaFromOpenAPISchema(apiSchema, scalarName),
+			Schema:   apiSchema,
 		})
 
 		argument := schema.ArgumentInfo{
@@ -363,7 +359,7 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 }
 
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *base.Schema, error) {
+func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 	if schemaProxy == nil {
 		return nil, nil, errParameterSchemaEmpty
 	}
@@ -371,43 +367,50 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 	if innerSchema == nil {
 		return nil, nil, fmt.Errorf("cannot get schema from proxy: %s", schemaProxy.GetReference())
 	}
-	refName := getSchemaRefTypeNameV3(schemaProxy.GetReference())
 	var ndcType schema.TypeEncoder
+	var typeSchema *rest.TypeSchema
 	var err error
+	refName := getSchemaRefTypeNameV3(schemaProxy.GetReference())
+
 	// return early object from ref
 	if refName != "" && len(innerSchema.Type) > 0 && innerSchema.Type[0] == "object" {
 		ndcType = schema.NewNamedType(utils.ToPascalCase(refName))
+		typeSchema = &rest.TypeSchema{Type: refName}
 	} else {
 		if innerSchema.Title != "" && !strings.Contains(innerSchema.Title, " ") {
 			fieldPaths = []string{utils.ToPascalCase(innerSchema.Title)}
 		}
-		ndcType, err = oc.getSchemaType(innerSchema, apiPath, fieldPaths)
+		ndcType, typeSchema, err = oc.getSchemaType(innerSchema, apiPath, fieldPaths)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
+
 	if nullable {
 		ndcType = schema.NewNullableType(ndcType)
 	}
-	return ndcType, innerSchema, nil
+	return ndcType, typeSchema, nil
 }
 
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if typeSchema == nil {
-		return nil, errParameterSchemaEmpty
+		return nil, nil, errParameterSchemaEmpty
 	}
-	if len(typeSchema.AnyOf) > 0 || typeSchema.AdditionalProperties != nil {
+
+	typeResult := createSchemaFromOpenAPISchema(typeSchema)
+	if len(typeSchema.AnyOf) > 0 || len(typeSchema.OneOf) > 0 || len(typeSchema.AllOf) > 0 || (typeSchema.AdditionalProperties != nil && (typeSchema.AdditionalProperties.B || typeSchema.AdditionalProperties.A != nil)) {
 		scalarName := "JSON"
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
 		}
-		return schema.NewNamedType(scalarName), nil
+		typeResult.Type = scalarName
+		return schema.NewNamedType(scalarName), typeResult, nil
 	}
 
 	if len(typeSchema.Type) == 0 {
-		return nil, errParameterSchemaEmpty
+		return nil, nil, errParameterSchemaEmpty
 	}
 
 	var result schema.TypeEncoder
@@ -416,8 +419,8 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 		result = schema.NewNamedType(scalarName)
 	} else {
 		typeName := typeSchema.Type[0]
+		typeResult.Type = typeName
 		switch typeName {
-		// case "null":
 		case "object":
 			refName := utils.StringSliceToPascalCase(fieldPaths)
 
@@ -431,18 +434,23 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 				if typeSchema.Description != "" {
 					object.Description = &typeSchema.Description
 				}
+
+				typeResult.Properties = make(map[string]rest.TypeSchema)
 				for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
 					propName := prop.Key()
 					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), !slices.Contains(typeSchema.Required, propName), apiPath, append(fieldPaths, propName))
 					if err != nil {
-						return nil, err
+						return nil, nil, err
 					}
+
 					objField := schema.ObjectField{
 						Type: propType.Encode(),
 					}
 					if propApiSchema.Description != "" {
 						objField.Description = &propApiSchema.Description
 					}
+
+					typeResult.Properties[propName] = *propApiSchema
 					object.Fields[propName] = objField
 				}
 
@@ -451,7 +459,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 			result = schema.NewNamedType(refName)
 		case "array":
 			if typeSchema.Items == nil || typeSchema.Items.A == nil {
-				return nil, errors.New("array item is empty")
+				return nil, nil, errors.New("array item is empty")
 			}
 
 			itemName := getSchemaRefTypeNameV3(typeSchema.Items.A.GetReference())
@@ -460,27 +468,28 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 			} else {
 				itemSchemaA := typeSchema.Items.A.Schema()
 				if itemSchemaA != nil {
-					itemSchema, err := oc.getSchemaType(itemSchemaA, apiPath, fieldPaths)
+					itemSchema, propType, err := oc.getSchemaType(itemSchemaA, apiPath, fieldPaths)
 					if err != nil {
-						return nil, err
+						return nil, nil, err
 					}
 
+					typeResult.Items = propType
 					result = schema.NewArrayType(itemSchema)
 				}
 			}
 
 			if result == nil {
-				return nil, fmt.Errorf("cannot parse type reference name: %s", typeSchema.Items.A.GetReference())
+				return nil, nil, fmt.Errorf("cannot parse type reference name: %s", typeSchema.Items.A.GetReference())
 			}
 		default:
-			return nil, fmt.Errorf("unsupported schema type %s", typeName)
+			return nil, nil, fmt.Errorf("unsupported schema type %s", typeName)
 		}
 	}
 
 	if typeSchema.Nullable != nil && *typeSchema.Nullable {
-		return schema.NewNullableType(result), nil
+		return schema.NewNullableType(result), typeResult, nil
 	}
-	return result, nil
+	return result, typeResult, nil
 }
 
 func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPath string, fieldPaths []string) (*rest.RequestBody, schema.TypeEncoder, error) {
@@ -501,20 +510,33 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 		return nil, nil, err
 	}
 
-	var typeName string
-	if len(typeSchema.Type) > 0 {
-		typeName = typeSchema.Type[0]
-	}
-	if st, ok := schemaType.(*schema.NamedType); ok {
-		typeName = st.Name
-	}
-
 	bodyResult := &rest.RequestBody{
 		ContentType: contentType,
-		Schema:      ParseTypeSchemaFromOpenAPISchema(typeSchema, typeName),
+		Schema:      typeSchema,
 	}
 	if reqBody.Required != nil {
 		bodyResult.Required = *reqBody.Required
+	}
+
+	if jsonContent.Encoding != nil {
+		encoding := make(map[string]rest.RequestBodyEncoding)
+		for iter := jsonContent.Encoding.First(); iter != nil; iter = iter.Next() {
+			encodingValue := iter.Value()
+			if encodingValue == nil {
+				continue
+			}
+			item := rest.RequestBodyEncoding{
+				Style:         encodingValue.Style,
+				ContentType:   encodingValue.ContentType,
+				AllowReserved: encodingValue.AllowReserved,
+			}
+			if encodingValue.Explode != nil {
+				item.Explode = *encodingValue.Explode
+			}
+
+			encoding[iter.Key()] = item
+		}
+		bodyResult.Encoding = encoding
 	}
 	return bodyResult, schemaType, nil
 }
@@ -556,7 +578,7 @@ func (oc *openAPIv3Converter) convertComponentSchemas(schemaItem orderedmap.Pair
 	if typeSchema == nil || !slices.Contains(typeSchema.Type, "object") {
 		return nil
 	}
-	_, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
+	_, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
 	return err
 }
 
