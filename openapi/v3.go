@@ -464,7 +464,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 
 			itemName := getSchemaRefTypeNameV3(typeSchema.Items.A.GetReference())
 			if itemName != "" {
-				result = schema.NewArrayType(schema.NewNamedType(itemName))
+				result = schema.NewArrayType(schema.NewNamedType(utils.ToPascalCase(itemName)))
 			} else {
 				itemSchemaA := typeSchema.Items.A.Schema()
 				if itemSchemaA != nil {

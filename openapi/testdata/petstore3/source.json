@@ -1149,7 +1149,7 @@
           "name": "user"
         }
       },
-      "Tag": {
+      "tag": {
         "type": "object",
         "properties": {
           "id": {
@@ -1198,7 +1198,7 @@
               "wrapped": true
             },
             "items": {
-              "$ref": "#/components/schemas/Tag"
+              "$ref": "#/components/schemas/tag"
             }
           },
           "status": {

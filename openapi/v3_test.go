@@ -3,6 +3,7 @@ package openapi
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -46,10 +47,22 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 
 			assertDeepEqual(t, expected.Collections, output.Collections, "Collections")
 			assertDeepEqual(t, expected.Settings, output.Settings, "Settings")
-			assertDeepEqual(t, expected.ScalarTypes, output.ScalarTypes, "ScalarTypes")
-			assertDeepEqual(t, expected.ObjectTypes, output.ObjectTypes, "ObjectTypes")
-			assertDeepEqual(t, expected.Procedures, output.Procedures, "Procedures")
-			assertDeepEqual(t, expected.Functions, output.Functions, "Functions")
+			assertDeepEqual(t, len(expected.ScalarTypes), len(output.ScalarTypes), "ScalarTypes")
+			for key, item := range expected.ScalarTypes {
+				assertDeepEqual(t, item, output.ScalarTypes[key], fmt.Sprintf("ScalarTypes[%s]", key))
+			}
+			assertDeepEqual(t, len(expected.ObjectTypes), len(output.ObjectTypes), "ObjectTypes")
+			for key, item := range expected.ObjectTypes {
+				assertDeepEqual(t, item, output.ObjectTypes[key], fmt.Sprintf("ObjectTypes[%s]", key))
+			}
+			assertDeepEqual(t, len(expected.Procedures), len(output.Procedures), "Procedures")
+			for i, item := range expected.Procedures {
+				assertDeepEqual(t, item, output.Procedures[i], fmt.Sprintf("Procedures[%d]", i))
+			}
+			assertDeepEqual(t, len(expected.Functions), len(output.Functions), "Functions")
+			for i, item := range expected.Functions {
+				assertDeepEqual(t, item, output.Functions[i], fmt.Sprintf("Functions[%d]", i))
+			}
 		})
 	}
 
