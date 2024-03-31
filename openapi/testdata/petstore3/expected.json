@@ -47,6 +47,7 @@
         "method": "get",
         "parameters": [
           {
+            "explode": true,
             "name": "status",
             "in": "query",
             "required": false,
@@ -97,6 +98,7 @@
         "method": "get",
         "parameters": [
           {
+            "explode": true,
             "name": "tags",
             "in": "query",
             "required": false,
@@ -1439,6 +1441,7 @@
         "method": "post",
         "parameters": [
           {
+            "style": "simple",
             "name": "id",
             "in": "path",
             "required": true,

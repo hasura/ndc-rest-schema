@@ -337,11 +337,19 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 		if err != nil {
 			return nil, nil, err
 		}
+		encoding := rest.EncodingObject{
+			Style:         param.Style,
+			AllowReserved: param.AllowReserved,
+		}
+		if param.Explode != nil {
+			encoding.Explode = *param.Explode
+		}
 		reqParams = append(reqParams, rest.RequestParameter{
-			Name:     paramName,
-			In:       paramLocation,
-			Required: paramRequired,
-			Schema:   apiSchema,
+			Name:           paramName,
+			In:             paramLocation,
+			Required:       paramRequired,
+			Schema:         apiSchema,
+			EncodingObject: encoding,
 		})
 
 		argument := schema.ArgumentInfo{
@@ -519,13 +527,13 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 	}
 
 	if jsonContent.Encoding != nil {
-		encoding := make(map[string]rest.RequestBodyEncoding)
+		encoding := make(map[string]rest.EncodingObject)
 		for iter := jsonContent.Encoding.First(); iter != nil; iter = iter.Next() {
 			encodingValue := iter.Value()
 			if encodingValue == nil {
 				continue
 			}
-			item := rest.RequestBodyEncoding{
+			item := rest.EncodingObject{
 				Style:         encodingValue.Style,
 				ContentType:   encodingValue.ContentType,
 				AllowReserved: encodingValue.AllowReserved,

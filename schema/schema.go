@@ -92,6 +92,8 @@ func (r Request) Clone() *Request {
 
 // RequestParameter represents an HTTP request parameter
 type RequestParameter struct {
+	EncodingObject `yaml:",inline"`
+
 	Name     string            `json:"name" yaml:"name" mapstructure:"name"`
 	In       ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
 	Required bool              `json:"required" yaml:"required" mapstructure:"required"`
@@ -115,10 +117,10 @@ type TypeSchema struct {
 	Description string                `json:"-" yaml:"-"`
 }
 
-// RequestBodyEncoding represents the [Encoding Object] that contains serialization strategy for application/x-www-form-urlencoded
+// EncodingObject represents the [Encoding Object] that contains serialization strategy for application/x-www-form-urlencoded
 //
 // [Encoding Object]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#encoding-object
-type RequestBodyEncoding struct {
+type EncodingObject struct {
 	// Describes how a specific property value will be serialized depending on its type.
 	// See Parameter Object for details on the style property.
 	// The behavior follows the same values as query parameters, including default values.
@@ -139,10 +141,10 @@ type RequestBodyEncoding struct {
 
 // RequestBody defines flexible request body with content types
 type RequestBody struct {
-	Required    bool                           `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
-	ContentType string                         `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
-	Schema      *TypeSchema                    `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
-	Encoding    map[string]RequestBodyEncoding `json:"encoding,omitempty" yaml:"encoding,omitempty" mapstructure:"encoding"`
+	Required    bool                      `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
+	ContentType string                    `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
+	Schema      *TypeSchema               `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Encoding    map[string]EncodingObject `json:"encoding,omitempty" yaml:"encoding,omitempty" mapstructure:"encoding"`
 }
 
 // RESTFunctionInfo extends NDC query function with OpenAPI REST information
