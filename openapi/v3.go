@@ -337,9 +337,16 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 		if err != nil {
 			return nil, nil, err
 		}
+
 		encoding := rest.EncodingObject{
-			Style:         param.Style,
 			AllowReserved: param.AllowReserved,
+		}
+		if param.Style != "" {
+			style, err := rest.ParseParameterEncodingStyle(param.Style)
+			if err != nil {
+				return nil, nil, err
+			}
+			encoding.Style = style
 		}
 		if param.Explode != nil {
 			encoding.Explode = *param.Explode
@@ -534,10 +541,18 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 				continue
 			}
 			item := rest.EncodingObject{
-				Style:         encodingValue.Style,
 				ContentType:   encodingValue.ContentType,
 				AllowReserved: encodingValue.AllowReserved,
 			}
+
+			if encodingValue.Style != "" {
+				style, err := rest.ParseParameterEncodingStyle(encodingValue.Style)
+				if err != nil {
+					return nil, nil, err
+				}
+				item.Style = style
+			}
+
 			if encodingValue.Explode != nil {
 				item.Explode = *encodingValue.Explode
 			}

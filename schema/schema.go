@@ -126,7 +126,7 @@ type EncodingObject struct {
 	// The behavior follows the same values as query parameters, including default values.
 	// This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.
 	// If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored
-	Style string `json:"style,omitempty" yaml:"style,omitempty" mapstructure:"style"`
+	Style ParameterEncodingStyle `json:"style,omitempty" yaml:"style,omitempty" mapstructure:"style"`
 	// When this is true, property values of type array or object generate separate parameters for each value of the array, or key-value-pair of the map.
 	// For other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
 	// This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.
