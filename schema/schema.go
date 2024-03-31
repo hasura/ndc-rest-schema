@@ -131,7 +131,7 @@ type EncodingObject struct {
 	// For other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.
 	// This property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.
 	// If a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored
-	Explode bool `json:"explode,omitempty" yaml:"explode,omitempty" mapstructure:"explode"`
+	Explode *bool `json:"explode,omitempty" yaml:"explode,omitempty" mapstructure:"explode"`
 	// By default, reserved characters :/?#[]@!$&'()*+,;= in form field values within application/x-www-form-urlencoded bodies are percent-encoded when sent.
 	// AllowReserved allows these characters to be sent as is:
 	AllowReserved bool `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty" mapstructure:"allowReserved"`
