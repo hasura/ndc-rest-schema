@@ -461,6 +461,9 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 					if err != nil {
 						return nil, nil, err
 					}
+					if propType == nil {
+						continue
+					}
 
 					objField := schema.ObjectField{
 						Type: propType.Encode(),
