@@ -271,15 +271,40 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 	if reqBody != nil {
-		description := fmt.Sprintf("Request body of %s", pathKey)
-		// renaming query parameter name `data` if exist to avoid conflicts
-		if paramData, ok := arguments["body"]; ok {
-			arguments["paramBody"] = paramData
-		}
+		if reqBody.ContentType == rest.ContentTypeFormURLEncoded {
+			// convert URL encoded body to parameters
+			if reqBody.Schema != nil {
+				if reqBody.Schema.Type == "object" {
+					for key, prop := range reqBody.Schema.Properties {
+						reqParams = append(reqParams, rest.RequestParameter{
+							EncodingObject: reqBody.Encoding[key],
+							Name:           key,
+							In:             rest.InQuery,
+							Required:       prop.Nullable == nil || !*prop.Nullable,
+							Schema:         &prop,
+						})
+					}
+				} else {
+					reqParams = append(reqParams, rest.RequestParameter{
+						Name:     "body",
+						In:       rest.InQuery,
+						Required: reqBody.Required,
+						Schema:   reqBody.Schema,
+					})
+				}
+			}
+			reqBody = nil
+		} else {
+			description := fmt.Sprintf("Request body of %s", pathKey)
+			// renaming query parameter name `data` if exist to avoid conflicts
+			if paramData, ok := arguments["body"]; ok {
+				arguments["paramBody"] = paramData
+			}
 
-		arguments["body"] = schema.ArgumentInfo{
-			Description: &description,
-			Type:        schemaType.Encode(),
+			arguments["body"] = schema.ArgumentInfo{
+				Description: &description,
+				Type:        schemaType.Encode(),
+			}
 		}
 	}
 
