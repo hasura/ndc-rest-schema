@@ -3,7 +3,6 @@ package openapi
 import (
 	"errors"
 	"fmt"
-	"log"
 	"slices"
 	"strings"
 
@@ -267,7 +266,6 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 
-	log.Println(pathKey, []string{procName})
 	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -401,6 +399,9 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 		}
 	}
 
+	if ndcType == nil {
+		return nil, nil, nil
+	}
 	if nullable {
 		ndcType = schema.NewNullableType(ndcType)
 	}
