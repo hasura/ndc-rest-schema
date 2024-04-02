@@ -1520,6 +1520,37 @@
         "name": "TreasuryInboundTransfer",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/v1/accounts/{account}",
+        "method": "delete",
+        "parameters": [
+          {
+            "style": "simple",
+            "name": "account",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 5000
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "account": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      },
+      "name": "DeleteAccountsAccount",
+      "result_type": {
+        "name": "TreasuryInboundTransfer",
+        "type": "named"
+      }
     }
   ],
   "scalar_types": {

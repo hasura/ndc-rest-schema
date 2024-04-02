@@ -3,6 +3,7 @@ package openapi
 import (
 	"errors"
 	"fmt"
+	"log"
 	"slices"
 	"strings"
 
@@ -266,6 +267,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 
+	log.Println(pathKey, []string{procName})
 	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -438,6 +440,9 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 			refName := utils.StringSliceToPascalCase(fieldPaths)
 
 			if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
+				if typeSchema.AdditionalProperties == nil || typeSchema.AdditionalProperties.A == nil || !typeSchema.AdditionalProperties.B {
+					return nil, nil, nil
+				}
 				// treat no-property objects as a JSON scalar
 				oc.schema.ScalarTypes[refName] = *schema.NewScalarType()
 			} else {
@@ -521,6 +526,10 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 	schemaType, typeSchema, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, false, apiPath, fieldPaths)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if typeSchema == nil {
+		return nil, nil, nil
 	}
 
 	bodyResult := &rest.RequestBody{
