@@ -634,6 +634,15 @@
     },
     "SnakeObject": {
       "fields": {
+        "features": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ConnectEmbeddedAccountFeatures",
+              "type": "named"
+            }
+          }
+        },
         "id": {
           "type": {
             "type": "nullable",
@@ -1513,6 +1522,20 @@
         ]
       },
       "arguments": {
+        "expand": {
+          "description": "Details about a failed InboundTransfer.",
+          "type": {
+            "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
+            "type": "named"
+          }
+        },
+        "failure_details": {
+          "description": "Details about a failed InboundTransfer.",
+          "type": {
+            "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
+            "type": "named"
+          }
+        },
         "id": {
           "type": {
             "name": "String",
@@ -1576,6 +1599,10 @@
       "representation": {
         "type": "boolean"
       }
+    },
+    "ConnectEmbeddedAccountFeatures": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
     },
     "DateTime": {
       "aggregate_functions": {},

@@ -1309,6 +1309,9 @@
               "complete": { "type": "boolean" }
             },
             "xml": { "name": "order" }
+          },
+          "features": {
+            "$ref": "#/components/schemas/connect_embedded_account_features"
           }
         }
       },
@@ -1507,6 +1510,13 @@
         },
         "required": ["error"],
         "type": "object"
+      },
+      "connect_embedded_account_features": {
+        "description": "",
+        "properties": {},
+        "title": "ConnectEmbeddedAccountFeatures",
+        "type": "object",
+        "x-expandableFields": []
       }
     },
     "requestBodies": {

@@ -276,6 +276,18 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 			if reqBody.Schema != nil {
 				if reqBody.Schema.Type == "object" {
 					for key, prop := range reqBody.Schema.Properties {
+						// renaming query parameter name `body` if exist to avoid conflicts
+						if paramData, ok := arguments[key]; ok {
+							arguments[fmt.Sprintf("param%s", key)] = paramData
+						}
+						argument := schema.ArgumentInfo{
+							Description: &prop.Description,
+							Type:        schemaType.Encode(),
+						}
+						if prop.Description != "" {
+							argument.Description = &prop.Description
+						}
+						arguments[key] = argument
 						reqParams = append(reqParams, rest.RequestParameter{
 							EncodingObject: reqBody.Encoding[key],
 							Name:           key,
@@ -285,6 +297,15 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 						})
 					}
 				} else {
+					description := fmt.Sprintf("Request body of %s", pathKey)
+					// renaming query parameter name `body` if exist to avoid conflicts
+					if paramData, ok := arguments["body"]; ok {
+						arguments["paramBody"] = paramData
+					}
+					arguments["body"] = schema.ArgumentInfo{
+						Description: &description,
+						Type:        schemaType.Encode(),
+					}
 					reqParams = append(reqParams, rest.RequestParameter{
 						Name:     "body",
 						In:       rest.InQuery,
@@ -296,7 +317,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 			reqBody = nil
 		} else {
 			description := fmt.Sprintf("Request body of %s", pathKey)
-			// renaming query parameter name `data` if exist to avoid conflicts
+			// renaming query parameter name `body` if exist to avoid conflicts
 			if paramData, ok := arguments["body"]; ok {
 				arguments["paramBody"] = paramData
 			}
@@ -634,7 +655,17 @@ func (oc *openAPIv3Converter) convertComponentSchemas(schemaItem orderedmap.Pair
 	if typeSchema == nil || !slices.Contains(typeSchema.Type, "object") {
 		return nil
 	}
-	_, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
+	typeEncoder, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
+	if err != nil {
+		return err
+	}
+
+	// treat no-property objects as a Arbitrary JSON scalar
+	if typeEncoder == nil {
+		refName := utils.ToPascalCase(schemaItem.Key())
+		oc.schema.ScalarTypes[refName] = *schema.NewScalarType()
+	}
+
 	return err
 }
 

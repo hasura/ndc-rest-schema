@@ -45,24 +45,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 				t.FailNow()
 			}
 
-			assertDeepEqual(t, expected.Collections, output.Collections, "Collections")
-			assertDeepEqual(t, expected.Settings, output.Settings, "Settings")
-			assertDeepEqual(t, len(expected.ScalarTypes), len(output.ScalarTypes), "ScalarTypes")
-			for key, item := range expected.ScalarTypes {
-				assertDeepEqual(t, item, output.ScalarTypes[key], fmt.Sprintf("ScalarTypes[%s]", key))
-			}
-			assertDeepEqual(t, len(expected.ObjectTypes), len(output.ObjectTypes), "ObjectTypes")
-			for key, item := range expected.ObjectTypes {
-				assertDeepEqual(t, item, output.ObjectTypes[key], fmt.Sprintf("ObjectTypes[%s]", key))
-			}
-			assertDeepEqual(t, len(expected.Procedures), len(output.Procedures), "Procedures")
-			for i, item := range expected.Procedures {
-				assertDeepEqual(t, item, output.Procedures[i], fmt.Sprintf("Procedures[%d]", i))
-			}
-			assertDeepEqual(t, len(expected.Functions), len(output.Functions), "Functions")
-			for i, item := range expected.Functions {
-				assertDeepEqual(t, item, output.Functions[i], fmt.Sprintf("Functions[%d]", i))
-			}
+			assertRESTSchemaEqual(t, &expected, output)
 		})
 	}
 
@@ -104,5 +87,36 @@ func assertDeepEqual(t *testing.T, expected any, reality any, msgs ...string) {
 	if !reflect.DeepEqual(expected1, reality1) {
 		t.Errorf("%s: not equal.\nexpected: %s\ngot			: %s", strings.Join(msgs, " "), string(expectedJson), string(realityJson))
 		t.FailNow()
+	}
+}
+
+func assertRESTSchemaEqual(t *testing.T, expected *schema.NDCRestSchema, output *schema.NDCRestSchema) {
+	assertDeepEqual(t, expected.Collections, output.Collections, "Collections")
+	assertDeepEqual(t, expected.Settings, output.Settings, "Settings")
+	assertDeepEqual(t, len(expected.ScalarTypes), len(output.ScalarTypes), "ScalarTypes")
+	for key, item := range expected.ScalarTypes {
+		assertDeepEqual(t, item, output.ScalarTypes[key], fmt.Sprintf("ScalarTypes[%s]", key))
+	}
+	assertDeepEqual(t, len(expected.ObjectTypes), len(output.ObjectTypes), "ObjectTypes")
+	for key, item := range expected.ObjectTypes {
+		assertDeepEqual(t, item, output.ObjectTypes[key], fmt.Sprintf("ObjectTypes[%s]", key))
+	}
+	assertDeepEqual(t, len(expected.Procedures), len(output.Procedures), "Procedures")
+	for i, item := range expected.Procedures {
+		assertDeepEqual(t, item.Arguments, output.Procedures[i].Arguments, fmt.Sprintf("Procedures[%d].Arguments", i))
+		assertDeepEqual(t, item.Description, output.Procedures[i].Description, fmt.Sprintf("Procedures[%d].Description", i))
+		assertDeepEqual(t, item.Name, output.Procedures[i].Name, fmt.Sprintf("Procedures[%d].Name", i))
+		assertDeepEqual(t, item.ProcedureInfo, output.Procedures[i].ProcedureInfo, fmt.Sprintf("Procedures[%d].ProcedureInfo", i))
+		assertDeepEqual(t, item.Request, output.Procedures[i].Request, fmt.Sprintf("Procedures[%d].Request", i))
+		assertDeepEqual(t, item.ResultType, output.Procedures[i].ResultType, fmt.Sprintf("Procedures[%d].ResultType", i))
+	}
+	assertDeepEqual(t, len(expected.Functions), len(output.Functions), "Functions")
+	for i, item := range expected.Functions {
+		assertDeepEqual(t, item.Arguments, output.Functions[i].Arguments, fmt.Sprintf("Functions[%d].Arguments", i))
+		assertDeepEqual(t, item.Description, output.Functions[i].Description, fmt.Sprintf("Functions[%d].Description", i))
+		assertDeepEqual(t, item.Name, output.Functions[i].Name, fmt.Sprintf("Functions[%d].Name", i))
+		assertDeepEqual(t, item.FunctionInfo, output.Functions[i].FunctionInfo, fmt.Sprintf("Functions[%d].ProcedureInfo", i))
+		assertDeepEqual(t, item.Request, output.Functions[i].Request, fmt.Sprintf("Functions[%d].Request", i))
+		assertDeepEqual(t, item.ResultType, output.Functions[i].ResultType, fmt.Sprintf("Functions[%d].ResultType", i))
 	}
 }
