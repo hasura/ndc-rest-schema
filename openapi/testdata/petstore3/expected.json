@@ -1489,7 +1489,7 @@
       },
       "arguments": {
         "expand": {
-          "description": "Details about a failed InboundTransfer.",
+          "description": "Specifies which fields in the response should be expanded.",
           "type": {
             "type": "nullable",
             "underlying_type": {

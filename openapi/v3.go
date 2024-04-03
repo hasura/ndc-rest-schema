@@ -310,12 +310,13 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 						if paramData, ok := arguments[key]; ok {
 							arguments[fmt.Sprintf("param%s", key)] = paramData
 						}
+
+						desc := prop.Description
 						argument := schema.ArgumentInfo{
-							Description: &prop.Description,
-							Type:        propType.Type,
+							Type: propType.Type,
 						}
-						if prop.Description != "" {
-							argument.Description = &prop.Description
+						if desc != "" {
+							argument.Description = &desc
 						}
 						arguments[key] = argument
 						schemaProp := prop
