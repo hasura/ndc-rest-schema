@@ -85,7 +85,7 @@ func assertDeepEqual(t *testing.T, expected any, reality any, msgs ...string) {
 	assertNoError(t, json.Unmarshal(realityJson, &reality1))
 
 	if !reflect.DeepEqual(expected1, reality1) {
-		t.Errorf("%s: not equal.\nexpected: %s\ngot			: %s", strings.Join(msgs, " "), string(expectedJson), string(realityJson))
+		t.Errorf("%s: not equal.\nexpected: %s\ngot     : %s", strings.Join(msgs, " "), string(expectedJson), string(realityJson))
 		t.FailNow()
 	}
 }
