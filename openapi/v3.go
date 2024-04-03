@@ -346,7 +346,9 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 					})
 				}
 			}
-			reqBody = nil
+			reqBody = &rest.RequestBody{
+				ContentType: rest.ContentTypeFormURLEncoded,
+			}
 		} else {
 			description := fmt.Sprintf("Request body of %s", pathKey)
 			// renaming query parameter name `body` if exist to avoid conflicts
