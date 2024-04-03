@@ -242,6 +242,26 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 	return nil
 }
 
+func (oc *openAPIv3Converter) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
+	iSchemaType, err := schemaType.InterfaceT()
+
+	switch st := iSchemaType.(type) {
+	case *schema.NullableType:
+		return oc.getObjectTypeFromSchemaType(st.UnderlyingType)
+	case *schema.NamedType:
+		objectType, ok := oc.schema.ObjectTypes[st.Name]
+		if !ok {
+			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
+		}
+
+		return &objectType, st.Name, nil
+	case *schema.ArrayType:
+		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
+	default:
+		return nil, "", err
+	}
+}
+
 func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method string, operation *v3.Operation) (*rest.RESTProcedureInfo, error) {
 	if operation == nil {
 		return nil, nil
@@ -266,7 +286,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
 
-	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName})
+	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName, "Body"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
 	}
@@ -275,25 +295,36 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 			// convert URL encoded body to parameters
 			if reqBody.Schema != nil {
 				if reqBody.Schema.Type == "object" {
+					objectType, objectTypeName, err := oc.getObjectTypeFromSchemaType(schemaType.Encode())
+					if err != nil {
+						return nil, fmt.Errorf("%s: %s", pathKey, err)
+					}
+					// remove unused request body type
+					delete(oc.schema.ObjectTypes, objectTypeName)
 					for key, prop := range reqBody.Schema.Properties {
+						propType, ok := objectType.Fields[key]
+						if !ok {
+							continue
+						}
 						// renaming query parameter name `body` if exist to avoid conflicts
 						if paramData, ok := arguments[key]; ok {
 							arguments[fmt.Sprintf("param%s", key)] = paramData
 						}
 						argument := schema.ArgumentInfo{
 							Description: &prop.Description,
-							Type:        schemaType.Encode(),
+							Type:        propType.Type,
 						}
 						if prop.Description != "" {
 							argument.Description = &prop.Description
 						}
 						arguments[key] = argument
+						schemaProp := prop
 						reqParams = append(reqParams, rest.RequestParameter{
 							EncodingObject: reqBody.Encoding[key],
 							Name:           key,
 							In:             rest.InQuery,
-							Required:       prop.Nullable == nil || !*prop.Nullable,
-							Schema:         &prop,
+							Required:       prop.Nullable != nil && !*prop.Nullable,
+							Schema:         &schemaProp,
 						})
 					}
 				} else {
@@ -573,7 +604,11 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 		jsonContent = contentPair.Value()
 	}
 
-	schemaType, typeSchema, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, false, apiPath, fieldPaths)
+	bodyRequired := false
+	if reqBody.Required != nil && *reqBody.Required {
+		bodyRequired = true
+	}
+	schemaType, typeSchema, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, !bodyRequired, apiPath, fieldPaths)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -585,9 +620,7 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 	bodyResult := &rest.RequestBody{
 		ContentType: contentType,
 		Schema:      typeSchema,
-	}
-	if reqBody.Required != nil {
-		bodyResult.Required = *reqBody.Required
+		Required:    bodyRequired,
 	}
 
 	if jsonContent.Encoding != nil {

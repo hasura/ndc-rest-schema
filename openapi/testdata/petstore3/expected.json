@@ -605,33 +605,6 @@
         }
       }
     },
-    "PostTestHelpersTreasuryInboundTransfersIdFail": {
-      "fields": {
-        "expand": {
-          "description": "Specifies which fields in the response should be expanded.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "failure_details": {
-          "description": "Details about a failed InboundTransfer.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "FailureDetailsParams",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
     "SnakeObject": {
       "fields": {
         "features": {
@@ -1286,8 +1259,11 @@
         "body": {
           "description": "Request body of /pet/{petId}/uploadImage",
           "type": {
-            "name": "Base64",
-            "type": "named"
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Base64",
+              "type": "named"
+            }
           }
         },
         "petId": {
@@ -1320,8 +1296,11 @@
         "body": {
           "description": "Request body of /store/order",
           "type": {
-            "name": "Order",
-            "type": "named"
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Order",
+              "type": "named"
+            }
           }
         }
       },
@@ -1382,11 +1361,14 @@
         "body": {
           "description": "Request body of /user/createWithList",
           "type": {
-            "element_type": {
-              "name": "User",
-              "type": "named"
-            },
-            "type": "array"
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "User",
+                "type": "named"
+              },
+              "type": "array"
+            }
           }
         }
       },
@@ -1464,28 +1446,12 @@
             "explode": true,
             "name": "expand",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string",
-                  "enum": [
-                    "account_closed",
-                    "account_frozen",
-                    "bank_account_restricted",
-                    "bank_ownership_changed",
-                    "debit_not_authorized",
-                    "incorrect_account_holder_address",
-                    "incorrect_account_holder_name",
-                    "incorrect_account_holder_tax_id",
-                    "insufficient_funds",
-                    "invalid_account_number",
-                    "invalid_currency",
-                    "no_account",
-                    "other"
-                  ]
-                }
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 5000
               }
             }
           },
@@ -1494,7 +1460,7 @@
             "explode": true,
             "name": "failure_details",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "object",
               "properties": {
@@ -1525,15 +1491,24 @@
         "expand": {
           "description": "Details about a failed InboundTransfer.",
           "type": {
-            "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
-            "type": "named"
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
           }
         },
         "failure_details": {
           "description": "Details about a failed InboundTransfer.",
           "type": {
-            "name": "PostTestHelpersTreasuryInboundTransfersIdFail",
-            "type": "named"
+            "type": "nullable",
+            "underlying_type": {
+              "name": "FailureDetailsParams",
+              "type": "named"
+            }
           }
         },
         "id": {
