@@ -155,25 +155,28 @@ func ParseParameterLocation(input string) (ParameterLocation, error) {
 	return result, nil
 }
 
-// ScalarType defines supported scalar type enums of the OpenAPI spec
-type ScalarType string
+// ScalarName defines supported scalar name enums of the OpenAPI spec
+type ScalarName string
 
 const (
-	ScalarTypeString   ScalarType = "String"
-	ScalarTypeInt      ScalarType = "Int"
-	ScalarTypeBigInt   ScalarType = "BigInt"
-	ScalarTypeFloat    ScalarType = "Float"
-	ScalarTypeBoolean  ScalarType = "Boolean"
-	ScalarTypeJSON     ScalarType = "JSON"
-	ScalarTypeDate     ScalarType = "Date"
-	ScalarTypeDateTime ScalarType = "DateTime"
-	ScalarTypeBase64   ScalarType = "Base64"
-	ScalarTypeUnixTime ScalarType = "UnixTime"
-	ScalarTypeEmail    ScalarType = "Email"
-	ScalarTypeUUID     ScalarType = "UUID"
-	ScalarTypeURI      ScalarType = "URI"
-	ScalarTypeIPV4     ScalarType = "ipv4"
-	ScalarTypeIPV6     ScalarType = "ipv6"
+	ScalarBoolean     ScalarName = "Boolean"
+	ScalarString      ScalarName = "String"
+	ScalarInt32       ScalarName = "Int32"
+	ScalarInt64       ScalarName = "Int64"
+	ScalarFloat32     ScalarName = "Float32"
+	ScalarFloat64     ScalarName = "Float64"
+	ScalarBigDecimal  ScalarName = "BigDecimal"
+	ScalarUUID        ScalarName = "UUID"
+	ScalarDate        ScalarName = "Date"
+	ScalarTimestamp   ScalarName = "Timestamp"
+	ScalarTimestampTZ ScalarName = "TimestampTZ"
+	ScalarBytes       ScalarName = "Bytes"
+	ScalarJSON        ScalarName = "JSON"
+	ScalarUnixTime    ScalarName = "UnixTime"
+	ScalarEmail       ScalarName = "Email"
+	ScalarURI         ScalarName = "URI"
+	ScalarIPV4        ScalarName = "IPv4"
+	ScalarIPV6        ScalarName = "IPv6"
 )
 
 const (
