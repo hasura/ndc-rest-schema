@@ -243,7 +243,7 @@
         "method": "get",
         "parameters": [
           {
-            "name": "username",
+            "name": "password",
             "in": "query",
             "required": false,
             "schema": {
@@ -251,7 +251,7 @@
             }
           },
           {
-            "name": "password",
+            "name": "username",
             "in": "query",
             "required": false,
             "schema": {
@@ -1444,6 +1444,20 @@
           {
             "style": "deepObject",
             "explode": true,
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 5000
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
             "name": "failure_details",
             "in": "query",
             "required": false,
@@ -1468,20 +1482,6 @@
                     "other"
                   ]
                 }
-              }
-            }
-          },
-          {
-            "style": "deepObject",
-            "explode": true,
-            "name": "expand",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "maxLength": 5000
               }
             }
           }

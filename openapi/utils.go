@@ -383,3 +383,15 @@ func convertSecurity(security *base.SecurityRequirement) rest.AuthSecurity {
 func isPrimitiveScalar(name string) bool {
 	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long"}, name)
 }
+
+// sort request parameters in order: in -> name
+func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParameter {
+	slices.SortFunc(input, func(a rest.RequestParameter, b rest.RequestParameter) int {
+		if result := strings.Compare(string(a.In), string(b.In)); result != 0 {
+			return result
+		}
+		return strings.Compare(a.Name, b.Name)
+	})
+
+	return input
+}

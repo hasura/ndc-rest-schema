@@ -189,7 +189,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 				Request: &rest.Request{
 					URL:        pathKey,
 					Method:     "get",
-					Parameters: reqParams,
+					Parameters: sortRequestParameters(reqParams),
 					Security:   convertSecurities(itemGet.Security),
 					Servers:    oc.convertServers(itemGet.Servers),
 				},
@@ -367,7 +367,7 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 		Request: &rest.Request{
 			URL:         pathKey,
 			Method:      method,
-			Parameters:  reqParams,
+			Parameters:  sortRequestParameters(reqParams),
 			Security:    convertSecurities(operation.Security),
 			Servers:     oc.convertServers(operation.Servers),
 			RequestBody: reqBody,
