@@ -31,7 +31,10 @@
     "security": [
       {},
       {
-        "petstore_auth": ["write:pets", "read:pets"]
+        "petstore_auth": [
+          "write:pets",
+          "read:pets"
+        ]
       }
     ],
     "version": "1.0.19"
@@ -50,13 +53,20 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["available", "pending", "sold"]
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
             }
           }
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -102,7 +112,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -151,7 +164,10 @@
             "api_key": []
           },
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -159,7 +175,7 @@
         "petId": {
           "description": "ID of pet to return",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -209,7 +225,7 @@
         "orderId": {
           "description": "ID of order that needs to be fetched",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -365,7 +381,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -396,7 +412,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -430,7 +446,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -486,7 +502,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -495,7 +511,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -504,7 +520,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -513,7 +529,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "DateTime",
+              "name": "Timestamp",
               "type": "named"
             }
           }
@@ -545,7 +561,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -626,7 +642,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -635,7 +651,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -644,7 +660,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -653,7 +669,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "DateTime",
+              "name": "Timestamp",
               "type": "named"
             }
           }
@@ -676,7 +692,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -698,7 +714,7 @@
         "amount": {
           "description": "Amount (in cents) transferred.",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         },
@@ -924,7 +940,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -961,7 +977,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -985,7 +1001,10 @@
         "method": "post",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -1018,7 +1037,10 @@
         "method": "put",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -1078,7 +1100,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -1096,7 +1121,7 @@
         "petId": {
           "description": "ID of pet that needs to be updated",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         },
@@ -1146,7 +1171,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -1163,7 +1191,7 @@
         "petId": {
           "description": "Pet id to delete",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -1203,7 +1231,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -1230,7 +1261,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Base64",
+              "name": "Bytes",
               "type": "named"
             }
           }
@@ -1238,7 +1269,7 @@
         "petId": {
           "description": "ID of pet to update",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -1300,7 +1331,7 @@
         "orderId": {
           "description": "ID of the order that needs to be deleted",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -1413,20 +1444,6 @@
           {
             "style": "deepObject",
             "explode": true,
-            "name": "expand",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "maxLength": 5000
-              }
-            }
-          },
-          {
-            "style": "deepObject",
-            "explode": true,
             "name": "failure_details",
             "in": "query",
             "required": false,
@@ -1451,6 +1468,20 @@
                     "other"
                   ]
                 }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "expand",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 5000
               }
             }
           }
@@ -1529,17 +1560,6 @@
     }
   ],
   "scalar_types": {
-    "Base64": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "string"
-      }
-    },
-    "BigInt": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
-    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1547,22 +1567,29 @@
         "type": "boolean"
       }
     },
-    "ConnectEmbeddedAccountFeatures": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
-    },
-    "DateTime": {
+    "Bytes": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
         "type": "string"
       }
     },
-    "Int": {
+    "ConnectEmbeddedAccountFeatures": {
+      "aggregate_functions": {},
+      "comparison_operators": {}
+    },
+    "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "integer"
+        "type": "int32"
+      }
+    },
+    "Int64": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "int64"
       }
     },
     "JSON": {
@@ -1573,7 +1600,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -1581,7 +1612,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["available", "pending", "sold"],
+        "one_of": [
+          "available",
+          "pending",
+          "sold"
+        ],
         "type": "enum"
       }
     },
@@ -1589,7 +1624,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -1622,11 +1661,20 @@
         "type": "enum"
       }
     },
+    "Timestamp": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "string"
+      }
+    },
     "TreasuryInboundTransferObject": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["treasury.inbound_transfer"],
+        "one_of": [
+          "treasury.inbound_transfer"
+        ],
         "type": "enum"
       }
     },
@@ -1634,7 +1682,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["canceled", "failed", "processing", "succeeded"],
+        "one_of": [
+          "canceled",
+          "failed",
+          "processing",
+          "succeeded"
+        ],
         "type": "enum"
       }
     },
@@ -1664,7 +1717,7 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "integer"
+        "type": "int32"
       }
     }
   }
