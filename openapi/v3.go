@@ -324,7 +324,6 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 							EncodingObject: reqBody.Encoding[key],
 							Name:           key,
 							In:             rest.InQuery,
-							Required:       prop.Nullable != nil && !*prop.Nullable,
 							Schema:         &schemaProp,
 						})
 					}
@@ -339,10 +338,9 @@ func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method s
 						Type:        schemaType.Encode(),
 					}
 					reqParams = append(reqParams, rest.RequestParameter{
-						Name:     "body",
-						In:       rest.InQuery,
-						Required: reqBody.Required,
-						Schema:   reqBody.Schema,
+						Name:   "body",
+						In:     rest.InQuery,
+						Schema: reqBody.Schema,
 					})
 				}
 			}
@@ -432,7 +430,6 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 		reqParams = append(reqParams, rest.RequestParameter{
 			Name:           paramName,
 			In:             paramLocation,
-			Required:       paramRequired,
 			Schema:         apiSchema,
 			EncodingObject: encoding,
 		})
@@ -468,7 +465,9 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 	// return early object from ref
 	if refName != "" && len(innerSchema.Type) > 0 && innerSchema.Type[0] == "object" {
 		ndcType = schema.NewNamedType(utils.ToPascalCase(refName))
-		typeSchema = &rest.TypeSchema{Type: refName}
+		typeSchema = &rest.TypeSchema{
+			Type: refName,
+		}
 	} else {
 		if innerSchema.Title != "" && !strings.Contains(innerSchema.Title, " ") {
 			fieldPaths = []string{utils.ToPascalCase(innerSchema.Title)}
@@ -537,7 +536,8 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 				typeResult.Properties = make(map[string]rest.TypeSchema)
 				for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
 					propName := prop.Key()
-					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), !slices.Contains(typeSchema.Required, propName), apiPath, append(fieldPaths, propName))
+					nullable := !slices.Contains(typeSchema.Required, propName)
+					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, apiPath, append(fieldPaths, propName))
 					if err != nil {
 						return nil, nil, err
 					}
@@ -552,6 +552,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 						objField.Description = &propApiSchema.Description
 					}
 
+					propApiSchema.Nullable = nullable
 					typeResult.Properties[propName] = *propApiSchema
 					object.Fields[propName] = objField
 				}
@@ -623,7 +624,6 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 	bodyResult := &rest.RequestBody{
 		ContentType: contentType,
 		Schema:      typeSchema,
-		Required:    bodyRequired,
 	}
 
 	if jsonContent.Encoding != nil {

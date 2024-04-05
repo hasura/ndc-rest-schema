@@ -109,13 +109,13 @@ func TestDecodeRESTFunctionInfo(t *testing.T) {
 					Method: "get",
 					Parameters: []RequestParameter{
 						{
-							Name:     "limit",
-							In:       "query",
-							Required: false,
+							Name: "limit",
+							In:   "query",
 							Schema: &TypeSchema{
-								Type:    "integer",
-								Maximum: toPtr(float64(100)),
-								Format:  "int32",
+								Type:     "integer",
+								Maximum:  toPtr(float64(100)),
+								Format:   "int32",
+								Nullable: true,
 							},
 						},
 					},

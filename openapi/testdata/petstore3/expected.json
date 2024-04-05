@@ -50,7 +50,6 @@
             "explode": true,
             "name": "status",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string",
               "enum": [
@@ -101,7 +100,6 @@
             "explode": true,
             "name": "tags",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "array",
               "items": {
@@ -152,7 +150,6 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -213,7 +210,6 @@
           {
             "name": "orderId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -245,7 +241,6 @@
           {
             "name": "password",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -253,7 +248,6 @@
           {
             "name": "username",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -297,7 +291,6 @@
           {
             "name": "username",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -375,6 +368,48 @@
         }
       }
     },
+    "AdjustableQuantityParams": {
+      "fields": {
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        },
+        "maximum": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "minimum": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "AfterExpirationParams": {
+      "description": "Configure actions after a Checkout Session has expired.",
+      "fields": {
+        "recovery": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "RecoveryParams",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "ApiResponse": {
       "fields": {
         "code": {
@@ -406,6 +441,57 @@
         }
       }
     },
+    "AutomaticTaxParams": {
+      "description": "Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions.",
+      "fields": {
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        },
+        "liability": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Param",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "BankTransferParam": {
+      "fields": {
+        "eu_bank_transfer": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "EuBankTransferParams",
+              "type": "named"
+            }
+          }
+        },
+        "requested_address_types": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "V1RequestedAddressTypes",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "name": "BankTransferParamType",
+            "type": "named"
+          }
+        }
+      }
+    },
     "Category": {
       "fields": {
         "id": {
@@ -422,6 +508,168 @@
             "type": "nullable",
             "underlying_type": {
               "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ConsentCollectionParams": {
+      "description": "Configure fields for the Checkout Session to gather active consent from customers.",
+      "fields": {
+        "payment_method_reuse_agreement": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodReuseAgreementParams",
+              "type": "named"
+            }
+          }
+        },
+        "promotions": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Promotions",
+              "type": "named"
+            }
+          }
+        },
+        "terms_of_service": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1TermsOfService",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomFieldDropdownParam": {
+      "fields": {
+        "options": {
+          "type": {
+            "element_type": {
+              "name": "CustomFieldDropdownParamOptions",
+              "type": "named"
+            },
+            "type": "array"
+          }
+        }
+      }
+    },
+    "CustomFieldDropdownParamOptions": {
+      "fields": {
+        "label": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "value": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "CustomFieldLabelParam": {
+      "fields": {
+        "custom": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "type": {
+          "type": {
+            "name": "CustomFieldLabelParamType",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "CustomFieldNumericParam": {
+      "fields": {
+        "maximum_length": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "minimum_length": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomFieldTextParam": {
+      "fields": {
+        "maximum_length": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "minimum_length": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "CustomTextParam": {
+      "description": "Display additional text for your customers using custom text.",
+      "fields": {
+        "after_submit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "shipping_address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "submit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "terms_of_service_acceptance": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
               "type": "named"
             }
           }
@@ -462,10 +710,100 @@
         }
       }
     },
+    "CustomerUpdateParams": {
+      "description": "Controls what fields on Customer can be updated by the Checkout Session. Can only be provided when `customer` is provided.",
+      "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Address",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Name",
+              "type": "named"
+            }
+          }
+        },
+        "shipping": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Shipping",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "DeliveryEstimate": {
+      "fields": {
+        "maximum": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "DeliveryEstimateBound",
+              "type": "named"
+            }
+          }
+        },
+        "minimum": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "DeliveryEstimateBound",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "DeliveryEstimateBound": {
+      "fields": {
+        "unit": {
+          "type": {
+            "name": "V1Unit",
+            "type": "named"
+          }
+        },
+        "value": {
+          "type": {
+            "name": "Int32",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "EndBehavior": {
+      "fields": {
+        "missing_payment_method": {
+          "type": {
+            "name": "V1MissingPaymentMethod",
+            "type": "named"
+          }
+        }
+      }
+    },
     "Error": {
       "description": "An error response from the Stripe API",
       "fields": {
         "error": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "EuBankTransferParams": {
+      "fields": {
+        "country": {
           "type": {
             "name": "String",
             "type": "named"
@@ -481,6 +819,288 @@
             "type": "nullable",
             "underlying_type": {
               "name": "TestHelpersCode",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "FixedAmount": {
+      "fields": {
+        "amount": {
+          "type": {
+            "name": "Int32",
+            "type": "named"
+          }
+        },
+        "currency": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "currency_options": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "InstallmentsParam": {
+      "fields": {
+        "enabled": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "InvoiceCreationParams": {
+      "description": "Generate a post-purchase Invoice for one-time payments.",
+      "fields": {
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        },
+        "invoice_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "InvoiceDataParams",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "InvoiceDataParams": {
+      "fields": {
+        "account_tax_ids": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "custom_fields": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "footer": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "issuer": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Param",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "rendering_options": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "InvoiceSettingsParams": {
+      "fields": {
+        "issuer": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Param",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "LinkedAccountOptionsParam": {
+      "fields": {
+        "permissions": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "V1Permissions",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "prefetch": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "V1Prefetch",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "MandateOptionsParam": {
+      "fields": {
+        "custom_mandate_url": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "default_for": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "V1DefaultFor",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "interval_description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "payment_schedule": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1PaymentSchedule",
+              "type": "named"
+            }
+          }
+        },
+        "transaction_type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1TransactionType",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "MethodParams": {
+      "fields": {
+        "delivery_estimate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "DeliveryEstimate",
+              "type": "named"
+            }
+          }
+        },
+        "display_name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "fixed_amount": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "FixedAmount",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "tax_behavior": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1TaxBehavior",
+              "type": "named"
+            }
+          }
+        },
+        "tax_code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "MethodParamsType",
               "type": "named"
             }
           }
@@ -546,6 +1166,423 @@
         }
       }
     },
+    "Param": {
+      "fields": {
+        "account": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "name": "V1Type",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PaymentIntentDataParams": {
+      "description": "A subset of parameters to be passed to PaymentIntent creation for Checkout Sessions in `payment` mode.",
+      "fields": {
+        "application_fee_amount": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "capture_method": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1CaptureMethod",
+              "type": "named"
+            }
+          }
+        },
+        "description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "on_behalf_of": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "receipt_email": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "setup_future_usage": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1SetupFutureUsage",
+              "type": "named"
+            }
+          }
+        },
+        "shipping": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Shipping",
+              "type": "named"
+            }
+          }
+        },
+        "statement_descriptor": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "statement_descriptor_suffix": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "transfer_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TransferDataParams",
+              "type": "named"
+            }
+          }
+        },
+        "transfer_group": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "PaymentMethodOptionsParam": {
+      "description": "Payment-method-specific configuration.",
+      "fields": {
+        "acss_debit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "affirm": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "afterpay_clearpay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "alipay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "au_becs_debit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "bacs_debit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "bancontact": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "boleto": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "card": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "cashapp": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "customer_balance": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "eps": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "fpx": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "giropay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "grabpay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "ideal": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "klarna": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "konbini": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "link": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "oxxo": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "p24": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "paynow": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "paypal": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "pix": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "revolut_pay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "sepa_debit": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "sofort": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "swish": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "us_bank_account": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "wechat_pay": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "PaymentMethodReuseAgreementParams": {
+      "fields": {
+        "position": {
+          "type": {
+            "name": "V1Position",
+            "type": "named"
+          }
+        }
+      }
+    },
     "Pet": {
       "fields": {
         "category": {
@@ -601,6 +1638,423 @@
               },
               "type": "array"
             }
+          }
+        }
+      }
+    },
+    "PhoneNumberCollectionParams": {
+      "description": "Controls phone number collection settings for the session.\n\nWe recommend that you review your privacy policy and check with your legal contacts\nbefore using this feature. Learn more about [collecting phone numbers with Checkout](https://stripe.com/docs/payments/checkout/phone-numbers).",
+      "fields": {
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyCustomFields": {
+      "fields": {
+        "dropdown": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomFieldDropdownParam",
+              "type": "named"
+            }
+          }
+        },
+        "key": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "label": {
+          "type": {
+            "name": "CustomFieldLabelParam",
+            "type": "named"
+          }
+        },
+        "numeric": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomFieldNumericParam",
+              "type": "named"
+            }
+          }
+        },
+        "optional": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "text": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomFieldTextParam",
+              "type": "named"
+            }
+          }
+        },
+        "type": {
+          "type": {
+            "name": "PostCheckoutSessionsBodyCustomFieldsType",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyDiscounts": {
+      "fields": {
+        "coupon": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "promotion_code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyLineItems": {
+      "fields": {
+        "adjustable_quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AdjustableQuantityParams",
+              "type": "named"
+            }
+          }
+        },
+        "dynamic_tax_rates": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "price": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "price_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PriceDataWithProductData",
+              "type": "named"
+            }
+          }
+        },
+        "quantity": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "tax_rates": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyShippingOptions": {
+      "fields": {
+        "shipping_rate": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "shipping_rate_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "MethodParams",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "PriceDataWithProductData": {
+      "fields": {
+        "currency": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "product": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "product_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ProductData",
+              "type": "named"
+            }
+          }
+        },
+        "recurring": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "RecurringAdhoc",
+              "type": "named"
+            }
+          }
+        },
+        "tax_behavior": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1TaxBehavior",
+              "type": "named"
+            }
+          }
+        },
+        "unit_amount": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "unit_amount_decimal": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ProductData": {
+      "fields": {
+        "description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "images": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "tax_code": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "RecoveryParams": {
+      "fields": {
+        "allow_promotion_codes": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "RecurringAdhoc": {
+      "fields": {
+        "interval": {
+          "type": {
+            "name": "V1Interval",
+            "type": "named"
+          }
+        },
+        "interval_count": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "SetupIntentDataParam": {
+      "description": "A subset of parameters to be passed to SetupIntent creation for Checkout Sessions in `setup` mode.",
+      "fields": {
+        "description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "on_behalf_of": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "Shipping": {
+      "fields": {
+        "address": {
+          "type": {
+            "name": "Address",
+            "type": "named"
+          }
+        },
+        "carrier": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "phone": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tracking_number": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "ShippingAddressCollectionParams": {
+      "description": "When set, provides configuration for Checkout to collect a shipping address from a customer.",
+      "fields": {
+        "allowed_countries": {
+          "type": {
+            "element_type": {
+              "name": "V1AllowedCountries",
+              "type": "named"
+            },
+            "type": "array"
           }
         }
       }
@@ -686,6 +2140,122 @@
         }
       }
     },
+    "SubscriptionDataParams": {
+      "description": "A subset of parameters to be passed to subscription creation for Checkout Sessions in `subscription` mode.",
+      "fields": {
+        "application_fee_percent": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Float64",
+              "type": "named"
+            }
+          }
+        },
+        "billing_cycle_anchor": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UnixTime",
+              "type": "named"
+            }
+          }
+        },
+        "default_tax_rates": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "description": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "invoice_settings": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "InvoiceSettingsParams",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "on_behalf_of": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "proration_behavior": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1ProrationBehavior",
+              "type": "named"
+            }
+          }
+        },
+        "transfer_data": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TransferDataSpecs",
+              "type": "named"
+            }
+          }
+        },
+        "trial_end": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UnixTime",
+              "type": "named"
+            }
+          }
+        },
+        "trial_period_days": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "trial_settings": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TrialSettingsConfig",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "Tag": {
       "fields": {
         "id": {
@@ -704,6 +2274,55 @@
               "name": "String",
               "type": "named"
             }
+          }
+        }
+      }
+    },
+    "TaxIdCollectionParams": {
+      "description": "Controls tax ID collection settings for the session.",
+      "fields": {
+        "enabled": {
+          "type": {
+            "name": "Boolean",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "TransferDataParams": {
+      "fields": {
+        "amount": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "destination": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "TransferDataSpecs": {
+      "fields": {
+        "amount_percent": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Float64",
+              "type": "named"
+            }
+          }
+        },
+        "destination": {
+          "type": {
+            "name": "String",
+            "type": "named"
           }
         }
       }
@@ -916,6 +2535,16 @@
         }
       }
     },
+    "TrialSettingsConfig": {
+      "fields": {
+        "end_behavior": {
+          "type": {
+            "name": "EndBehavior",
+            "type": "named"
+          }
+        }
+      }
+    },
     "User": {
       "fields": {
         "email": {
@@ -1008,7 +2637,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Pet"
@@ -1044,7 +2672,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Pet"
@@ -1075,7 +2702,6 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1084,7 +2710,6 @@
           {
             "name": "name",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1092,7 +2717,6 @@
           {
             "name": "status",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1154,7 +2778,6 @@
           {
             "name": "api_key",
             "in": "header",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1162,7 +2785,6 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1214,7 +2836,6 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1223,7 +2844,6 @@
           {
             "name": "additionalMetadata",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1319,7 +2939,6 @@
           {
             "name": "orderId",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -1387,7 +3006,6 @@
           {
             "name": "username",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1435,7 +3053,6 @@
             "style": "simple",
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "string",
               "maxLength": 5000
@@ -1446,9 +3063,9 @@
             "explode": true,
             "name": "expand",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "array",
+              "nullable": true,
               "items": {
                 "type": "string",
                 "maxLength": 5000
@@ -1460,12 +3077,13 @@
             "explode": true,
             "name": "failure_details",
             "in": "query",
-            "required": false,
             "schema": {
               "type": "object",
+              "nullable": true,
               "properties": {
                 "code": {
                   "type": "string",
+                  "nullable": true,
                   "enum": [
                     "account_closed",
                     "account_frozen",
@@ -1536,7 +3154,6 @@
             "style": "simple",
             "name": "account",
             "in": "path",
-            "required": true,
             "schema": {
               "type": "string",
               "maxLength": 5000
@@ -1557,9 +3174,2230 @@
         "name": "TreasuryInboundTransfer",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/v1/checkout/sessions",
+        "method": "post",
+        "parameters": [
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "after_expiration",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "recovery": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "allow_promotion_codes": {
+                      "type": "boolean",
+                      "nullable": true
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "allow_promotion_codes",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "nullable": true
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "automatic_tax",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "liability": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "account": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "account",
+                        "self"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "billing_address_collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "cancel_url",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 5000
+            }
+          },
+          {
+            "name": "client_reference_id",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 200
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "consent_collection",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "payment_method_reuse_agreement": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "position": {
+                      "type": "string",
+                      "enum": [
+                        "auto",
+                        "hidden"
+                      ]
+                    }
+                  }
+                },
+                "promotions": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "auto",
+                    "none"
+                  ]
+                },
+                "terms_of_service": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "none",
+                    "required"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "custom_fields",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dropdown": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "options": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "value": {
+                              "type": "string",
+                              "maxLength": 100
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "key": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "label": {
+                    "type": "object",
+                    "properties": {
+                      "custom": {
+                        "type": "string",
+                        "maxLength": 50
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "custom"
+                        ]
+                      }
+                    }
+                  },
+                  "numeric": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "maximum_length": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "minimum_length": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "optional": {
+                    "type": "boolean",
+                    "nullable": true
+                  },
+                  "text": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "maximum_length": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "minimum_length": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "dropdown",
+                      "numeric",
+                      "text"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "custom_text",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "after_submit": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "shipping_address": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "submit": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "terms_of_service_acceptance": {
+                  "type": "JSON",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 5000
+            }
+          },
+          {
+            "name": "customer_creation",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "always",
+                "if_required"
+              ]
+            }
+          },
+          {
+            "name": "customer_email",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "customer_update",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                },
+                "shipping": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "auto",
+                    "never"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "discounts",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "coupon": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 5000
+                  },
+                  "promotion_code": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 5000
+                  }
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "expand",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string",
+                "maxLength": 5000
+              }
+            }
+          },
+          {
+            "name": "expires_at",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "unix-time",
+              "nullable": true
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "invoice_creation",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "invoice_data": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "account_tax_ids": {
+                      "type": "JSON",
+                      "nullable": true
+                    },
+                    "custom_fields": {
+                      "type": "JSON",
+                      "nullable": true
+                    },
+                    "description": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 1500
+                    },
+                    "footer": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    },
+                    "issuer": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "account": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "account",
+                            "self"
+                          ]
+                        }
+                      }
+                    },
+                    "metadata": {
+                      "type": "JSON",
+                      "nullable": true
+                    },
+                    "rendering_options": {
+                      "type": "JSON",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "line_items",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "adjustable_quantity": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "maximum": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "minimum": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "dynamic_tax_rates": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 5000
+                    }
+                  },
+                  "price": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 5000
+                  },
+                  "price_data": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "currency": {
+                        "type": "string"
+                      },
+                      "product": {
+                        "type": "string",
+                        "nullable": true,
+                        "maxLength": 5000
+                      },
+                      "product_data": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                          "description": {
+                            "type": "string",
+                            "nullable": true,
+                            "maxLength": 40000
+                          },
+                          "images": {
+                            "type": "array",
+                            "nullable": true,
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "metadata": {
+                            "type": "JSON",
+                            "nullable": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "maxLength": 5000
+                          },
+                          "tax_code": {
+                            "type": "string",
+                            "nullable": true,
+                            "maxLength": 5000
+                          }
+                        }
+                      },
+                      "recurring": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                          "interval": {
+                            "type": "string",
+                            "enum": [
+                              "day",
+                              "month",
+                              "week",
+                              "year"
+                            ]
+                          },
+                          "interval_count": {
+                            "type": "integer",
+                            "nullable": true
+                          }
+                        }
+                      },
+                      "tax_behavior": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                          "exclusive",
+                          "inclusive",
+                          "unspecified"
+                        ]
+                      },
+                      "unit_amount": {
+                        "type": "integer",
+                        "nullable": true
+                      },
+                      "unit_amount_decimal": {
+                        "type": "string",
+                        "format": "decimal",
+                        "nullable": true
+                      }
+                    }
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "nullable": true
+                  },
+                  "tax_rates": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "string",
+                      "maxLength": 5000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "auto",
+                "bg",
+                "cs"
+              ]
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "metadata",
+            "in": "query",
+            "schema": {
+              "type": "JSON",
+              "nullable": true
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "payment",
+                "setup",
+                "subscription"
+              ]
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "payment_intent_data",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "application_fee_amount": {
+                  "type": "integer",
+                  "nullable": true
+                },
+                "capture_method": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "automatic",
+                    "automatic_async",
+                    "manual"
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 1000
+                },
+                "metadata": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "on_behalf_of": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "receipt_email": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "setup_future_usage": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "off_session",
+                    "on_session"
+                  ]
+                },
+                "shipping": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "city": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 5000
+                        },
+                        "country": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 5000
+                        },
+                        "line1": {
+                          "type": "string",
+                          "maxLength": 5000
+                        },
+                        "line2": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 5000
+                        },
+                        "postal_code": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 5000
+                        },
+                        "state": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 5000
+                        }
+                      }
+                    },
+                    "carrier": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    },
+                    "name": {
+                      "type": "string",
+                      "maxLength": 5000
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    },
+                    "tracking_number": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    }
+                  }
+                },
+                "statement_descriptor": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 22
+                },
+                "statement_descriptor_suffix": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 22
+                },
+                "transfer_data": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "amount": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "destination": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "transfer_group": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          {
+            "name": "payment_method_collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "always",
+                "if_required"
+              ]
+            }
+          },
+          {
+            "name": "payment_method_configuration",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 100
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "payment_method_options",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "acss_debit": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "cad",
+                        "usd"
+                      ]
+                    },
+                    "mandate_options": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "custom_mandate_url": {
+                          "type": "JSON",
+                          "nullable": true
+                        },
+                        "default_for": {
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "invoice",
+                              "subscription"
+                            ]
+                          }
+                        },
+                        "interval_description": {
+                          "type": "string",
+                          "nullable": true,
+                          "maxLength": 500
+                        },
+                        "payment_schedule": {
+                          "type": "string",
+                          "nullable": true,
+                          "enum": [
+                            "combined",
+                            "interval",
+                            "sporadic"
+                          ]
+                        },
+                        "transaction_type": {
+                          "type": "string",
+                          "nullable": true,
+                          "enum": [
+                            "business",
+                            "personal"
+                          ]
+                        }
+                      }
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    },
+                    "verification_method": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "automatic",
+                        "instant",
+                        "microdeposits"
+                      ]
+                    }
+                  }
+                },
+                "affirm": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "afterpay_clearpay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "alipay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "au_becs_debit": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "bacs_debit": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    }
+                  }
+                },
+                "bancontact": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "boleto": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "expires_after_days": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    }
+                  }
+                },
+                "card": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "installments": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "request_three_d_secure": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "any",
+                        "automatic",
+                        "challenge"
+                      ]
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "off_session",
+                        "on_session"
+                      ]
+                    },
+                    "statement_descriptor_suffix_kana": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 22
+                    },
+                    "statement_descriptor_suffix_kanji": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 17
+                    }
+                  }
+                },
+                "cashapp": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    }
+                  }
+                },
+                "customer_balance": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "bank_transfer": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "eu_bank_transfer": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "country": {
+                              "type": "string",
+                              "maxLength": 5000
+                            }
+                          }
+                        },
+                        "requested_address_types": {
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "aba",
+                              "iban"
+                            ]
+                          }
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "eu_bank_transfer",
+                            "gb_bank_transfer"
+                          ]
+                        }
+                      }
+                    },
+                    "funding_type": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "bank_transfer"
+                      ]
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "eps": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "fpx": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "giropay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "grabpay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "ideal": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "klarna": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "konbini": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "expires_after_days": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "link": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session"
+                      ]
+                    }
+                  }
+                },
+                "oxxo": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "expires_after_days": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "p24": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    },
+                    "tos_shown_and_accepted": {
+                      "type": "boolean",
+                      "nullable": true
+                    }
+                  }
+                },
+                "paynow": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "paypal": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "capture_method": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "",
+                        "manual"
+                      ]
+                    },
+                    "preferred_locale": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "cs-CZ",
+                        "da-DK"
+                      ]
+                    },
+                    "reference": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 127
+                    },
+                    "risk_correlation_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 32
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "",
+                        "none",
+                        "off_session"
+                      ]
+                    }
+                  }
+                },
+                "pix": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "expires_after_seconds": {
+                      "type": "integer",
+                      "nullable": true
+                    }
+                  }
+                },
+                "revolut_pay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session"
+                      ]
+                    }
+                  }
+                },
+                "sepa_debit": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    }
+                  }
+                },
+                "sofort": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                },
+                "swish": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "reference": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    }
+                  }
+                },
+                "us_bank_account": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "financial_connections": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "permissions": {
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "string",
+                            "maxLength": 5000,
+                            "enum": [
+                              "balances",
+                              "ownership",
+                              "payment_method",
+                              "transactions"
+                            ]
+                          }
+                        },
+                        "prefetch": {
+                          "type": "array",
+                          "nullable": true,
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "balances",
+                              "transactions"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none",
+                        "off_session",
+                        "on_session"
+                      ]
+                    },
+                    "verification_method": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "automatic",
+                        "instant"
+                      ]
+                    }
+                  }
+                },
+                "wechat_pay": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "app_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 5000
+                    },
+                    "client": {
+                      "type": "string",
+                      "enum": [
+                        "android",
+                        "ios",
+                        "web"
+                      ]
+                    },
+                    "setup_future_usage": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "none"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "payment_method_types",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "acss_debit",
+                  "affirm"
+                ]
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "phone_number_collection",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "name": "redirect_on_completion",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "always",
+                "if_required",
+                "never"
+              ]
+            }
+          },
+          {
+            "name": "return_url",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 5000
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "setup_intent_data",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 1000
+                },
+                "metadata": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "on_behalf_of": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "shipping_address_collection",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "allowed_countries": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "AC",
+                      "AD"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "shipping_options",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "shipping_rate": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 5000
+                  },
+                  "shipping_rate_data": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "delivery_estimate": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                          "maximum": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "business_day",
+                                  "day",
+                                  "hour",
+                                  "month",
+                                  "week"
+                                ]
+                              },
+                              "value": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "minimum": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "business_day",
+                                  "day",
+                                  "hour",
+                                  "month",
+                                  "week"
+                                ]
+                              },
+                              "value": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "display_name": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "fixed_amount": {
+                        "type": "object",
+                        "nullable": true,
+                        "properties": {
+                          "amount": {
+                            "type": "integer"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "currency_options": {
+                            "type": "JSON",
+                            "nullable": true
+                          }
+                        }
+                      },
+                      "metadata": {
+                        "type": "JSON",
+                        "nullable": true
+                      },
+                      "tax_behavior": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                          "exclusive",
+                          "inclusive",
+                          "unspecified"
+                        ]
+                      },
+                      "tax_code": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "type": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                          "fixed_amount"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "submit_type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "auto",
+                "book",
+                "donate",
+                "pay"
+              ]
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "subscription_data",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "application_fee_percent": {
+                  "type": "number",
+                  "nullable": true
+                },
+                "billing_cycle_anchor": {
+                  "type": "integer",
+                  "format": "unix-time",
+                  "nullable": true
+                },
+                "default_tax_rates": {
+                  "type": "array",
+                  "nullable": true,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 5000
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "nullable": true,
+                  "maxLength": 500
+                },
+                "invoice_settings": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "issuer": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "account": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "account",
+                            "self"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "metadata": {
+                  "type": "JSON",
+                  "nullable": true
+                },
+                "on_behalf_of": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "proration_behavior": {
+                  "type": "string",
+                  "nullable": true,
+                  "enum": [
+                    "create_prorations",
+                    "none"
+                  ]
+                },
+                "transfer_data": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "amount_percent": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "destination": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "trial_end": {
+                  "type": "integer",
+                  "format": "unix-time",
+                  "nullable": true
+                },
+                "trial_period_days": {
+                  "type": "integer",
+                  "nullable": true
+                },
+                "trial_settings": {
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "end_behavior": {
+                      "type": "object",
+                      "properties": {
+                        "missing_payment_method": {
+                          "type": "string",
+                          "enum": [
+                            "cancel",
+                            "create_invoice",
+                            "pause"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "success_url",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 5000
+            }
+          },
+          {
+            "style": "deepObject",
+            "explode": true,
+            "name": "tax_id_collection",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "nullable": true,
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "name": "ui_mode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true,
+              "enum": [
+                "embedded",
+                "hosted"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "contentType": "application/x-www-form-urlencoded"
+        }
+      },
+      "arguments": {
+        "after_expiration": {
+          "description": "Configure actions after a Checkout Session has expired.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AfterExpirationParams",
+              "type": "named"
+            }
+          }
+        },
+        "allow_promotion_codes": {
+          "description": "Enables user redeemable promotion codes.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Boolean",
+              "type": "named"
+            }
+          }
+        },
+        "automatic_tax": {
+          "description": "Settings for automatic tax lookup for this session and resulting payments, invoices, and subscriptions.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "AutomaticTaxParams",
+              "type": "named"
+            }
+          }
+        },
+        "billing_address_collection": {
+          "description": "Specify whether Checkout should collect the customer's billing address. Defaults to `auto`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1BillingAddressCollection",
+              "type": "named"
+            }
+          }
+        },
+        "cancel_url": {
+          "description": "If set, Checkout displays a back button and customers will be directed to this URL if they decide to cancel payment and return to your website.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "client_reference_id": {
+          "description": "A unique string to reference the Checkout Session. This can be a\ncustomer ID, a cart ID, or similar, and can be used to reconcile the\nsession with your internal systems.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "consent_collection": {
+          "description": "Configure fields for the Checkout Session to gather active consent from customers.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ConsentCollectionParams",
+              "type": "named"
+            }
+          }
+        },
+        "currency": {
+          "description": "Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies). Required in `setup` mode when `payment_method_types` is not set.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "custom_fields": {
+          "description": "Collect additional information from your customer using custom fields. Up to 3 fields are supported.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "PostCheckoutSessionsBodyCustomFields",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "custom_text": {
+          "description": "Display additional text for your customers using custom text.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomTextParam",
+              "type": "named"
+            }
+          }
+        },
+        "customer": {
+          "description": "ID of an existing Customer, if one exists. In `payment` mode, the customer’s most recently saved card\npayment method will be used to prefill the email, name, card details, and billing address\non the Checkout page. In `subscription` mode, the customer’s [default payment method](https://stripe.com/docs/api/customers/update#update_customer-invoice_settings-default_payment_method)\nwill be used if it’s a card, otherwise the most recently saved card will be used. A valid billing address, billing name and billing email are required on the payment method for Checkout to prefill the customer's card details.\n\nIf the Customer already has a valid [email](https://stripe.com/docs/api/customers/object#customer_object-email) set, the email will be prefilled and not editable in Checkout.\nIf the Customer does not have a valid `email`, Checkout will set the email entered during the session on the Customer.\n\nIf blank for Checkout Sessions in `subscription` mode or with `customer_creation` set as `always` in `payment` mode, Checkout will create a new Customer object based on information provided during the payment flow.\n\nYou can set [`payment_intent_data.setup_future_usage`](https://stripe.com/docs/api/checkout/sessions/create#create_checkout_session-payment_intent_data-setup_future_usage) to have Checkout automatically attach the payment method to the Customer you pass in for future reuse.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "customer_creation": {
+          "description": "Configure whether a Checkout Session creates a [Customer](https://stripe.com/docs/api/customers) during Session confirmation.\n\nWhen a Customer is not created, you can still retrieve email, address, and other customer data entered in Checkout\nwith [customer_details](https://stripe.com/docs/api/checkout/sessions/object#checkout_session_object-customer_details).\n\nSessions that don't create Customers instead are grouped by [guest customers](https://stripe.com/docs/payments/checkout/guest-customers)\nin the Dashboard. Promotion codes limited to first time customers will return invalid for these Sessions.\n\nCan only be set in `payment` and `setup` mode.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1CustomerCreation",
+              "type": "named"
+            }
+          }
+        },
+        "customer_email": {
+          "description": "If provided, this value will be used when the Customer object is created.\nIf not provided, customers will be asked to enter their email address.\nUse this parameter to prefill customer data if you already have an email\non file. To access information about the customer once a session is\ncomplete, use the `customer` field.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "customer_update": {
+          "description": "Controls what fields on Customer can be updated by the Checkout Session. Can only be provided when `customer` is provided.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CustomerUpdateParams",
+              "type": "named"
+            }
+          }
+        },
+        "discounts": {
+          "description": "The coupon or promotion code to apply to this Session. Currently, only up to one may be specified.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "PostCheckoutSessionsBodyDiscounts",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "expand": {
+          "description": "Specifies which fields in the response should be expanded.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "expires_at": {
+          "description": "The Epoch time in seconds at which the Checkout Session will expire. It can be anywhere from 30 minutes to 24 hours after Checkout Session creation. By default, this value is 24 hours from creation.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UnixTime",
+              "type": "named"
+            }
+          }
+        },
+        "invoice_creation": {
+          "description": "Generate a post-purchase Invoice for one-time payments.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "InvoiceCreationParams",
+              "type": "named"
+            }
+          }
+        },
+        "line_items": {
+          "description": "A list of items the customer is purchasing. Use this parameter to pass one-time or recurring [Prices](https://stripe.com/docs/api/prices).\n\nFor `payment` mode, there is a maximum of 100 line items, however it is recommended to consolidate line items if there are more than a few dozen.\n\nFor `subscription` mode, there is a maximum of 20 line items with recurring Prices and 20 line items with one-time Prices. Line items with one-time Prices will be on the initial invoice only.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "PostCheckoutSessionsBodyLineItems",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "locale": {
+          "description": "The IETF language tag of the locale Checkout is displayed in. If blank or `auto`, the browser's locale is used.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Locale",
+              "type": "named"
+            }
+          }
+        },
+        "metadata": {
+          "description": "Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
+        "mode": {
+          "description": "The mode of the Checkout Session. Pass `subscription` if the Checkout Session includes at least one recurring item.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1Mode",
+              "type": "named"
+            }
+          }
+        },
+        "payment_intent_data": {
+          "description": "A subset of parameters to be passed to PaymentIntent creation for Checkout Sessions in `payment` mode.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentIntentDataParams",
+              "type": "named"
+            }
+          }
+        },
+        "payment_method_collection": {
+          "description": "Specify whether Checkout should collect a payment method. When set to `if_required`, Checkout will not collect a payment method when the total due for the session is 0.\nThis may occur if the Checkout Session includes a free trial or a discount.\n\nCan only be set in `subscription` mode. Defaults to `always`.\n\nIf you'd like information on how to collect a payment method outside of Checkout, read the guide on configuring [subscriptions with a free trial](https://stripe.com/docs/payments/checkout/free-trials).",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1PaymentMethodCollection",
+              "type": "named"
+            }
+          }
+        },
+        "payment_method_configuration": {
+          "description": "The ID of the payment method configuration to use with this Checkout session.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "payment_method_options": {
+          "description": "Payment-method-specific configuration.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodOptionsParam",
+              "type": "named"
+            }
+          }
+        },
+        "payment_method_types": {
+          "description": "A list of the types of payment methods (e.g., `card`) this Checkout Session can accept.\n\nYou can omit this attribute to manage your payment methods from the [Stripe Dashboard](https://dashboard.stripe.com/settings/payment_methods).\nSee [Dynamic Payment Methods](https://stripe.com/docs/payments/payment-methods/integration-options#using-dynamic-payment-methods) for more details.\n\nRead more about the supported payment methods and their requirements in our [payment\nmethod details guide](/docs/payments/checkout/payment-methods).\n\nIf multiple payment methods are passed, Checkout will dynamically reorder them to\nprioritize the most relevant payment methods based on the customer's location and\nother characteristics.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "V1PaymentMethodTypes",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "phone_number_collection": {
+          "description": "Controls phone number collection settings for the session.\n\nWe recommend that you review your privacy policy and check with your legal contacts\nbefore using this feature. Learn more about [collecting phone numbers with Checkout](https://stripe.com/docs/payments/checkout/phone-numbers).",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PhoneNumberCollectionParams",
+              "type": "named"
+            }
+          }
+        },
+        "redirect_on_completion": {
+          "description": "This parameter applies to `ui_mode: embedded`. Learn more about the [redirect behavior](https://stripe.com/docs/payments/checkout/custom-redirect-behavior) of embedded sessions. Defaults to `always`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1RedirectOnCompletion",
+              "type": "named"
+            }
+          }
+        },
+        "return_url": {
+          "description": "The URL to redirect your customer back to after they authenticate or cancel their payment on the\npayment method's app or site. This parameter is required if ui_mode is `embedded`\nand redirect-based payment methods are enabled on the session.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "setup_intent_data": {
+          "description": "A subset of parameters to be passed to SetupIntent creation for Checkout Sessions in `setup` mode.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "SetupIntentDataParam",
+              "type": "named"
+            }
+          }
+        },
+        "shipping_address_collection": {
+          "description": "When set, provides configuration for Checkout to collect a shipping address from a customer.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "ShippingAddressCollectionParams",
+              "type": "named"
+            }
+          }
+        },
+        "shipping_options": {
+          "description": "The shipping rate options to apply to this Session. Up to a maximum of 5.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "PostCheckoutSessionsBodyShippingOptions",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "submit_type": {
+          "description": "Describes the type of transaction being performed by Checkout in order to customize\nrelevant text on the page, such as the submit button. `submit_type` can only be\nspecified on Checkout Sessions in `payment` mode. If blank or `auto`, `pay` is used.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1SubmitType",
+              "type": "named"
+            }
+          }
+        },
+        "subscription_data": {
+          "description": "A subset of parameters to be passed to subscription creation for Checkout Sessions in `subscription` mode.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "SubscriptionDataParams",
+              "type": "named"
+            }
+          }
+        },
+        "success_url": {
+          "description": "The URL to which Stripe should send customers when payment or setup\nis complete.\nThis parameter is not allowed if ui_mode is `embedded`. If you’d like to use\ninformation from the successful Checkout Session on your page, read the\nguide on [customizing your success page](https://stripe.com/docs/payments/checkout/custom-success-page).",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "tax_id_collection": {
+          "description": "Controls tax ID collection settings for the session.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "TaxIdCollectionParams",
+              "type": "named"
+            }
+          }
+        },
+        "ui_mode": {
+          "description": "The UI mode of the Session. Defaults to `hosted`.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "V1UiMode",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "name": "PostCheckoutSessions",
+      "result_type": {
+        "name": "Order",
+        "type": "named"
+      }
     }
   ],
   "scalar_types": {
+    "BankTransferParamType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "eu_bank_transfer",
+          "gb_bank_transfer"
+        ],
+        "type": "enum"
+      }
+    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1577,6 +5415,23 @@
     "ConnectEmbeddedAccountFeatures": {
       "aggregate_functions": {},
       "comparison_operators": {}
+    },
+    "CustomFieldLabelParamType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "custom"
+        ],
+        "type": "enum"
+      }
+    },
+    "Float64": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "float64"
+      }
     },
     "Int32": {
       "aggregate_functions": {},
@@ -1596,6 +5451,16 @@
       "aggregate_functions": {},
       "comparison_operators": {}
     },
+    "MethodParamsType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "fixed_amount"
+        ],
+        "type": "enum"
+      }
+    },
     "OrderStatus": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1608,6 +5473,50 @@
         "type": "enum"
       }
     },
+    "PaymentMethodOptionsParamCaptureMethod": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "",
+          "manual"
+        ],
+        "type": "enum"
+      }
+    },
+    "PaymentMethodOptionsParamSetupFutureUsage": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
+        "type": "enum"
+      }
+    },
+    "PaymentMethodOptionsParamSetupFutureUsageEnum": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "none"
+        ],
+        "type": "enum"
+      }
+    },
+    "PaymentMethodOptionsParamVerificationMethod": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "automatic",
+          "instant"
+        ],
+        "type": "enum"
+      }
+    },
     "PetStatus": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1616,6 +5525,18 @@
           "available",
           "pending",
           "sold"
+        ],
+        "type": "enum"
+      }
+    },
+    "PostCheckoutSessionsBodyCustomFieldsType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "dropdown",
+          "numeric",
+          "text"
         ],
         "type": "enum"
       }
@@ -1718,6 +5639,420 @@
       "comparison_operators": {},
       "representation": {
         "type": "int32"
+      }
+    },
+    "V1Address": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "never"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1AllowedCountries": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "AC",
+          "AD"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1BillingAddressCollection": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "required"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1CaptureMethod": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "automatic",
+          "automatic_async",
+          "manual"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Client": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "android",
+          "ios",
+          "web"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Currency": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "cad",
+          "usd"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1CustomerCreation": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "always",
+          "if_required"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1DefaultFor": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "invoice",
+          "subscription"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1FundingType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "bank_transfer"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Interval": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "day",
+          "month",
+          "week",
+          "year"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Locale": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "bg",
+          "cs"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1MissingPaymentMethod": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "cancel",
+          "create_invoice",
+          "pause"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Mode": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "payment",
+          "setup",
+          "subscription"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Name": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "never"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1PaymentMethodCollection": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "always",
+          "if_required"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1PaymentMethodTypes": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "acss_debit",
+          "affirm"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1PaymentSchedule": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "combined",
+          "interval",
+          "sporadic"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Permissions": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "balances",
+          "ownership",
+          "payment_method",
+          "transactions"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Position": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "hidden"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1PreferredLocale": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "cs-CZ",
+          "da-DK"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Prefetch": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "balances",
+          "transactions"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Promotions": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "none"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1ProrationBehavior": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "create_prorations",
+          "none"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1RedirectOnCompletion": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "always",
+          "if_required",
+          "never"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1RequestThreeDSecure": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "any",
+          "automatic",
+          "challenge"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1RequestedAddressTypes": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "aba",
+          "iban"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1SetupFutureUsage": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "off_session",
+          "on_session"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Shipping": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "never"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1SubmitType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "auto",
+          "book",
+          "donate",
+          "pay"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1TaxBehavior": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "exclusive",
+          "inclusive",
+          "unspecified"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1TermsOfService": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "none",
+          "required"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1TransactionType": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "business",
+          "personal"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Type": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "account",
+          "self"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1UiMode": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "embedded",
+          "hosted"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1Unit": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "business_day",
+          "day",
+          "hour",
+          "month",
+          "week"
+        ],
+        "type": "enum"
+      }
+    },
+    "V1VerificationMethod": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "automatic",
+          "instant",
+          "microdeposits"
+        ],
+        "type": "enum"
       }
     }
   }

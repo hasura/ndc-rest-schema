@@ -77,9 +77,9 @@ The NDC REST configuration adds `request` information into `functions` and `proc
     parameters:
       - name: petId
         in: path
-        required: true
         schema:
           type: string
+          nullable: false
     security:
       - api_key: []
 ```
@@ -148,9 +148,9 @@ functions:
       parameters:
         - name: status
           in: query
-          required: false
           schema:
             type: String
+            nullable: true
             enum:
               - available
               - pending

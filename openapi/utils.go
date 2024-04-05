@@ -319,7 +319,6 @@ func createSchemaFromOpenAPISchema(input *base.Schema) *rest.TypeSchema {
 	}
 	ps.Format = input.Format
 	ps.Pattern = input.Pattern
-	ps.Nullable = input.Nullable
 	ps.Maximum = input.Maximum
 	ps.Minimum = input.Minimum
 	ps.MaxLength = input.MaxLength

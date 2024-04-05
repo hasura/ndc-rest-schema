@@ -335,7 +335,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, apiPath 
 				Type:     param.Type,
 				Format:   param.Format,
 				Pattern:  param.Pattern,
-				Nullable: &nullable,
+				Nullable: nullable,
 			}
 			if param.Maximum != nil {
 				maximum := float64(*param.Maximum)
@@ -376,8 +376,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, apiPath 
 		case rest.InBody:
 			arguments["body"] = argument
 			requestBody = &rest.RequestBody{
-				Required: paramRequired,
-				Schema:   typeSchema,
+				Schema: typeSchema,
 			}
 		case rest.InFormData:
 			arguments[paramName] = argument
@@ -387,17 +386,15 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, apiPath 
 		default:
 			arguments[paramName] = argument
 			reqParams = append(reqParams, rest.RequestParameter{
-				Name:     paramName,
-				In:       paramLocation,
-				Required: paramRequired,
-				Schema:   typeSchema,
+				Name:   paramName,
+				In:     paramLocation,
+				Schema: typeSchema,
 			})
 		}
 	}
 
 	if len(formData.Properties) > 0 {
 		requestBody = &rest.RequestBody{
-			Required:    true,
 			ContentType: rest.ContentTypeMultipartFormData,
 			Schema:      &formData,
 		}
@@ -522,7 +519,8 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 				typeResult.Properties = make(map[string]rest.TypeSchema)
 				for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
 					propName := prop.Key()
-					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), !slices.Contains(typeSchema.Required, propName), apiPath, append(fieldPaths, propName))
+					nullable := !slices.Contains(typeSchema.Required, propName)
+					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, apiPath, append(fieldPaths, propName))
 					if err != nil {
 						return nil, nil, err
 					}
@@ -532,6 +530,7 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 					if propApiSchema.Description != "" {
 						objField.Description = &propApiSchema.Description
 					}
+					propApiSchema.Nullable = nullable
 					typeResult.Properties[propName] = *propApiSchema
 					object.Fields[propName] = objField
 				}

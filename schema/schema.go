@@ -94,10 +94,9 @@ func (r Request) Clone() *Request {
 type RequestParameter struct {
 	EncodingObject `yaml:",inline"`
 
-	Name     string            `json:"name" yaml:"name" mapstructure:"name"`
-	In       ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
-	Required bool              `json:"required" yaml:"required" mapstructure:"required"`
-	Schema   *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Name   string            `json:"name" yaml:"name" mapstructure:"name"`
+	In     ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
+	Schema *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 }
 
 // TypeSchema represents a serializable object of OpenAPI schema
@@ -106,7 +105,7 @@ type TypeSchema struct {
 	Type        string                `json:"type" yaml:"type" mapstructure:"type"`
 	Format      string                `json:"format,omitempty" yaml:"format,omitempty" mapstructure:"format"`
 	Pattern     string                `json:"pattern,omitempty" yaml:"pattern,omitempty" mapstructure:"pattern"`
-	Nullable    *bool                 `json:"nullable,omitempty" yaml:"nullable,omitempty" mapstructure:"nullable"`
+	Nullable    bool                  `json:"nullable,omitempty" yaml:"nullable,omitempty" mapstructure:"nullable"`
 	Maximum     *float64              `json:"maximum,omitempty" yaml:"maximum,omitempty" mapstructure:"maximum"`
 	Minimum     *float64              `json:"minimum,omitempty," yaml:"minimum,omitempty" mapstructure:"minimum"`
 	MaxLength   *int64                `json:"maxLength,omitempty" yaml:"maxLength,omitempty" mapstructure:"maxLength"`
@@ -141,7 +140,6 @@ type EncodingObject struct {
 
 // RequestBody defines flexible request body with content types
 type RequestBody struct {
-	Required    bool                      `json:"required,omitempty" yaml:"required,omitempty" mapstructure:"required"`
 	ContentType string                    `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
 	Schema      *TypeSchema               `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 	Encoding    map[string]EncodingObject `json:"encoding,omitempty" yaml:"encoding,omitempty" mapstructure:"encoding"`
