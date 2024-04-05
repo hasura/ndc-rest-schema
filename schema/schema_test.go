@@ -11,7 +11,7 @@ import (
 
 func assertDeepEqual(t *testing.T, expected any, reality any, msgs ...string) {
 	if !reflect.DeepEqual(expected, reality) {
-		t.Errorf("%s: not equal, expected: %+v got: %+v", strings.Join(msgs, " "), expected, reality)
+		t.Errorf("%s: not equal, expected: %+v\ngot     : %+v", strings.Join(msgs, " "), expected, reality)
 		t.FailNow()
 	}
 }
@@ -82,8 +82,7 @@ func TestDecodeRESTFunctionInfo(t *testing.T) {
 						{
 							"name": "limit",
 							"in": "query",
-							"required": false,
-							"schema": { "type": "integer", "maximum": 100, "format": "int32" }
+							"schema": { "type": "integer", "maximum": 100, "format": "int32", "nullable": true }
 						}
 					]
 				},
