@@ -17,18 +17,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -74,10 +72,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -106,10 +102,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -141,18 +135,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "postId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -198,10 +190,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -230,18 +220,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -287,10 +275,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -319,10 +305,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -354,18 +338,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "albumId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -411,10 +393,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -443,18 +423,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -500,10 +478,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -532,18 +508,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "email",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -589,10 +563,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -1022,7 +994,6 @@
         "url": "/posts",
         "method": "post",
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Post"
@@ -1053,15 +1024,12 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "schema": {
             "type": "Post"
           }
@@ -1098,15 +1066,12 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "schema": {
             "type": "Post"
           }
@@ -1143,10 +1108,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]

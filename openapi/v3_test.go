@@ -19,7 +19,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 		Source   string
 		Expected string
 	}{
-		// go run . convert -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --spec openapi3 --env-prefix PET_STORE
+		// go run . convert -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
 		{
 			Name:     "petstore3",
 			Source:   "testdata/petstore3/source.json",
@@ -38,7 +38,8 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
 			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, &ConvertOptions{
-				EnvPrefix: "PET_STORE",
+				EnvPrefix:  "PET_STORE",
+				TrimPrefix: "/v1",
 			})
 			if output == nil {
 				t.Error(errors.Join(errs...))

@@ -307,31 +307,27 @@ func canSetEnumToSchema(sm *rest.NDCRestSchema, scalarName string, enums []strin
 	return false
 }
 
-func createSchemaFromOpenAPISchema(input *base.Schema) *rest.TypeSchema {
+func createSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest.TypeSchema {
 	ps := &rest.TypeSchema{}
 	if input == nil {
 		return ps
 	}
-	if len(input.Type) > 1 {
-		ps.Type = string(rest.ScalarJSON)
-	} else if len(input.Type) > 0 {
-		ps.Type = input.Type[0]
+	if typeName != "" {
+		ps.Type = typeName
+	} else {
+		if len(input.Type) > 1 {
+			ps.Type = string(rest.ScalarJSON)
+		} else if len(input.Type) > 0 {
+			ps.Type = input.Type[0]
+		}
+		ps.Format = input.Format
 	}
-	ps.Format = input.Format
 	ps.Pattern = input.Pattern
 	ps.Maximum = input.Maximum
 	ps.Minimum = input.Minimum
 	ps.MaxLength = input.MaxLength
 	ps.MinLength = input.MinLength
 	ps.Description = input.Description
-
-	enumLength := len(input.Enum)
-	if enumLength > 0 {
-		ps.Enum = make([]string, enumLength)
-		for i, enum := range input.Enum {
-			ps.Enum[i] = enum.Value
-		}
-	}
 
 	return ps
 }
@@ -393,4 +389,15 @@ func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParamete
 	})
 
 	return input
+}
+
+func getNamedType(typeSchema schema.TypeEncoder, defaultValue string) string {
+	switch ty := typeSchema.(type) {
+	case *schema.NullableType:
+		return getNamedType(ty.UnderlyingType.Interface(), defaultValue)
+	case *schema.NamedType:
+		return ty.Name
+	default:
+		return defaultValue
+	}
 }

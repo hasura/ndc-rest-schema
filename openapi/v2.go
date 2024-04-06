@@ -332,8 +332,7 @@ func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, apiPath 
 			}
 			nullable := !paramRequired
 			typeSchema = &rest.TypeSchema{
-				Type:     param.Type,
-				Format:   param.Format,
+				Type:     getNamedType(schemaType, param.Type),
 				Pattern:  param.Pattern,
 				Nullable: nullable,
 			}
@@ -479,14 +478,14 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 		return nil, nil, errParameterSchemaEmpty
 	}
 
-	typeResult := createSchemaFromOpenAPISchema(typeSchema)
+	var typeResult *rest.TypeSchema
 	if len(typeSchema.AnyOf) > 0 || typeSchema.AdditionalProperties != nil || len(typeSchema.Type) > 1 {
 		scalarName := "JSON"
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
 		}
-		typeResult.Type = scalarName
-		return schema.NewNamedType(scalarName), nil, nil
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
+		return schema.NewNamedType(scalarName), typeResult, nil
 	}
 
 	if len(typeSchema.Type) == 0 {
@@ -498,8 +497,10 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 	if isPrimitiveScalar(typeName) {
 		scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 	} else {
 
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, "")
 		typeResult.Type = typeName
 		switch typeName {
 		case "object":

@@ -445,7 +445,6 @@ func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath 
 	}
 
 	return arguments, reqParams, nil
-
 }
 
 // get and convert an OpenAPI data type to a NDC type
@@ -494,13 +493,22 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 		return nil, nil, errParameterSchemaEmpty
 	}
 
-	typeResult := createSchemaFromOpenAPISchema(typeSchema)
-	if len(typeSchema.AnyOf) > 0 || len(typeSchema.OneOf) > 0 || len(typeSchema.AllOf) > 0 || (typeSchema.AdditionalProperties != nil && (typeSchema.AdditionalProperties.B || typeSchema.AdditionalProperties.A != nil)) {
+	var typeResult *rest.TypeSchema
+	anyOfLength := len(typeSchema.AnyOf)
+	oneOfLength := len(typeSchema.OneOf)
+	if anyOfLength == 1 {
+		return oc.getSchemaTypeFromProxy(typeSchema.AnyOf[0], *typeSchema.Nullable, apiPath, fieldPaths)
+	}
+	if oneOfLength == 1 {
+		return oc.getSchemaTypeFromProxy(typeSchema.OneOf[0], *typeSchema.Nullable, apiPath, fieldPaths)
+	}
+
+	if oneOfLength > 0 || anyOfLength > 0 || (typeSchema.AdditionalProperties != nil && (typeSchema.AdditionalProperties.B || typeSchema.AdditionalProperties.A != nil)) {
 		scalarName := "JSON"
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
 		}
-		typeResult.Type = scalarName
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 		return schema.NewNamedType(scalarName), typeResult, nil
 	}
 
@@ -512,9 +520,10 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 	if len(typeSchema.Type) > 1 || isPrimitiveScalar(typeSchema.Type[0]) {
 		scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 	} else {
 		typeName := typeSchema.Type[0]
-		typeResult.Type = typeName
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, typeName)
 		switch typeName {
 		case "object":
 			refName := utils.StringSliceToPascalCase(fieldPaths)
