@@ -401,3 +401,8 @@ func getNamedType(typeSchema schema.TypeEncoder, defaultValue string) string {
 		return defaultValue
 	}
 }
+
+func isNullableType(input schema.TypeEncoder) bool {
+	_, ok := input.(*schema.NullableType)
+	return ok
+}

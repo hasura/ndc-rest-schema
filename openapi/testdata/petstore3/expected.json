@@ -2356,11 +2356,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "String",
-                "type": "named"
-              }
+              "name": "String",
+              "type": "named"
             }
           }
         },
@@ -2368,11 +2365,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "TreasuryInboundTransfersResourceFailureDetails",
-                "type": "named"
-              }
+              "name": "TreasuryInboundTransfersResourceFailureDetails",
+              "type": "named"
             }
           }
         },
@@ -2388,11 +2382,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "String",
-                "type": "named"
-              }
+              "name": "String",
+              "type": "named"
             }
           }
         },
@@ -2436,11 +2427,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "Boolean",
-                "type": "named"
-              }
+              "name": "Boolean",
+              "type": "named"
             }
           }
         },
@@ -2494,11 +2482,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "UnixTime",
-                "type": "named"
-              }
+              "name": "UnixTime",
+              "type": "named"
             }
           }
         },
@@ -2507,11 +2492,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "UnixTime",
-                "type": "named"
-              }
+              "name": "UnixTime",
+              "type": "named"
             }
           }
         },
@@ -2520,11 +2502,8 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "type": "nullable",
-              "underlying_type": {
-                "name": "UnixTime",
-                "type": "named"
-              }
+              "name": "UnixTime",
+              "type": "named"
             }
           }
         }
