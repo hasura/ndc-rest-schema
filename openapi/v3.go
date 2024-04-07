@@ -468,9 +468,6 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 			Type: refName,
 		}
 	} else {
-		if innerSchema.Title != "" && !strings.Contains(innerSchema.Title, " ") {
-			fieldPaths = []string{utils.ToPascalCase(innerSchema.Title)}
-		}
 		ndcType, typeSchema, err = oc.getSchemaType(innerSchema, apiPath, fieldPaths)
 		if err != nil {
 			return nil, nil, err
