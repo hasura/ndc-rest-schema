@@ -51,7 +51,8 @@
             "name": "status",
             "in": "query",
             "schema": {
-              "type": "PetStatus"
+              "type": "PetStatus",
+              "nullable": true
             }
           }
         ],
@@ -97,6 +98,7 @@
             "in": "query",
             "schema": {
               "type": "array",
+              "nullable": true,
               "items": {
                 "type": "String"
               }
@@ -235,14 +237,16 @@
             "name": "password",
             "in": "query",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           },
           {
             "name": "username",
             "in": "query",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           }
         ]
@@ -3369,14 +3373,16 @@
             "name": "name",
             "in": "query",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           },
           {
             "name": "status",
             "in": "query",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           }
         ],
@@ -3437,7 +3443,8 @@
             "name": "api_key",
             "in": "header",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           },
           {
@@ -3501,7 +3508,8 @@
             "name": "additionalMetadata",
             "in": "query",
             "schema": {
-              "type": "String"
+              "type": "String",
+              "nullable": true
             }
           }
         ],
@@ -3516,7 +3524,8 @@
         "requestBody": {
           "contentType": "application/octet-stream",
           "schema": {
-            "type": "Bytes"
+            "type": "Bytes",
+            "nullable": true
           }
         }
       },
@@ -3563,7 +3572,8 @@
         "requestBody": {
           "contentType": "application/json",
           "schema": {
-            "type": "Order"
+            "type": "Order",
+            "nullable": true
           }
         }
       },
@@ -3626,7 +3636,8 @@
         "requestBody": {
           "contentType": "application/json",
           "schema": {
-            "type": "array"
+            "type": "array",
+            "nullable": true
           }
         }
       },

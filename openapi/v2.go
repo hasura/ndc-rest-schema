@@ -432,7 +432,10 @@ func (oc *openAPIv2Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 		}
 	}
 	if nullable {
-		ndcType = schema.NewNullableType(ndcType)
+		typeSchema.Nullable = true
+		if !isNullableType(ndcType) {
+			ndcType = schema.NewNullableType(ndcType)
+		}
 	}
 	return ndcType, typeSchema, nil
 }
