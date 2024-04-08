@@ -410,3 +410,8 @@ func isNullableType(input schema.TypeEncoder) bool {
 	_, ok := input.(*schema.NullableType)
 	return ok
 }
+
+// encodeHeaderArgumentName encodes header key to NDC schema field name
+func encodeHeaderArgumentName(name string) string {
+	return fmt.Sprintf("header%s", utils.ToPascalCase(name))
+}

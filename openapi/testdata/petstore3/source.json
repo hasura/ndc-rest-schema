@@ -474,16 +474,7 @@
                   },
                   "profileImage": {
                     "type": "string",
-                    "format": "binary",
-                    "contentType": "image/png, image/jpeg",
-                    "headers": {
-                      "X-Rate-Limit-Limit": {
-                        "description": "The number of allowed requests in the current period",
-                        "schema": {
-                          "type": "integer"
-                        }
-                      }
-                    }
+                    "format": "binary"
                   },
                   "children": {
                     "type": "array",
@@ -495,6 +486,19 @@
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/Address"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "profileImage": {
+                  "contentType": "image/png, image/jpeg",
+                  "headers": {
+                    "X-Rate-Limit-Limit": {
+                      "description": "The number of allowed requests in the current period",
+                      "schema": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }

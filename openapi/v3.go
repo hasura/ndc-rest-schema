@@ -394,18 +394,18 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 	}
 
 	contentType := rest.ContentTypeJSON
-	jsonContent, ok := reqBody.Content.Get(contentType)
+	content, ok := reqBody.Content.Get(contentType)
 	if !ok {
 		contentPair := reqBody.Content.First()
 		contentType = contentPair.Key()
-		jsonContent = contentPair.Value()
+		content = contentPair.Value()
 	}
 
 	bodyRequired := false
 	if reqBody.Required != nil && *reqBody.Required {
 		bodyRequired = true
 	}
-	schemaType, typeSchema, err := oc.builder.getSchemaTypeFromProxy(jsonContent.Schema, !bodyRequired, apiPath, fieldPaths)
+	schemaType, typeSchema, err := oc.builder.getSchemaTypeFromProxy(content.Schema, !bodyRequired, apiPath, fieldPaths)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -419,9 +419,9 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 		Schema:      typeSchema,
 	}
 
-	if jsonContent.Encoding != nil {
+	if content.Encoding != nil {
 		encoding := make(map[string]rest.EncodingObject)
-		for iter := jsonContent.Encoding.First(); iter != nil; iter = iter.Next() {
+		for iter := content.Encoding.First(); iter != nil; iter = iter.Next() {
 			encodingValue := iter.Value()
 			if encodingValue == nil {
 				continue
@@ -444,9 +444,9 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 
 			if encodingValue.Headers != nil {
 				// move headers to parameters
-				for iter := encodingValue.Headers.First(); iter != nil; iter = iter.Next() {
-					key := strings.TrimSpace(iter.Key())
-					header := iter.Value()
+				for encodingHeader := encodingValue.Headers.First(); encodingHeader != nil; encodingHeader = encodingHeader.Next() {
+					key := strings.TrimSpace(encodingHeader.Key())
+					header := encodingHeader.Value()
 					if key == "" || header == nil {
 						continue
 					}
@@ -469,9 +469,11 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 						headerEncoding.Style = style
 					}
 
+					argumentName := encodeHeaderArgumentName(key)
 					oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
 						In:             rest.InHeader,
 						Name:           key,
+						ArgumentName:   argumentName,
 						Schema:         typeSchema,
 						EncodingObject: headerEncoding,
 					})
@@ -483,7 +485,7 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 						argument.Description = &header.Description
 					}
 
-					oc.Arguments[utils.EncodeHeaderSchemaName(key)] = argument
+					oc.Arguments[argumentName] = argument
 				}
 			}
 		}
@@ -697,7 +699,15 @@ func (oc *openAPIv3OperationBuilder) BuildProcedure(pathKey string, method strin
 					// renaming query parameter name `body` if exist to avoid conflicts
 					if paramData, ok := oc.Arguments["body"]; ok {
 						oc.Arguments["paramBody"] = paramData
+						for i, param := range oc.RequestParams {
+							if param.Name == "body" {
+								param.ArgumentName = "paramBody"
+								oc.RequestParams[i] = param
+								break
+							}
+						}
 					}
+
 					oc.Arguments["body"] = schema.ArgumentInfo{
 						Description: &description,
 						Type:        schemaType.Encode(),

@@ -94,9 +94,10 @@ func (r Request) Clone() *Request {
 type RequestParameter struct {
 	EncodingObject `yaml:",inline"`
 
-	Name   string            `json:"name" yaml:"name" mapstructure:"name"`
-	In     ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
-	Schema *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
+	Name         string            `json:"name" yaml:"name" mapstructure:"name"`
+	ArgumentName string            `json:"argumentName,omitempty" yaml:"argumentName,omitempty" mapstructure:"argumentName,omitempty"`
+	In           ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
+	Schema       *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 }
 
 // TypeSchema represents a serializable object of OpenAPI schema

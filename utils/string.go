@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
@@ -127,9 +126,4 @@ func SplitStringsAndTrimSpaces(input string, sep string) []string {
 	}
 
 	return results
-}
-
-// EncodeHeaderSchemaName encodes header key to NDC schema field name
-func EncodeHeaderSchemaName(name string) string {
-	return fmt.Sprintf("header%s", ToPascalCase(name))
 }

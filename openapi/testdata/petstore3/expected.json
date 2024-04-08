@@ -3615,6 +3615,17 @@
       "request": {
         "url": "/pet/multipart",
         "method": "post",
+        "parameters": [
+          {
+            "explode": false,
+            "name": "X-Rate-Limit-Limit",
+            "argumentName": "headerXRateLimitLimit",
+            "in": "header",
+            "schema": {
+              "type": "Int32"
+            }
+          }
+        ],
         "requestBody": {
           "contentType": "multipart/form-data",
           "schema": {
@@ -3641,6 +3652,14 @@
                 "nullable": true
               }
             }
+          },
+          "encoding": {
+            "profileImage": {
+              "contentType": [
+                "image/png",
+                "image/jpeg"
+              ]
+            }
           }
         }
       },
@@ -3653,6 +3672,13 @@
               "name": "UploadPetMultipartBody",
               "type": "named"
             }
+          }
+        },
+        "headerXRateLimitLimit": {
+          "description": "The number of allowed requests in the current period",
+          "type": {
+            "name": "Int32",
+            "type": "named"
           }
         }
       },
