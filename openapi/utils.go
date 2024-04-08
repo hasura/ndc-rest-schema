@@ -64,24 +64,25 @@ var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
 	rest.ScalarDate: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationDate().Encode(),
 	},
 	// string with date-time format
-	rest.ScalarTimestamp: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
-	},
 	rest.ScalarTimestampTZ: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationTimestampTZ().Encode(),
 	},
 	// string with byte format
 	rest.ScalarBytes: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationBytes().Encode(),
+	},
+	// string with byte format
+	rest.ScalarBinary: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationBytes().Encode(),
 	},
 	rest.ScalarEmail: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
@@ -96,7 +97,7 @@ var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
 	rest.ScalarUUID: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationUUID().Encode(),
 	},
 	rest.ScalarIPV4: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
@@ -260,11 +261,14 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 				scalarName = string(rest.ScalarDate)
 				scalarType = defaultScalarTypes[rest.ScalarDate]
 			case "date-time":
-				scalarName = string(rest.ScalarTimestamp)
-				scalarType = defaultScalarTypes[rest.ScalarTimestamp]
-			case "byte", "binary":
+				scalarName = string(rest.ScalarTimestampTZ)
+				scalarType = defaultScalarTypes[rest.ScalarTimestampTZ]
+			case "byte", "base64":
 				scalarName = string(rest.ScalarBytes)
 				scalarType = defaultScalarTypes[rest.ScalarBytes]
+			case "binary":
+				scalarName = string(rest.ScalarBinary)
+				scalarType = defaultScalarTypes[rest.ScalarBinary]
 			case "uuid":
 				scalarName = string(rest.ScalarUUID)
 				scalarType = defaultScalarTypes[rest.ScalarUUID]

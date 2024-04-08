@@ -505,7 +505,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Timestamp",
+              "name": "TimestampTZ",
               "type": "named"
             }
           }
@@ -2980,7 +2980,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Timestamp",
+              "name": "TimestampTZ",
               "type": "named"
             }
           }
@@ -3202,6 +3202,52 @@
             "type": "nullable",
             "underlying_type": {
               "name": "UnixTime",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UploadPetMultipartBody": {
+      "fields": {
+        "addresses": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "Address",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "children": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "id": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UUID",
+              "type": "named"
+            }
+          }
+        },
+        "profileImage": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Binary",
               "type": "named"
             }
           }
@@ -3524,7 +3570,7 @@
         "requestBody": {
           "contentType": "application/octet-stream",
           "schema": {
-            "type": "Bytes",
+            "type": "Binary",
             "nullable": true
           }
         }
@@ -3545,7 +3591,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Bytes",
+              "name": "Binary",
               "type": "named"
             }
           }
@@ -3560,6 +3606,57 @@
       },
       "description": "uploads an image",
       "name": "uploadFile",
+      "result_type": {
+        "name": "ApiResponse",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/pet/multipart",
+        "method": "post",
+        "requestBody": {
+          "contentType": "multipart/form-data",
+          "schema": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "addresses": {
+                "type": "array",
+                "nullable": true
+              },
+              "children": {
+                "type": "array",
+                "nullable": true,
+                "items": {
+                  "type": "String"
+                }
+              },
+              "id": {
+                "type": "UUID",
+                "nullable": true
+              },
+              "profileImage": {
+                "type": "Binary",
+                "nullable": true
+              }
+            }
+          }
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of /pet/multipart",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "UploadPetMultipartBody",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "name": "uploadPetMultipart",
       "result_type": {
         "name": "ApiResponse",
         "type": "named"
@@ -5727,18 +5824,18 @@
     }
   ],
   "scalar_types": {
+    "Binary": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "bytes"
+      }
+    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
         "type": "boolean"
-      }
-    },
-    "Bytes": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "string"
       }
     },
     "CheckoutAddress": {
@@ -6600,11 +6697,11 @@
         "type": "enum"
       }
     },
-    "Timestamp": {
+    "TimestampTZ": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "string"
+        "type": "timestamptz"
       }
     },
     "TreasuryInboundTransferObject": {
@@ -6650,6 +6747,13 @@
           "other"
         ],
         "type": "enum"
+      }
+    },
+    "UUID": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "uuid"
       }
     },
     "UnixTime": {

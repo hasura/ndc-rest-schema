@@ -386,7 +386,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Timestamp",
+              "name": "TimestampTZ",
               "type": "named"
             }
           }
@@ -1036,7 +1036,7 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "string"
+        "type": "bytes"
       }
     },
     "Int32": {
@@ -1088,11 +1088,11 @@
         "type": "string"
       }
     },
-    "Timestamp": {
+    "TimestampTZ": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "string"
+        "type": "timestamptz"
       }
     }
   }

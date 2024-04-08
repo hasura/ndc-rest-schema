@@ -455,6 +455,67 @@
         ]
       }
     },
+    "/pet/multipart": {
+      "post": {
+        "operationId": "uploadPetMultipart",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "address": {
+                    "type": "object",
+                    "properties": {}
+                  },
+                  "profileImage": {
+                    "type": "string",
+                    "format": "binary",
+                    "contentType": "image/png, image/jpeg",
+                    "headers": {
+                      "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period",
+                        "schema": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "addresses": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Address"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/store/inventory": {
       "get": {
         "tags": ["store"],

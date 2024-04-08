@@ -15,7 +15,7 @@ import (
 	"github.com/pb33f/libopenapi/orderedmap"
 )
 
-type openAPIv3Converter struct {
+type openAPIv3Builder struct {
 	schema *rest.NDCRestSchema
 	*ConvertOptions
 }
@@ -42,7 +42,7 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		return nil, append(errs, errors.New("there is no API to be converted"))
 	}
 
-	converter := &openAPIv3Converter{
+	converter := &openAPIv3Builder{
 		schema:         rest.NewNDCRestSchema(),
 		ConvertOptions: opts,
 	}
@@ -84,7 +84,7 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 	return converter.schema, nil
 }
 
-func (oc *openAPIv3Converter) convertServers(servers []*v3.Server) []rest.ServerConfig {
+func (oc *openAPIv3Builder) convertServers(servers []*v3.Server) []rest.ServerConfig {
 	var results []rest.ServerConfig
 
 	for i, server := range servers {
@@ -102,7 +102,7 @@ func (oc *openAPIv3Converter) convertServers(servers []*v3.Server) []rest.Server
 	return results
 }
 
-func (oc *openAPIv3Converter) convertSecuritySchemes(scheme orderedmap.Pair[string, *v3.SecurityScheme]) error {
+func (oc *openAPIv3Builder) convertSecuritySchemes(scheme orderedmap.Pair[string, *v3.SecurityScheme]) error {
 	key := scheme.Key()
 	security := scheme.Value()
 	if security == nil {
@@ -166,49 +166,21 @@ func (oc *openAPIv3Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 	return nil
 }
 
-func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.PathItem]) error {
+func (oc *openAPIv3Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.PathItem]) error {
 	pathKey := pathItem.Key()
 	pathValue := pathItem.Value()
+
 	if pathValue.Get != nil {
-		itemGet := pathValue.Get
-		funcName := itemGet.OperationId
-		if funcName == "" {
-			funcName = buildPathMethodName(pathKey, "get", oc.ConvertOptions)
-		}
-		resultType, err := oc.convertResponse(itemGet.Responses, pathKey, []string{funcName, "Result"})
+		funcGet, err := newOpenAPIv3OperationBuilder(oc).BuildFunction(pathKey, pathValue.Get)
 		if err != nil {
-			return fmt.Errorf("%s: %s", pathKey, err)
+			return err
 		}
-		if resultType != nil {
-			arguments, reqParams, err := oc.convertParameters(itemGet.Parameters, pathKey, []string{funcName})
-			if err != nil {
-				return fmt.Errorf("%s: %s", funcName, err)
-			}
-
-			function := rest.RESTFunctionInfo{
-				Request: &rest.Request{
-					URL:        pathKey,
-					Method:     "get",
-					Parameters: sortRequestParameters(reqParams),
-					Security:   convertSecurities(itemGet.Security),
-					Servers:    oc.convertServers(itemGet.Servers),
-				},
-				FunctionInfo: schema.FunctionInfo{
-					Name:       funcName,
-					Arguments:  arguments,
-					ResultType: resultType.Encode(),
-				},
-			}
-
-			if itemGet.Summary != "" {
-				function.Description = &itemGet.Summary
-			}
-
-			oc.schema.Functions = append(oc.schema.Functions, &function)
+		if funcGet != nil {
+			oc.schema.Functions = append(oc.schema.Functions, funcGet)
 		}
 	}
 
-	procPost, err := oc.convertProcedureOperation(pathKey, "post", pathValue.Post)
+	procPost, err := newOpenAPIv3OperationBuilder(oc).BuildProcedure(pathKey, "post", pathValue.Post)
 	if err != nil {
 		return err
 	}
@@ -216,7 +188,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPost)
 	}
 
-	procPut, err := oc.convertProcedureOperation(pathKey, "put", pathValue.Put)
+	procPut, err := newOpenAPIv3OperationBuilder(oc).BuildProcedure(pathKey, "put", pathValue.Put)
 	if err != nil {
 		return err
 	}
@@ -224,7 +196,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPut)
 	}
 
-	procPatch, err := oc.convertProcedureOperation(pathKey, "patch", pathValue.Patch)
+	procPatch, err := newOpenAPIv3OperationBuilder(oc).BuildProcedure(pathKey, "patch", pathValue.Patch)
 	if err != nil {
 		return err
 	}
@@ -232,7 +204,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPatch)
 	}
 
-	procDelete, err := oc.convertProcedureOperation(pathKey, "delete", pathValue.Delete)
+	procDelete, err := newOpenAPIv3OperationBuilder(oc).BuildProcedure(pathKey, "delete", pathValue.Delete)
 	if err != nil {
 		return err
 	}
@@ -242,7 +214,7 @@ func (oc *openAPIv3Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 	return nil
 }
 
-func (oc *openAPIv3Converter) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
+func (oc *openAPIv3Builder) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
 	iSchemaType, err := schemaType.InterfaceT()
 
 	switch st := iSchemaType.(type) {
@@ -262,193 +234,8 @@ func (oc *openAPIv3Converter) getObjectTypeFromSchemaType(schemaType schema.Type
 	}
 }
 
-func (oc *openAPIv3Converter) convertProcedureOperation(pathKey string, method string, operation *v3.Operation) (*rest.RESTProcedureInfo, error) {
-	if operation == nil {
-		return nil, nil
-	}
-
-	procName := operation.OperationId
-	if procName == "" {
-		procName = buildPathMethodName(pathKey, method, oc.ConvertOptions)
-	}
-
-	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-
-	if resultType == nil {
-		return nil, nil
-	}
-
-	arguments, reqParams, err := oc.convertParameters(operation.Parameters, pathKey, []string{procName})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-
-	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName, "Body"})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-	if reqBody != nil {
-		if reqBody.ContentType == rest.ContentTypeFormURLEncoded {
-			// convert URL encoded body to parameters
-			if reqBody.Schema != nil {
-				if reqBody.Schema.Type == "object" {
-					objectType, objectTypeName, err := oc.getObjectTypeFromSchemaType(schemaType.Encode())
-					if err != nil {
-						return nil, fmt.Errorf("%s: %s", pathKey, err)
-					}
-					// remove unused request body type
-					delete(oc.schema.ObjectTypes, objectTypeName)
-					for key, prop := range reqBody.Schema.Properties {
-						propType, ok := objectType.Fields[key]
-						if !ok {
-							continue
-						}
-						// renaming query parameter name `body` if exist to avoid conflicts
-						if paramData, ok := arguments[key]; ok {
-							arguments[fmt.Sprintf("param%s", key)] = paramData
-						}
-
-						desc := prop.Description
-						argument := schema.ArgumentInfo{
-							Type: propType.Type,
-						}
-						if desc != "" {
-							argument.Description = &desc
-						}
-						arguments[key] = argument
-						schemaProp := prop
-						reqParams = append(reqParams, rest.RequestParameter{
-							EncodingObject: reqBody.Encoding[key],
-							Name:           key,
-							In:             rest.InQuery,
-							Schema:         &schemaProp,
-						})
-					}
-				} else {
-					description := fmt.Sprintf("Request body of %s", pathKey)
-					// renaming query parameter name `body` if exist to avoid conflicts
-					if paramData, ok := arguments["body"]; ok {
-						arguments["paramBody"] = paramData
-					}
-					arguments["body"] = schema.ArgumentInfo{
-						Description: &description,
-						Type:        schemaType.Encode(),
-					}
-					reqParams = append(reqParams, rest.RequestParameter{
-						Name:   "body",
-						In:     rest.InQuery,
-						Schema: reqBody.Schema,
-					})
-				}
-			}
-			reqBody = &rest.RequestBody{
-				ContentType: rest.ContentTypeFormURLEncoded,
-			}
-		} else {
-			description := fmt.Sprintf("Request body of %s", pathKey)
-			// renaming query parameter name `body` if exist to avoid conflicts
-			if paramData, ok := arguments["body"]; ok {
-				arguments["paramBody"] = paramData
-			}
-
-			arguments["body"] = schema.ArgumentInfo{
-				Description: &description,
-				Type:        schemaType.Encode(),
-			}
-		}
-	}
-
-	procedure := rest.RESTProcedureInfo{
-		Request: &rest.Request{
-			URL:         pathKey,
-			Method:      method,
-			Parameters:  sortRequestParameters(reqParams),
-			Security:    convertSecurities(operation.Security),
-			Servers:     oc.convertServers(operation.Servers),
-			RequestBody: reqBody,
-		},
-		ProcedureInfo: schema.ProcedureInfo{
-			Name:       procName,
-			Arguments:  arguments,
-			ResultType: resultType.Encode(),
-		},
-	}
-
-	if operation.Summary != "" {
-		procedure.Description = &operation.Summary
-	}
-
-	return &procedure, nil
-}
-
-func (oc *openAPIv3Converter) convertParameters(params []*v3.Parameter, apiPath string, fieldPaths []string) (map[string]schema.ArgumentInfo, []rest.RequestParameter, error) {
-
-	arguments := make(map[string]schema.ArgumentInfo)
-	if len(params) == 0 {
-		return arguments, nil, nil
-	}
-
-	var reqParams []rest.RequestParameter
-
-	for _, param := range params {
-		if param == nil {
-			continue
-		}
-		paramName := param.Name
-		if paramName == "" {
-			return nil, nil, errors.New("parameter name is empty")
-		}
-		paramRequired := false
-		if param.Required != nil && *param.Required {
-			paramRequired = true
-		}
-		paramPaths := append(fieldPaths, paramName)
-		schemaType, apiSchema, err := oc.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, paramPaths)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		paramLocation, err := rest.ParseParameterLocation(param.In)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		encoding := rest.EncodingObject{
-			AllowReserved: param.AllowReserved,
-			Explode:       param.Explode,
-		}
-		if param.Style != "" {
-			style, err := rest.ParseParameterEncodingStyle(param.Style)
-			if err != nil {
-				return nil, nil, err
-			}
-			encoding.Style = style
-		}
-		reqParams = append(reqParams, rest.RequestParameter{
-			Name:           paramName,
-			In:             paramLocation,
-			Schema:         apiSchema,
-			EncodingObject: encoding,
-		})
-
-		argument := schema.ArgumentInfo{
-			Type: schemaType.Encode(),
-		}
-		if param.Description != "" {
-			argument.Description = &param.Description
-		}
-
-		arguments[paramName] = argument
-	}
-
-	return arguments, reqParams, nil
-}
-
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
+func (oc *openAPIv3Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 	if schemaProxy == nil {
 		return nil, nil, errParameterSchemaEmpty
 	}
@@ -487,7 +274,7 @@ func (oc *openAPIv3Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 }
 
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
+func (oc *openAPIv3Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if typeSchema == nil {
 		return nil, nil, errParameterSchemaEmpty
@@ -601,7 +388,7 @@ func (oc *openAPIv3Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 	return result, typeResult, nil
 }
 
-func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPath string, fieldPaths []string) (*rest.RequestBody, schema.TypeEncoder, error) {
+func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody, apiPath string, fieldPaths []string) (*rest.RequestBody, schema.TypeEncoder, error) {
 	if reqBody == nil || reqBody.Content == nil {
 		return nil, nil, nil
 	}
@@ -618,7 +405,7 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 	if reqBody.Required != nil && *reqBody.Required {
 		bodyRequired = true
 	}
-	schemaType, typeSchema, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, !bodyRequired, apiPath, fieldPaths)
+	schemaType, typeSchema, err := oc.builder.getSchemaTypeFromProxy(jsonContent.Schema, !bodyRequired, apiPath, fieldPaths)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -639,8 +426,9 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 			if encodingValue == nil {
 				continue
 			}
+
 			item := rest.EncodingObject{
-				ContentType:   encodingValue.ContentType,
+				ContentType:   utils.SplitStringsAndTrimSpaces(encodingValue.ContentType, ","),
 				AllowReserved: encodingValue.AllowReserved,
 				Explode:       encodingValue.Explode,
 			}
@@ -652,15 +440,59 @@ func (oc *openAPIv3Converter) convertRequestBody(reqBody *v3.RequestBody, apiPat
 				}
 				item.Style = style
 			}
-
 			encoding[iter.Key()] = item
+
+			if encodingValue.Headers != nil {
+				// move headers to parameters
+				for iter := encodingValue.Headers.First(); iter != nil; iter = iter.Next() {
+					key := strings.TrimSpace(iter.Key())
+					header := iter.Value()
+					if key == "" || header == nil {
+						continue
+					}
+
+					ndcType, typeSchema, err := oc.builder.getSchemaTypeFromProxy(header.Schema, header.AllowEmptyValue, apiPath, append(fieldPaths, key))
+					if err != nil {
+						return nil, nil, err
+					}
+
+					headerEncoding := rest.EncodingObject{
+						AllowReserved: header.AllowReserved,
+						Explode:       &header.Explode,
+					}
+
+					if header.Style != "" {
+						style, err := rest.ParseParameterEncodingStyle(header.Style)
+						if err != nil {
+							return nil, nil, err
+						}
+						headerEncoding.Style = style
+					}
+
+					oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
+						In:             rest.InHeader,
+						Name:           key,
+						Schema:         typeSchema,
+						EncodingObject: headerEncoding,
+					})
+
+					argument := schema.ArgumentInfo{
+						Type: ndcType.Encode(),
+					}
+					if header.Description != "" {
+						argument.Description = &header.Description
+					}
+
+					oc.Arguments[utils.EncodeHeaderSchemaName(key)] = argument
+				}
+			}
 		}
 		bodyResult.Encoding = encoding
 	}
 	return bodyResult, schemaType, nil
 }
 
-func (oc *openAPIv3Converter) convertResponse(responses *v3.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv3OperationBuilder) convertResponse(responses *v3.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
 	if responses == nil || responses.Codes == nil || responses.Codes.IsZero() {
 		return nil, nil
 	}
@@ -683,14 +515,14 @@ func (oc *openAPIv3Converter) convertResponse(responses *v3.Responses, apiPath s
 		return nil, nil
 	}
 
-	schemaType, _, err := oc.getSchemaTypeFromProxy(jsonContent.Schema, false, apiPath, fieldPaths)
+	schemaType, _, err := oc.builder.getSchemaTypeFromProxy(jsonContent.Schema, false, apiPath, fieldPaths)
 	if err != nil {
 		return nil, err
 	}
 	return schemaType, nil
 }
 
-func (oc *openAPIv3Converter) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
+func (oc *openAPIv3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
 	typeValue := schemaItem.Value()
 	typeSchema := typeValue.Schema()
 
@@ -734,9 +566,245 @@ func convertV3OAuthFLow(input *v3.OAuthFlow) *rest.OAuthFlow {
 	return result
 }
 
-func (oc *openAPIv3Converter) trimPathPrefix(input string) string {
+func (oc *openAPIv3Builder) trimPathPrefix(input string) string {
 	if oc.ConvertOptions.TrimPrefix == "" {
 		return input
 	}
 	return strings.TrimPrefix(input, oc.ConvertOptions.TrimPrefix)
+}
+
+type openAPIv3OperationBuilder struct {
+	builder       *openAPIv3Builder
+	Arguments     map[string]schema.ArgumentInfo
+	RequestParams []rest.RequestParameter
+}
+
+func newOpenAPIv3OperationBuilder(builder *openAPIv3Builder) *openAPIv3OperationBuilder {
+	return &openAPIv3OperationBuilder{
+		builder:   builder,
+		Arguments: make(map[string]schema.ArgumentInfo),
+	}
+}
+
+// BuildFunction build a REST NDC function information from OpenAPI v3 operation
+func (oc *openAPIv3OperationBuilder) BuildFunction(pathKey string, itemGet *v3.Operation) (*rest.RESTFunctionInfo, error) {
+	funcName := itemGet.OperationId
+	if funcName == "" {
+		funcName = buildPathMethodName(pathKey, "get", oc.builder.ConvertOptions)
+	}
+	resultType, err := oc.convertResponse(itemGet.Responses, pathKey, []string{funcName, "Result"})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+	if resultType == nil {
+		return nil, nil
+	}
+
+	err = oc.convertParameters(itemGet.Parameters, pathKey, []string{funcName})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", funcName, err)
+	}
+
+	function := rest.RESTFunctionInfo{
+		Request: &rest.Request{
+			URL:        pathKey,
+			Method:     "get",
+			Parameters: sortRequestParameters(oc.RequestParams),
+			Security:   convertSecurities(itemGet.Security),
+			Servers:    oc.builder.convertServers(itemGet.Servers),
+		},
+		FunctionInfo: schema.FunctionInfo{
+			Name:       funcName,
+			Arguments:  oc.Arguments,
+			ResultType: resultType.Encode(),
+		},
+	}
+
+	if itemGet.Summary != "" {
+		function.Description = &itemGet.Summary
+	}
+
+	return &function, nil
+}
+
+func (oc *openAPIv3OperationBuilder) BuildProcedure(pathKey string, method string, operation *v3.Operation) (*rest.RESTProcedureInfo, error) {
+	if operation == nil {
+		return nil, nil
+	}
+
+	procName := operation.OperationId
+	if procName == "" {
+		procName = buildPathMethodName(pathKey, method, oc.builder.ConvertOptions)
+	}
+
+	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+
+	if resultType == nil {
+		return nil, nil
+	}
+
+	err = oc.convertParameters(operation.Parameters, pathKey, []string{procName})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+
+	reqBody, schemaType, err := oc.convertRequestBody(operation.RequestBody, pathKey, []string{procName, "Body"})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+	if reqBody != nil {
+		if reqBody.ContentType == rest.ContentTypeFormURLEncoded {
+			// convert URL encoded body to parameters
+			if reqBody.Schema != nil {
+				if reqBody.Schema.Type == "object" {
+					objectType, objectTypeName, err := oc.builder.getObjectTypeFromSchemaType(schemaType.Encode())
+					if err != nil {
+						return nil, fmt.Errorf("%s: %s", pathKey, err)
+					}
+					// remove unused request body type
+					delete(oc.builder.schema.ObjectTypes, objectTypeName)
+					for key, prop := range reqBody.Schema.Properties {
+						propType, ok := objectType.Fields[key]
+						if !ok {
+							continue
+						}
+						// renaming query parameter name `body` if exist to avoid conflicts
+						if paramData, ok := oc.Arguments[key]; ok {
+							oc.Arguments[fmt.Sprintf("param%s", key)] = paramData
+						}
+
+						desc := prop.Description
+						argument := schema.ArgumentInfo{
+							Type: propType.Type,
+						}
+						if desc != "" {
+							argument.Description = &desc
+						}
+						oc.Arguments[key] = argument
+						schemaProp := prop
+						oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
+							EncodingObject: reqBody.Encoding[key],
+							Name:           key,
+							In:             rest.InQuery,
+							Schema:         &schemaProp,
+						})
+					}
+				} else {
+					description := fmt.Sprintf("Request body of %s", pathKey)
+					// renaming query parameter name `body` if exist to avoid conflicts
+					if paramData, ok := oc.Arguments["body"]; ok {
+						oc.Arguments["paramBody"] = paramData
+					}
+					oc.Arguments["body"] = schema.ArgumentInfo{
+						Description: &description,
+						Type:        schemaType.Encode(),
+					}
+					oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
+						Name:   "body",
+						In:     rest.InQuery,
+						Schema: reqBody.Schema,
+					})
+				}
+			}
+			reqBody = &rest.RequestBody{
+				ContentType: rest.ContentTypeFormURLEncoded,
+			}
+		} else {
+			description := fmt.Sprintf("Request body of %s", pathKey)
+			// renaming query parameter name `body` if exist to avoid conflicts
+			if paramData, ok := oc.Arguments["body"]; ok {
+				oc.Arguments["paramBody"] = paramData
+			}
+
+			oc.Arguments["body"] = schema.ArgumentInfo{
+				Description: &description,
+				Type:        schemaType.Encode(),
+			}
+		}
+	}
+
+	procedure := rest.RESTProcedureInfo{
+		Request: &rest.Request{
+			URL:         pathKey,
+			Method:      method,
+			Parameters:  sortRequestParameters(oc.RequestParams),
+			Security:    convertSecurities(operation.Security),
+			Servers:     oc.builder.convertServers(operation.Servers),
+			RequestBody: reqBody,
+		},
+		ProcedureInfo: schema.ProcedureInfo{
+			Name:       procName,
+			Arguments:  oc.Arguments,
+			ResultType: resultType.Encode(),
+		},
+	}
+
+	if operation.Summary != "" {
+		procedure.Description = &operation.Summary
+	}
+
+	return &procedure, nil
+}
+
+func (oc *openAPIv3OperationBuilder) convertParameters(params []*v3.Parameter, apiPath string, fieldPaths []string) error {
+
+	if len(params) == 0 {
+		return nil
+	}
+
+	for _, param := range params {
+		if param == nil {
+			continue
+		}
+		paramName := param.Name
+		if paramName == "" {
+			return errors.New("parameter name is empty")
+		}
+		paramRequired := false
+		if param.Required != nil && *param.Required {
+			paramRequired = true
+		}
+		paramPaths := append(fieldPaths, paramName)
+		schemaType, apiSchema, err := oc.builder.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, paramPaths)
+		if err != nil {
+			return err
+		}
+
+		paramLocation, err := rest.ParseParameterLocation(param.In)
+		if err != nil {
+			return err
+		}
+
+		encoding := rest.EncodingObject{
+			AllowReserved: param.AllowReserved,
+			Explode:       param.Explode,
+		}
+		if param.Style != "" {
+			style, err := rest.ParseParameterEncodingStyle(param.Style)
+			if err != nil {
+				return err
+			}
+			encoding.Style = style
+		}
+		oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
+			Name:           paramName,
+			In:             paramLocation,
+			Schema:         apiSchema,
+			EncodingObject: encoding,
+		})
+
+		argument := schema.ArgumentInfo{
+			Type: schemaType.Encode(),
+		}
+		if param.Description != "" {
+			argument.Description = &param.Description
+		}
+
+		oc.Arguments[paramName] = argument
+	}
+
+	return nil
 }

@@ -135,7 +135,7 @@ type EncodingObject struct {
 	// AllowReserved allows these characters to be sent as is:
 	AllowReserved bool `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty" mapstructure:"allowReserved"`
 	// For more complex scenarios, such as nested arrays or JSON in form data, use the contentType keyword to specify the media type for encoding the value of a complex field.
-	ContentType string `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
+	ContentType []string `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
 }
 
 // RequestBody defines flexible request body with content types
