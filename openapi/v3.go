@@ -443,7 +443,7 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 			encoding[iter.Key()] = item
 
 			if encodingValue.Headers != nil {
-				// move headers to parameters
+				item.Headers = make(map[string]rest.RequestParameter)
 				for encodingHeader := encodingValue.Headers.First(); encodingHeader != nil; encodingHeader = encodingHeader.Next() {
 					key := strings.TrimSpace(encodingHeader.Key())
 					header := encodingHeader.Value()
@@ -470,13 +470,11 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 					}
 
 					argumentName := encodeHeaderArgumentName(key)
-					oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
-						In:             rest.InHeader,
-						Name:           key,
+					item.Headers[key] = rest.RequestParameter{
 						ArgumentName:   argumentName,
 						Schema:         typeSchema,
 						EncodingObject: headerEncoding,
-					})
+					}
 
 					argument := schema.ArgumentInfo{
 						Type: ndcType.Encode(),

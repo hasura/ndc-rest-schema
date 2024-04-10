@@ -616,7 +616,7 @@
                 "nullable": true
               },
               "file": {
-                "type": "Bytes",
+                "type": "Binary",
                 "nullable": true
               }
             }
@@ -639,7 +639,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Bytes",
+              "name": "Binary",
               "type": "named"
             }
           }
@@ -1025,18 +1025,18 @@
     }
   ],
   "scalar_types": {
+    "Binary": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "bytes"
+      }
+    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
         "type": "boolean"
-      }
-    },
-    "Bytes": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "bytes"
       }
     },
     "Int32": {

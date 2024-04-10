@@ -3615,17 +3615,7 @@
       "request": {
         "url": "/pet/multipart",
         "method": "post",
-        "parameters": [
-          {
-            "explode": false,
-            "name": "X-Rate-Limit-Limit",
-            "argumentName": "headerXRateLimitLimit",
-            "in": "header",
-            "schema": {
-              "type": "Int32"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "contentType": "multipart/form-data",
           "schema": {
@@ -3658,7 +3648,15 @@
               "contentType": [
                 "image/png",
                 "image/jpeg"
-              ]
+              ],
+              "headers": {
+                "X-Rate-Limit-Limit": {
+                  "argumentName": "headerXRateLimitLimit",
+                  "schema": {
+                    "type": "integer"
+                  }
+                }
+              }
             }
           }
         }

@@ -208,8 +208,8 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 				scalarType = defaultScalarTypes[rest.ScalarFloat64]
 			}
 		case "file":
-			scalarName = string(rest.ScalarBytes)
-			scalarType = defaultScalarTypes[rest.ScalarBytes]
+			scalarName = string(rest.ScalarBinary)
+			scalarType = defaultScalarTypes[rest.ScalarBinary]
 		case "string":
 			schemaEnumLength := len(enumNodes)
 			if schemaEnumLength > 0 {

@@ -94,9 +94,9 @@ func (r Request) Clone() *Request {
 type RequestParameter struct {
 	EncodingObject `yaml:",inline"`
 
-	Name         string            `json:"name" yaml:"name" mapstructure:"name"`
+	Name         string            `json:"name,omitempty" yaml:"name,omitempty" mapstructure:"name"`
 	ArgumentName string            `json:"argumentName,omitempty" yaml:"argumentName,omitempty" mapstructure:"argumentName,omitempty"`
-	In           ParameterLocation `json:"in" yaml:"in" mapstructure:"in"`
+	In           ParameterLocation `json:"in,omitempty" yaml:"in,omitempty" mapstructure:"in"`
 	Schema       *TypeSchema       `json:"schema,omitempty" yaml:"schema,omitempty" mapstructure:"schema"`
 }
 
@@ -137,6 +137,10 @@ type EncodingObject struct {
 	AllowReserved bool `json:"allowReserved,omitempty" yaml:"allowReserved,omitempty" mapstructure:"allowReserved"`
 	// For more complex scenarios, such as nested arrays or JSON in form data, use the contentType keyword to specify the media type for encoding the value of a complex field.
 	ContentType []string `json:"contentType,omitempty" yaml:"contentType,omitempty" mapstructure:"contentType"`
+	// A map allowing additional information to be provided as headers, for example Content-Disposition.
+	// Content-Type is described separately and SHALL be ignored in this section.
+	// This property SHALL be ignored if the request body media type is not a multipart.
+	Headers map[string]RequestParameter `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
 }
 
 // RequestBody defines flexible request body with content types
