@@ -440,7 +440,6 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 				}
 				item.Style = style
 			}
-			encoding[iter.Key()] = item
 
 			if encodingValue.Headers != nil {
 				item.Headers = make(map[string]rest.RequestParameter)
@@ -459,6 +458,7 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 					headerEncoding := rest.EncodingObject{
 						AllowReserved: header.AllowReserved,
 						Explode:       &header.Explode,
+						Headers:       map[string]rest.RequestParameter{},
 					}
 
 					if header.Style != "" {
@@ -486,6 +486,8 @@ func (oc *openAPIv3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody,
 					oc.Arguments[argumentName] = argument
 				}
 			}
+
+			encoding[iter.Key()] = item
 		}
 		bodyResult.Encoding = encoding
 	}

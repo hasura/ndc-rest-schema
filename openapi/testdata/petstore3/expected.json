@@ -3615,7 +3615,6 @@
       "request": {
         "url": "/pet/multipart",
         "method": "post",
-        "parameters": [],
         "requestBody": {
           "contentType": "multipart/form-data",
           "schema": {
@@ -3651,9 +3650,10 @@
               ],
               "headers": {
                 "X-Rate-Limit-Limit": {
+                  "explode": false,
                   "argumentName": "headerXRateLimitLimit",
                   "schema": {
-                    "type": "integer"
+                    "type": "Int32"
                   }
                 }
               }
