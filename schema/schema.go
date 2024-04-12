@@ -140,7 +140,7 @@ type EncodingObject struct {
 	// A map allowing additional information to be provided as headers, for example Content-Disposition.
 	// Content-Type is described separately and SHALL be ignored in this section.
 	// This property SHALL be ignored if the request body media type is not a multipart.
-	Headers map[string]RequestParameter `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
+	Headers map[string]RequestParameter `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 }
 
 // RequestBody defines flexible request body with content types
