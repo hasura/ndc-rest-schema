@@ -23,82 +23,97 @@ var (
 	errParameterSchemaEmpty = errors.New("parameter schema is empty")
 )
 
-var defaultScalarTypes = map[rest.ScalarType]*schema.ScalarType{
-	rest.ScalarTypeString: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
-	},
-	rest.ScalarTypeInt: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationInteger().Encode(),
-	},
-	// big integer can be encoded as string
-	rest.ScalarTypeBigInt: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-	},
-	rest.ScalarTypeFloat: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationNumber().Encode(),
-	},
-	rest.ScalarTypeBoolean: {
+var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
+	rest.ScalarBoolean: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
 		Representation:      schema.NewTypeRepresentationBoolean().Encode(),
 	},
-	rest.ScalarTypeJSON: schema.NewScalarType(),
+	rest.ScalarString: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationString().Encode(),
+	},
+	rest.ScalarInt32: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationInt32().Encode(),
+	},
+	rest.ScalarInt64: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationInt64().Encode(),
+	},
+	rest.ScalarFloat32: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationFloat32().Encode(),
+	},
+	rest.ScalarFloat64: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationFloat64().Encode(),
+	},
+	rest.ScalarJSON: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationJSON().Encode(),
+	},
 	// string format variants https://swagger.io/docs/specification/data-models/data-types/#string
 	// string with date format
-	rest.ScalarTypeDate: {
+	rest.ScalarDate: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationDate().Encode(),
 	},
 	// string with date-time format
-	rest.ScalarTypeDateTime: {
+	rest.ScalarTimestampTZ: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
+		Representation:      schema.NewTypeRepresentationTimestampTZ().Encode(),
 	},
 	// string with byte format
-	rest.ScalarTypeBase64: {
+	rest.ScalarBytes: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationBytes().Encode(),
+	},
+	// string with byte format
+	rest.ScalarBinary: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationBytes().Encode(),
+	},
+	rest.ScalarEmail: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
 		Representation:      schema.NewTypeRepresentationString().Encode(),
 	},
-	rest.ScalarTypeEmail: {
+	rest.ScalarURI: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
 		Representation:      schema.NewTypeRepresentationString().Encode(),
 	},
-	rest.ScalarTypeURI: {
+	rest.ScalarUUID: {
+		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
+		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
+		Representation:      schema.NewTypeRepresentationUUID().Encode(),
+	},
+	rest.ScalarIPV4: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
 		Representation:      schema.NewTypeRepresentationString().Encode(),
 	},
-	rest.ScalarTypeUUID: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
-	},
-	rest.ScalarTypeIPV4: {
-		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
-		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationString().Encode(),
-	},
-	rest.ScalarTypeIPV6: {
+	rest.ScalarIPV6: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
 		Representation:      schema.NewTypeRepresentationString().Encode(),
 	},
 	// unix-time the timestamp integer which is measured in seconds since the Unix epoch
-	rest.ScalarTypeUnixTime: {
+	rest.ScalarUnixTime: {
 		AggregateFunctions:  schema.ScalarTypeAggregateFunctions{},
 		ComparisonOperators: map[string]schema.ComparisonOperatorDefinition{},
-		Representation:      schema.NewTypeRepresentationInteger().Encode(),
+		Representation:      schema.NewTypeRepresentationInt32().Encode(),
 	},
 }
 
@@ -162,33 +177,39 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 
 	if len(names) != 1 {
 		scalarName = "JSON"
-		scalarType = defaultScalarTypes[rest.ScalarTypeJSON]
+		scalarType = defaultScalarTypes[rest.ScalarJSON]
 	} else {
 		switch names[0] {
 		case "boolean":
-			scalarName = string(rest.ScalarTypeBoolean)
-			scalarType = defaultScalarTypes[rest.ScalarTypeBoolean]
+			scalarName = string(rest.ScalarBoolean)
+			scalarType = defaultScalarTypes[rest.ScalarBoolean]
 		case "integer":
 			switch format {
 			case "unix-time":
-				scalarName = string(rest.ScalarTypeUnixTime)
-				scalarType = defaultScalarTypes[rest.ScalarTypeUnixTime]
+				scalarName = string(rest.ScalarUnixTime)
+				scalarType = defaultScalarTypes[rest.ScalarUnixTime]
 			case "int64":
-				scalarName = string(rest.ScalarTypeBigInt)
-				scalarType = defaultScalarTypes[rest.ScalarTypeBigInt]
+				scalarName = string(rest.ScalarInt64)
+				scalarType = defaultScalarTypes[rest.ScalarInt64]
 			default:
-				scalarName = "Int"
-				scalarType = defaultScalarTypes[rest.ScalarTypeInt]
+				scalarName = "Int32"
+				scalarType = defaultScalarTypes[rest.ScalarInt32]
 			}
 		case "long":
-			scalarName = string(rest.ScalarTypeBigInt)
-			scalarType = defaultScalarTypes[rest.ScalarTypeBigInt]
+			scalarName = string(rest.ScalarInt64)
+			scalarType = defaultScalarTypes[rest.ScalarInt64]
 		case "number":
-			scalarName = "Float"
-			scalarType = defaultScalarTypes[rest.ScalarTypeFloat]
+			switch format {
+			case "float":
+				scalarName = string(rest.ScalarFloat32)
+				scalarType = defaultScalarTypes[rest.ScalarFloat32]
+			default:
+				scalarName = string(rest.ScalarFloat64)
+				scalarType = defaultScalarTypes[rest.ScalarFloat64]
+			}
 		case "file":
-			scalarName = string(rest.ScalarTypeBase64)
-			scalarType = defaultScalarTypes[rest.ScalarTypeBase64]
+			scalarName = string(rest.ScalarBinary)
+			scalarType = defaultScalarTypes[rest.ScalarBinary]
 		case "string":
 			schemaEnumLength := len(enumNodes)
 			if schemaEnumLength > 0 {
@@ -237,33 +258,36 @@ func getScalarFromType(sm *rest.NDCRestSchema, names []string, format string, en
 
 			switch format {
 			case "date":
-				scalarName = string(rest.ScalarTypeDate)
-				scalarType = defaultScalarTypes[rest.ScalarTypeDate]
+				scalarName = string(rest.ScalarDate)
+				scalarType = defaultScalarTypes[rest.ScalarDate]
 			case "date-time":
-				scalarName = string(rest.ScalarTypeDateTime)
-				scalarType = defaultScalarTypes[rest.ScalarTypeDateTime]
-			case "byte", "binary":
-				scalarName = string(rest.ScalarTypeBase64)
-				scalarType = defaultScalarTypes[rest.ScalarTypeBase64]
+				scalarName = string(rest.ScalarTimestampTZ)
+				scalarType = defaultScalarTypes[rest.ScalarTimestampTZ]
+			case "byte", "base64":
+				scalarName = string(rest.ScalarBytes)
+				scalarType = defaultScalarTypes[rest.ScalarBytes]
+			case "binary":
+				scalarName = string(rest.ScalarBinary)
+				scalarType = defaultScalarTypes[rest.ScalarBinary]
 			case "uuid":
-				scalarName = string(rest.ScalarTypeUUID)
-				scalarType = defaultScalarTypes[rest.ScalarTypeUUID]
+				scalarName = string(rest.ScalarUUID)
+				scalarType = defaultScalarTypes[rest.ScalarUUID]
 			case "uri":
-				scalarName = string(rest.ScalarTypeURI)
-				scalarType = defaultScalarTypes[rest.ScalarTypeURI]
+				scalarName = string(rest.ScalarURI)
+				scalarType = defaultScalarTypes[rest.ScalarURI]
 			case "ipv4":
-				scalarName = string(rest.ScalarTypeIPV4)
-				scalarType = defaultScalarTypes[rest.ScalarTypeIPV4]
+				scalarName = string(rest.ScalarIPV4)
+				scalarType = defaultScalarTypes[rest.ScalarIPV4]
 			case "ipv6":
-				scalarName = string(rest.ScalarTypeIPV6)
-				scalarType = defaultScalarTypes[rest.ScalarTypeIPV6]
+				scalarName = string(rest.ScalarIPV6)
+				scalarType = defaultScalarTypes[rest.ScalarIPV6]
 			default:
-				scalarName = string(rest.ScalarTypeString)
-				scalarType = defaultScalarTypes[rest.ScalarTypeString]
+				scalarName = string(rest.ScalarString)
+				scalarType = defaultScalarTypes[rest.ScalarString]
 			}
 		default:
-			scalarName = string(rest.ScalarTypeJSON)
-			scalarType = defaultScalarTypes[rest.ScalarTypeJSON]
+			scalarName = string(rest.ScalarJSON)
+			scalarType = defaultScalarTypes[rest.ScalarJSON]
 		}
 	}
 
@@ -287,32 +311,27 @@ func canSetEnumToSchema(sm *rest.NDCRestSchema, scalarName string, enums []strin
 	return false
 }
 
-func createSchemaFromOpenAPISchema(input *base.Schema) *rest.TypeSchema {
+func createSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest.TypeSchema {
 	ps := &rest.TypeSchema{}
 	if input == nil {
 		return ps
 	}
-	if len(input.Type) > 1 {
-		ps.Type = string(rest.ScalarTypeJSON)
-	} else if len(input.Type) > 0 {
-		ps.Type = input.Type[0]
+	if typeName != "" {
+		ps.Type = typeName
+	} else {
+		if len(input.Type) > 1 {
+			ps.Type = string(rest.ScalarJSON)
+		} else if len(input.Type) > 0 {
+			ps.Type = input.Type[0]
+		}
+		ps.Format = input.Format
 	}
-	ps.Format = input.Format
 	ps.Pattern = input.Pattern
-	ps.Nullable = input.Nullable
 	ps.Maximum = input.Maximum
 	ps.Minimum = input.Minimum
 	ps.MaxLength = input.MaxLength
 	ps.MinLength = input.MinLength
 	ps.Description = input.Description
-
-	enumLength := len(input.Enum)
-	if enumLength > 0 {
-		ps.Enum = make([]string, enumLength)
-		for i, enum := range input.Enum {
-			ps.Enum[i] = enum.Value
-		}
-	}
 
 	return ps
 }
@@ -362,4 +381,37 @@ func convertSecurity(security *base.SecurityRequirement) rest.AuthSecurity {
 
 func isPrimitiveScalar(name string) bool {
 	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long"}, name)
+}
+
+// sort request parameters in order: in -> name
+func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParameter {
+	slices.SortFunc(input, func(a rest.RequestParameter, b rest.RequestParameter) int {
+		if result := strings.Compare(string(a.In), string(b.In)); result != 0 {
+			return result
+		}
+		return strings.Compare(a.Name, b.Name)
+	})
+
+	return input
+}
+
+func getNamedType(typeSchema schema.TypeEncoder, defaultValue string) string {
+	switch ty := typeSchema.(type) {
+	case *schema.NullableType:
+		return getNamedType(ty.UnderlyingType.Interface(), defaultValue)
+	case *schema.NamedType:
+		return ty.Name
+	default:
+		return defaultValue
+	}
+}
+
+func isNullableType(input schema.TypeEncoder) bool {
+	_, ok := input.(*schema.NullableType)
+	return ok
+}
+
+// encodeHeaderArgumentName encodes header key to NDC schema field name
+func encodeHeaderArgumentName(name string) string {
+	return fmt.Sprintf("header%s", utils.ToPascalCase(name))
 }

@@ -17,18 +17,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -40,7 +38,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -50,7 +48,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -74,10 +72,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -86,7 +82,7 @@
         "id": {
           "description": "The ID of the post to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -106,10 +102,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -118,7 +112,7 @@
         "id": {
           "description": "post id",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -141,18 +135,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "postId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -164,7 +156,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -174,7 +166,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -198,10 +190,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -210,7 +200,7 @@
         "id": {
           "description": "The ID of the comment to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -230,18 +220,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -253,7 +241,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -263,7 +251,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -287,10 +275,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -299,7 +285,7 @@
         "id": {
           "description": "The ID of the album to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -319,10 +305,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -331,7 +315,7 @@
         "id": {
           "description": "post id",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -354,18 +338,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "albumId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -377,7 +359,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -387,7 +369,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -411,10 +393,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -423,7 +403,7 @@
         "id": {
           "description": "The ID of the photo to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -443,18 +423,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "userId",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -466,7 +444,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -476,7 +454,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -500,10 +478,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -512,7 +488,7 @@
         "id": {
           "description": "The ID of the todo to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -532,18 +508,16 @@
           {
             "name": "id",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           },
           {
             "name": "email",
             "in": "query",
-            "required": false,
             "schema": {
-              "type": "integer",
+              "type": "Int32",
               "nullable": true
             }
           }
@@ -555,7 +529,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -565,7 +539,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -589,10 +563,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -601,7 +573,7 @@
         "id": {
           "description": "The ID of the user to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -634,7 +606,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -652,7 +624,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -683,7 +655,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -701,7 +673,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -714,7 +686,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -723,7 +695,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -772,7 +744,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -790,7 +762,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -812,7 +784,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -830,7 +802,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -870,7 +842,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -1022,7 +994,6 @@
         "url": "/posts",
         "method": "post",
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Post"
@@ -1053,15 +1024,12 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "schema": {
             "type": "Post"
           }
@@ -1078,7 +1046,7 @@
         "id": {
           "description": "The ID of the post to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -1098,15 +1066,12 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "schema": {
             "type": "Post"
           }
@@ -1123,7 +1088,7 @@
         "id": {
           "description": "The ID of the post to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -1143,10 +1108,8 @@
           {
             "name": "id",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "nullable": false
+              "type": "Int32"
             }
           }
         ]
@@ -1155,7 +1118,7 @@
         "id": {
           "description": "The ID of the post to retrieve",
           "type": {
-            "name": "Int",
+            "name": "Int32",
             "type": "named"
           }
         }
@@ -1172,10 +1135,6 @@
     }
   ],
   "scalar_types": {
-    "BigInt": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
-    },
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1183,11 +1142,18 @@
         "type": "boolean"
       }
     },
-    "Int": {
+    "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "integer"
+        "type": "int32"
+      }
+    },
+    "Int64": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "int64"
       }
     },
     "NotFoundError": {

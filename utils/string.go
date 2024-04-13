@@ -112,3 +112,18 @@ func ToConstantCase(input string) string {
 func StringSliceToConstantCase(inputs []string) string {
 	return strings.ToUpper(StringSliceToSnakeCase(inputs))
 }
+
+// SplitStrings wrap strings.Split with all leading and trailing white space removed
+func SplitStringsAndTrimSpaces(input string, sep string) []string {
+	var results []string
+	items := strings.Split(input, sep)
+	for _, item := range items {
+		trimmed := strings.TrimSpace(item)
+		if trimmed == "" {
+			continue
+		}
+		results = append(results, trimmed)
+	}
+
+	return results
+}

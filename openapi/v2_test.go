@@ -50,12 +50,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 				t.FailNow()
 			}
 
-			assertDeepEqual(t, expected.Collections, output.Collections, "Collections")
-			assertDeepEqual(t, expected.Settings, output.Settings, "Settings")
-			assertDeepEqual(t, expected.ScalarTypes, output.ScalarTypes, "ScalarTypes")
-			assertDeepEqual(t, expected.ObjectTypes, output.ObjectTypes, "ObjectTypes")
-			assertDeepEqual(t, expected.Procedures, output.Procedures, "Procedures")
-			assertDeepEqual(t, expected.Functions, output.Functions, "Functions")
+			assertRESTSchemaEqual(t, &expected, output)
 		})
 	}
 

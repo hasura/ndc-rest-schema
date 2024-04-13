@@ -15,7 +15,7 @@ import (
 	"github.com/pb33f/libopenapi/orderedmap"
 )
 
-type openAPIv2Converter struct {
+type openAPIv2Builder struct {
 	schema *rest.NDCRestSchema
 	*ConvertOptions
 }
@@ -41,7 +41,7 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		return nil, append(errs, errors.New("there is no API to be converted"))
 	}
 
-	converter := &openAPIv2Converter{
+	converter := &openAPIv2Builder{
 		schema:         rest.NewNDCRestSchema(),
 		ConvertOptions: opts,
 	}
@@ -93,7 +93,7 @@ func OpenAPIv2ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 	return converter.schema, nil
 }
 
-func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[string, *v2.SecurityScheme]) error {
+func (oc *openAPIv2Builder) convertSecuritySchemes(scheme orderedmap.Pair[string, *v2.SecurityScheme]) error {
 	key := scheme.Key()
 	security := scheme.Value()
 	if security == nil {
@@ -162,49 +162,19 @@ func (oc *openAPIv2Converter) convertSecuritySchemes(scheme orderedmap.Pair[stri
 	return nil
 }
 
-func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.PathItem]) error {
+func (oc *openAPIv2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.PathItem]) error {
 	pathKey := pathItem.Key()
 	pathValue := pathItem.Value()
-	if pathValue.Get != nil {
-		itemGet := pathValue.Get
-		funcName := itemGet.OperationId
-		if funcName == "" {
-			funcName = buildPathMethodName(pathKey, "get", oc.ConvertOptions)
-		}
-		resultType, err := oc.convertResponse(itemGet.Responses, pathKey, []string{funcName, "Result"})
-		if err != nil {
-			return fmt.Errorf("%s: %s", pathKey, err)
-		}
-		if resultType != nil {
-			arguments, reqParams, reqBody, err := oc.convertParameters(itemGet.Parameters, pathKey, []string{funcName})
-			if err != nil {
-				return fmt.Errorf("%s: %s", funcName, err)
-			}
 
-			function := rest.RESTFunctionInfo{
-				Request: &rest.Request{
-					URL:         pathKey,
-					Method:      "get",
-					Parameters:  reqParams,
-					RequestBody: reqBody,
-					Security:    convertSecurities(itemGet.Security),
-				},
-				FunctionInfo: schema.FunctionInfo{
-					Name:       funcName,
-					Arguments:  arguments,
-					ResultType: resultType.Encode(),
-				},
-			}
-
-			if itemGet.Summary != "" {
-				function.Description = &itemGet.Summary
-			}
-
-			oc.schema.Functions = append(oc.schema.Functions, &function)
-		}
+	funcGet, err := newOpenAPIv2OperationBuilder(oc).BuildFunction(pathKey, pathValue.Get)
+	if err != nil {
+		return err
+	}
+	if funcGet != nil {
+		oc.schema.Functions = append(oc.schema.Functions, funcGet)
 	}
 
-	procPost, err := oc.convertProcedureOperation(pathKey, "post", pathValue.Post)
+	procPost, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "post", pathValue.Post)
 	if err != nil {
 		return err
 	}
@@ -212,7 +182,7 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPost)
 	}
 
-	procPut, err := oc.convertProcedureOperation(pathKey, "put", pathValue.Put)
+	procPut, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "put", pathValue.Put)
 	if err != nil {
 		return err
 	}
@@ -220,7 +190,7 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPut)
 	}
 
-	procPatch, err := oc.convertProcedureOperation(pathKey, "patch", pathValue.Patch)
+	procPatch, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "patch", pathValue.Patch)
 	if err != nil {
 		return err
 	}
@@ -228,7 +198,7 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 		oc.schema.Procedures = append(oc.schema.Procedures, procPatch)
 	}
 
-	procDelete, err := oc.convertProcedureOperation(pathKey, "delete", pathValue.Delete)
+	procDelete, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "delete", pathValue.Delete)
 	if err != nil {
 		return err
 	}
@@ -238,177 +208,8 @@ func (oc *openAPIv2Converter) pathToNDCOperations(pathItem orderedmap.Pair[strin
 	return nil
 }
 
-func (oc *openAPIv2Converter) convertProcedureOperation(pathKey string, method string, operation *v2.Operation) (*rest.RESTProcedureInfo, error) {
-
-	if operation == nil {
-		return nil, nil
-	}
-
-	procName := operation.OperationId
-	if procName == "" {
-		procName = buildPathMethodName(pathKey, method, oc.ConvertOptions)
-	}
-
-	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-
-	if resultType == nil {
-		return nil, nil
-	}
-
-	arguments, reqParams, reqBody, err := oc.convertParameters(operation.Parameters, pathKey, []string{procName})
-	if err != nil {
-		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-
-	if reqBody != nil && len(operation.Consumes) > 0 {
-		contentType := rest.ContentTypeJSON
-		if !slices.Contains(operation.Consumes, rest.ContentTypeJSON) {
-			contentType = operation.Consumes[0]
-		}
-		reqBody.ContentType = contentType
-	}
-
-	procedure := rest.RESTProcedureInfo{
-		Request: &rest.Request{
-			URL:         pathKey,
-			Method:      method,
-			Parameters:  reqParams,
-			RequestBody: reqBody,
-			Security:    convertSecurities(operation.Security),
-		},
-		ProcedureInfo: schema.ProcedureInfo{
-			Name:       procName,
-			Arguments:  arguments,
-			ResultType: resultType.Encode(),
-		},
-	}
-
-	if operation.Summary != "" {
-		procedure.Description = &operation.Summary
-	}
-
-	return &procedure, nil
-}
-
-func (oc *openAPIv2Converter) convertParameters(params []*v2.Parameter, apiPath string, fieldPaths []string) (map[string]schema.ArgumentInfo, []rest.RequestParameter, *rest.RequestBody, error) {
-
-	if len(params) == 0 {
-		return map[string]schema.ArgumentInfo{}, nil, nil, nil
-	}
-
-	var reqParams []rest.RequestParameter
-	arguments := make(map[string]schema.ArgumentInfo)
-
-	var requestBody *rest.RequestBody
-	formData := rest.TypeSchema{
-		Type:       "object",
-		Properties: make(map[string]rest.TypeSchema),
-	}
-	for _, param := range params {
-		if param == nil {
-			continue
-		}
-		paramName := param.Name
-		if paramName == "" {
-			return nil, nil, nil, errors.New("parameter name is empty")
-		}
-
-		var schemaType schema.TypeEncoder
-		var typeSchema *rest.TypeSchema
-		var err error
-
-		paramRequired := false
-		if param.Required != nil && *param.Required {
-			paramRequired = true
-		}
-
-		if param.Type != "" {
-			schemaType, err = oc.getSchemaTypeFromParameter(param, apiPath, fieldPaths)
-			if err != nil {
-				return nil, nil, nil, err
-			}
-			nullable := !paramRequired
-			typeSchema = &rest.TypeSchema{
-				Type:     param.Type,
-				Format:   param.Format,
-				Pattern:  param.Pattern,
-				Nullable: &nullable,
-			}
-			if param.Maximum != nil {
-				maximum := float64(*param.Maximum)
-				typeSchema.Maximum = &maximum
-			}
-			if param.Minimum != nil {
-				minimum := float64(*param.Minimum)
-				typeSchema.Minimum = &minimum
-			}
-			if param.MaxLength != nil {
-				maxLength := int64(*param.MaxLength)
-				typeSchema.MaxLength = &maxLength
-			}
-			if param.MinLength != nil {
-				minLength := int64(*param.MinLength)
-				typeSchema.MinLength = &minLength
-			}
-		} else if param.Schema != nil {
-			schemaType, typeSchema, err = oc.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, fieldPaths)
-			if err != nil {
-				return nil, nil, nil, err
-			}
-		}
-
-		paramLocation, err := rest.ParseParameterLocation(param.In)
-		if err != nil {
-			return nil, nil, nil, err
-		}
-
-		argument := schema.ArgumentInfo{
-			Type: schemaType.Encode(),
-		}
-		if param.Description != "" {
-			argument.Description = &param.Description
-		}
-
-		switch paramLocation {
-		case rest.InBody:
-			arguments["body"] = argument
-			requestBody = &rest.RequestBody{
-				Required: paramRequired,
-				Schema:   typeSchema,
-			}
-		case rest.InFormData:
-			arguments[paramName] = argument
-			if typeSchema != nil {
-				formData.Properties[paramName] = *typeSchema
-			}
-		default:
-			arguments[paramName] = argument
-			reqParams = append(reqParams, rest.RequestParameter{
-				Name:     paramName,
-				In:       paramLocation,
-				Required: paramRequired,
-				Schema:   typeSchema,
-			})
-		}
-	}
-
-	if len(formData.Properties) > 0 {
-		requestBody = &rest.RequestBody{
-			Required:    true,
-			ContentType: rest.ContentTypeMultipartFormData,
-			Schema:      &formData,
-		}
-	}
-
-	return arguments, reqParams, requestBody, nil
-
-}
-
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv2Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
+func (oc *openAPIv2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if schemaProxy == nil {
 		return nil, nil, errParameterSchemaEmpty
@@ -436,13 +237,16 @@ func (oc *openAPIv2Converter) getSchemaTypeFromProxy(schemaProxy *base.SchemaPro
 		}
 	}
 	if nullable {
-		ndcType = schema.NewNullableType(ndcType)
+		typeSchema.Nullable = true
+		if !isNullableType(ndcType) {
+			ndcType = schema.NewNullableType(ndcType)
+		}
 	}
 	return ndcType, typeSchema, nil
 }
 
 // get and convert an OpenAPI data type to a NDC type from parameter
-func (oc *openAPIv2Converter) getSchemaTypeFromParameter(param *v2.Parameter, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
 
 	if param.Type == "" {
 		return nil, errParameterSchemaEmpty
@@ -476,20 +280,20 @@ func (oc *openAPIv2Converter) getSchemaTypeFromParameter(param *v2.Parameter, ap
 }
 
 // get and convert an OpenAPI data type to a NDC type
-func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
+func (oc *openAPIv2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if typeSchema == nil {
 		return nil, nil, errParameterSchemaEmpty
 	}
 
-	typeResult := createSchemaFromOpenAPISchema(typeSchema)
+	var typeResult *rest.TypeSchema
 	if len(typeSchema.AnyOf) > 0 || typeSchema.AdditionalProperties != nil || len(typeSchema.Type) > 1 {
 		scalarName := "JSON"
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
 		}
-		typeResult.Type = scalarName
-		return schema.NewNamedType(scalarName), nil, nil
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
+		return schema.NewNamedType(scalarName), typeResult, nil
 	}
 
 	if len(typeSchema.Type) == 0 {
@@ -501,8 +305,10 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 	if isPrimitiveScalar(typeName) {
 		scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 	} else {
 
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, "")
 		typeResult.Type = typeName
 		switch typeName {
 		case "object":
@@ -522,7 +328,8 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 				typeResult.Properties = make(map[string]rest.TypeSchema)
 				for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
 					propName := prop.Key()
-					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), !slices.Contains(typeSchema.Required, propName), apiPath, append(fieldPaths, propName))
+					nullable := !slices.Contains(typeSchema.Required, propName)
+					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, apiPath, append(fieldPaths, propName))
 					if err != nil {
 						return nil, nil, err
 					}
@@ -532,6 +339,7 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 					if propApiSchema.Description != "" {
 						objField.Description = &propApiSchema.Description
 					}
+					propApiSchema.Nullable = nullable
 					typeResult.Properties[propName] = *propApiSchema
 					object.Fields[propName] = objField
 				}
@@ -574,7 +382,245 @@ func (oc *openAPIv2Converter) getSchemaType(typeSchema *base.Schema, apiPath str
 	return result, typeResult, nil
 }
 
-func (oc *openAPIv2Converter) convertResponse(responses *v2.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *openAPIv2Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
+	typeValue := schemaItem.Value()
+	typeSchema := typeValue.Schema()
+
+	if typeSchema == nil || !slices.Contains(typeSchema.Type, "object") {
+		return nil
+	}
+	_, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
+	return err
+}
+
+func (oc *openAPIv2Builder) trimPathPrefix(input string) string {
+	if oc.ConvertOptions.TrimPrefix == "" {
+		return input
+	}
+	return strings.TrimPrefix(input, oc.ConvertOptions.TrimPrefix)
+}
+
+type openAPIv2OperationBuilder struct {
+	builder       *openAPIv2Builder
+	Arguments     map[string]schema.ArgumentInfo
+	RequestParams []rest.RequestParameter
+}
+
+func newOpenAPIv2OperationBuilder(builder *openAPIv2Builder) *openAPIv2OperationBuilder {
+	return &openAPIv2OperationBuilder{
+		builder:   builder,
+		Arguments: make(map[string]schema.ArgumentInfo),
+	}
+}
+
+// BuildFunction build a REST NDC function information from OpenAPI v2 operation
+func (oc *openAPIv2OperationBuilder) BuildFunction(pathKey string, operation *v2.Operation) (*rest.RESTFunctionInfo, error) {
+
+	if operation == nil {
+		return nil, nil
+	}
+	funcName := operation.OperationId
+	if funcName == "" {
+		funcName = buildPathMethodName(pathKey, "get", oc.builder.ConvertOptions)
+	}
+	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{funcName, "Result"})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+	if resultType == nil {
+		return nil, nil
+	}
+	reqBody, err := oc.convertParameters(operation.Parameters, pathKey, []string{funcName})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", funcName, err)
+	}
+
+	function := rest.RESTFunctionInfo{
+		Request: &rest.Request{
+			URL:         pathKey,
+			Method:      "get",
+			Parameters:  oc.RequestParams,
+			RequestBody: reqBody,
+			Security:    convertSecurities(operation.Security),
+		},
+		FunctionInfo: schema.FunctionInfo{
+			Name:       funcName,
+			Arguments:  oc.Arguments,
+			ResultType: resultType.Encode(),
+		},
+	}
+
+	if operation.Summary != "" {
+		function.Description = &operation.Summary
+	}
+
+	return &function, nil
+}
+
+// BuildProcedure build a REST NDC function information from OpenAPI v2 operation
+func (oc *openAPIv2OperationBuilder) BuildProcedure(pathKey string, method string, operation *v2.Operation) (*rest.RESTProcedureInfo, error) {
+
+	if operation == nil {
+		return nil, nil
+	}
+
+	procName := operation.OperationId
+	if procName == "" {
+		procName = buildPathMethodName(pathKey, method, oc.builder.ConvertOptions)
+	}
+
+	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+
+	if resultType == nil {
+		return nil, nil
+	}
+
+	reqBody, err := oc.convertParameters(operation.Parameters, pathKey, []string{procName})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %s", pathKey, err)
+	}
+
+	if reqBody != nil && len(operation.Consumes) > 0 {
+		contentType := rest.ContentTypeJSON
+		if !slices.Contains(operation.Consumes, rest.ContentTypeJSON) {
+			contentType = operation.Consumes[0]
+		}
+		reqBody.ContentType = contentType
+	}
+
+	procedure := rest.RESTProcedureInfo{
+		Request: &rest.Request{
+			URL:         pathKey,
+			Method:      method,
+			Parameters:  oc.RequestParams,
+			RequestBody: reqBody,
+			Security:    convertSecurities(operation.Security),
+		},
+		ProcedureInfo: schema.ProcedureInfo{
+			Name:       procName,
+			Arguments:  oc.Arguments,
+			ResultType: resultType.Encode(),
+		},
+	}
+
+	if operation.Summary != "" {
+		procedure.Description = &operation.Summary
+	}
+
+	return &procedure, nil
+}
+
+func (oc *openAPIv2OperationBuilder) convertParameters(params []*v2.Parameter, apiPath string, fieldPaths []string) (*rest.RequestBody, error) {
+
+	if len(params) == 0 {
+		return nil, nil
+	}
+
+	var requestBody *rest.RequestBody
+	formData := rest.TypeSchema{
+		Type:       "object",
+		Properties: make(map[string]rest.TypeSchema),
+	}
+	for _, param := range params {
+		if param == nil {
+			continue
+		}
+		paramName := param.Name
+		if paramName == "" {
+			return nil, errors.New("parameter name is empty")
+		}
+
+		var schemaType schema.TypeEncoder
+		var typeSchema *rest.TypeSchema
+		var err error
+
+		paramRequired := false
+		if param.Required != nil && *param.Required {
+			paramRequired = true
+		}
+
+		if param.Type != "" {
+			schemaType, err = oc.builder.getSchemaTypeFromParameter(param, apiPath, fieldPaths)
+			if err != nil {
+				return nil, err
+			}
+			nullable := !paramRequired
+			typeSchema = &rest.TypeSchema{
+				Type:     getNamedType(schemaType, param.Type),
+				Pattern:  param.Pattern,
+				Nullable: nullable,
+			}
+			if param.Maximum != nil {
+				maximum := float64(*param.Maximum)
+				typeSchema.Maximum = &maximum
+			}
+			if param.Minimum != nil {
+				minimum := float64(*param.Minimum)
+				typeSchema.Minimum = &minimum
+			}
+			if param.MaxLength != nil {
+				maxLength := int64(*param.MaxLength)
+				typeSchema.MaxLength = &maxLength
+			}
+			if param.MinLength != nil {
+				minLength := int64(*param.MinLength)
+				typeSchema.MinLength = &minLength
+			}
+		} else if param.Schema != nil {
+			schemaType, typeSchema, err = oc.builder.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, fieldPaths)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		paramLocation, err := rest.ParseParameterLocation(param.In)
+		if err != nil {
+			return nil, err
+		}
+
+		argument := schema.ArgumentInfo{
+			Type: schemaType.Encode(),
+		}
+		if param.Description != "" {
+			argument.Description = &param.Description
+		}
+
+		switch paramLocation {
+		case rest.InBody:
+			oc.Arguments["body"] = argument
+			requestBody = &rest.RequestBody{
+				Schema: typeSchema,
+			}
+		case rest.InFormData:
+			oc.Arguments[paramName] = argument
+			if typeSchema != nil {
+				formData.Properties[paramName] = *typeSchema
+			}
+		default:
+			oc.Arguments[paramName] = argument
+			oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
+				Name:   paramName,
+				In:     paramLocation,
+				Schema: typeSchema,
+			})
+		}
+	}
+
+	if len(formData.Properties) > 0 {
+		requestBody = &rest.RequestBody{
+			ContentType: rest.ContentTypeMultipartFormData,
+			Schema:      &formData,
+		}
+	}
+
+	return requestBody, nil
+
+}
+
+func (oc *openAPIv2OperationBuilder) convertResponse(responses *v2.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
 	if responses == nil || responses.Codes == nil || responses.Codes.IsZero() {
 		return nil, nil
 	}
@@ -598,27 +644,9 @@ func (oc *openAPIv2Converter) convertResponse(responses *v2.Responses, apiPath s
 		return schema.NewNullableNamedType("Boolean"), nil
 	}
 
-	schemaType, _, err := oc.getSchemaTypeFromProxy(resp.Schema, false, apiPath, fieldPaths)
+	schemaType, _, err := oc.builder.getSchemaTypeFromProxy(resp.Schema, false, apiPath, fieldPaths)
 	if err != nil {
 		return nil, err
 	}
 	return schemaType, nil
-}
-
-func (oc *openAPIv2Converter) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
-	typeValue := schemaItem.Value()
-	typeSchema := typeValue.Schema()
-
-	if typeSchema == nil || !slices.Contains(typeSchema.Type, "object") {
-		return nil
-	}
-	_, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
-	return err
-}
-
-func (oc *openAPIv2Converter) trimPathPrefix(input string) string {
-	if oc.ConvertOptions.TrimPrefix == "" {
-		return input
-	}
-	return strings.TrimPrefix(input, oc.ConvertOptions.TrimPrefix)
 }

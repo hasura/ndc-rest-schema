@@ -104,7 +104,7 @@ func (j *SchemaFileFormat) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// ParseSchemaFileFormat parse SchemaFileFormat from file extension
+// ParseSchemaFileFormat parses SchemaFileFormat from file extension
 func ParseSchemaFileFormat(extension string) (SchemaFileFormat, error) {
 	result := SchemaFileFormat(extension)
 	if !slices.Contains(schemaFileFormat_enums, result) {
@@ -146,7 +146,7 @@ func (j *ParameterLocation) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// ParseParameterLocation parse ParameterLocation from string
+// ParseParameterLocation parses ParameterLocation from string
 func ParseParameterLocation(input string) (ParameterLocation, error) {
 	result := ParameterLocation(input)
 	if !slices.Contains(parameterLocation_enums, result) {
@@ -155,25 +155,28 @@ func ParseParameterLocation(input string) (ParameterLocation, error) {
 	return result, nil
 }
 
-// ScalarType defines supported scalar type enums of the OpenAPI spec
-type ScalarType string
+// ScalarName defines supported scalar name enums of the OpenAPI spec
+type ScalarName string
 
 const (
-	ScalarTypeString   ScalarType = "String"
-	ScalarTypeInt      ScalarType = "Int"
-	ScalarTypeBigInt   ScalarType = "BigInt"
-	ScalarTypeFloat    ScalarType = "Float"
-	ScalarTypeBoolean  ScalarType = "Boolean"
-	ScalarTypeJSON     ScalarType = "JSON"
-	ScalarTypeDate     ScalarType = "Date"
-	ScalarTypeDateTime ScalarType = "DateTime"
-	ScalarTypeBase64   ScalarType = "Base64"
-	ScalarTypeUnixTime ScalarType = "UnixTime"
-	ScalarTypeEmail    ScalarType = "Email"
-	ScalarTypeUUID     ScalarType = "UUID"
-	ScalarTypeURI      ScalarType = "URI"
-	ScalarTypeIPV4     ScalarType = "ipv4"
-	ScalarTypeIPV6     ScalarType = "ipv6"
+	ScalarBoolean     ScalarName = "Boolean"
+	ScalarString      ScalarName = "String"
+	ScalarInt32       ScalarName = "Int32"
+	ScalarInt64       ScalarName = "Int64"
+	ScalarFloat32     ScalarName = "Float32"
+	ScalarFloat64     ScalarName = "Float64"
+	ScalarBigDecimal  ScalarName = "BigDecimal"
+	ScalarUUID        ScalarName = "UUID"
+	ScalarDate        ScalarName = "Date"
+	ScalarTimestampTZ ScalarName = "TimestampTZ"
+	ScalarBytes       ScalarName = "Bytes"
+	ScalarBinary      ScalarName = "Binary"
+	ScalarJSON        ScalarName = "JSON"
+	ScalarUnixTime    ScalarName = "UnixTime"
+	ScalarEmail       ScalarName = "Email"
+	ScalarURI         ScalarName = "URI"
+	ScalarIPV4        ScalarName = "IPv4"
+	ScalarIPV6        ScalarName = "IPv6"
 )
 
 const (
@@ -185,3 +188,67 @@ const (
 	ContentTypeTextPlain         = "text/plain"
 	ContentTypeTextHTML          = "text/html"
 )
+
+// ParameterEncodingStyle represents the encoding style of the parameter.
+// style defines how multiple values are delimited. Possible styles depend on the parameter location – path, query, header or cookie.
+type ParameterEncodingStyle string
+
+const (
+	// EncodingStyleSimple (default of query) comma-separated values. Corresponds to the {param_name} URI template.
+	EncodingStyleSimple ParameterEncodingStyle = "simple"
+	// EncodingStyleLabel dot-prefixed values, also known as label expansion. Corresponds to the {.param_name} URI template.
+	EncodingStyleLabel ParameterEncodingStyle = "label"
+	// EncodingStyleMatrix semicolon-prefixed values, also known as path-style expansion. Corresponds to the {;param_name} URI template.
+	EncodingStyleMatrix ParameterEncodingStyle = "matrix"
+	// EncodingStyleForm ampersand-separated values, also known as form-style query expansion. Corresponds to the {?param_name} URI template.
+	EncodingStyleForm ParameterEncodingStyle = "form"
+	// EncodingStyleSpaceDelimited space-separated array values. Same as collectionFormat: ssv in OpenAPI 2.0.
+	// Has effect only for non-exploded arrays (explode: false), that is, the space separates the array values if the array is a single parameter, as in arr=a b c.
+	EncodingStyleSpaceDelimited ParameterEncodingStyle = "spaceDelimited"
+	// EncodingStylePipeDelimited pipeline-separated array values. Same as collectionFormat: pipes in OpenAPI 2.0.
+	// Has effect only for non-exploded arrays (explode: false), that is, the pipe separates the array values if the array is a single parameter, as in arr=a|b|c.
+	EncodingStylePipeDelimited ParameterEncodingStyle = "pipeDelimited"
+	// EncodingStyleDeepObject simple non-nested objects are serialized as paramName[prop1]=value1&paramName[prop2]=value2&....
+	// The behavior for nested objects and arrays is undefined.
+	EncodingStyleDeepObject ParameterEncodingStyle = "deepObject"
+)
+
+var parameterEncodingStyle_enums = []ParameterEncodingStyle{
+	EncodingStyleSimple,
+	EncodingStyleLabel,
+	EncodingStyleMatrix,
+	EncodingStyleForm,
+	EncodingStyleSpaceDelimited,
+	EncodingStylePipeDelimited,
+	EncodingStyleDeepObject,
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (j *ParameterEncodingStyle) UnmarshalJSON(b []byte) error {
+	var rawResult string
+	if err := json.Unmarshal(b, &rawResult); err != nil {
+		return err
+	}
+
+	result, err := ParseParameterEncodingStyle(rawResult)
+	if err != nil {
+		return err
+	}
+
+	*j = result
+	return nil
+}
+
+// IsEmpty checks if the style enum is valid
+func (j ParameterEncodingStyle) IsValid() bool {
+	return slices.Contains(parameterEncodingStyle_enums, j)
+}
+
+// ParseParameterEncodingStyle parses ParameterEncodingStyle from string
+func ParseParameterEncodingStyle(input string) (ParameterEncodingStyle, error) {
+	result := ParameterEncodingStyle(input)
+	if !slices.Contains(parameterEncodingStyle_enums, result) {
+		return result, fmt.Errorf("invalid ParameterEncodingStyle. Expected %+v, got <%s>", parameterEncodingStyle_enums, input)
+	}
+	return result, nil
+}

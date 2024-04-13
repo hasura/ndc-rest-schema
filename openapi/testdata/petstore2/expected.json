@@ -37,10 +37,8 @@
           {
             "name": "status",
             "in": "query",
-            "required": true,
             "schema": {
-              "type": "array",
-              "nullable": false
+              "type": "array"
             }
           }
         ],
@@ -83,10 +81,8 @@
           {
             "name": "tags",
             "in": "query",
-            "required": true,
             "schema": {
-              "type": "array",
-              "nullable": false
+              "type": "array"
             }
           }
         ],
@@ -129,11 +125,8 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false
+              "type": "Int64"
             }
           }
         ],
@@ -147,7 +140,7 @@
         "petId": {
           "description": "ID of pet to return",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -167,11 +160,8 @@
           {
             "name": "orderId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false,
+              "type": "Int64",
               "maximum": 10,
               "minimum": 1
             }
@@ -182,7 +172,7 @@
         "orderId": {
           "description": "ID of pet that needs to be fetched",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -220,10 +210,8 @@
           {
             "name": "username",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "String"
             }
           }
         ]
@@ -252,19 +240,15 @@
           {
             "name": "username",
             "in": "query",
-            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "String"
             }
           },
           {
             "name": "password",
             "in": "query",
-            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "String"
             }
           }
         ]
@@ -313,7 +297,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -344,7 +328,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -375,7 +359,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -384,7 +368,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -393,7 +377,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -402,7 +386,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "DateTime",
+              "name": "TimestampTZ",
               "type": "named"
             }
           }
@@ -434,7 +418,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -484,7 +468,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -506,7 +490,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -546,7 +530,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BigInt",
+              "name": "Int64",
               "type": "named"
             }
           }
@@ -583,7 +567,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Int",
+              "name": "Int32",
               "type": "named"
             }
           }
@@ -609,11 +593,8 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false
+              "type": "Int64"
             }
           }
         ],
@@ -626,17 +607,16 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "multipart/form-data",
           "schema": {
             "type": "object",
             "properties": {
               "additionalMetadata": {
-                "type": "string",
+                "type": "String",
                 "nullable": true
               },
               "file": {
-                "type": "file",
+                "type": "Binary",
                 "nullable": true
               }
             }
@@ -659,7 +639,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "Base64",
+              "name": "Binary",
               "type": "named"
             }
           }
@@ -667,7 +647,7 @@
         "petId": {
           "description": "ID of pet to update",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -692,7 +672,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Pet"
@@ -731,7 +710,6 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Pet"
@@ -765,11 +743,8 @@
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false
+              "type": "Int64"
             }
           }
         ],
@@ -782,17 +757,16 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/x-www-form-urlencoded",
           "schema": {
             "type": "object",
             "properties": {
               "name": {
-                "type": "string",
+                "type": "String",
                 "nullable": true
               },
               "status": {
-                "type": "string",
+                "type": "String",
                 "nullable": true
               }
             }
@@ -813,7 +787,7 @@
         "petId": {
           "description": "ID of pet that needs to be updated",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         },
@@ -846,20 +820,16 @@
           {
             "name": "api_key",
             "in": "header",
-            "required": false,
             "schema": {
-              "type": "string",
+              "type": "String",
               "nullable": true
             }
           },
           {
             "name": "petId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false
+              "type": "Int64"
             }
           }
         ],
@@ -885,7 +855,7 @@
         "petId": {
           "description": "Pet id to delete",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -905,7 +875,6 @@
         "url": "/store/order",
         "method": "post",
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "Order"
@@ -936,11 +905,8 @@
           {
             "name": "orderId",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64",
-              "nullable": false,
+              "type": "Int64",
               "minimum": 1
             }
           }
@@ -950,7 +916,7 @@
         "orderId": {
           "description": "ID of the order that needs to be deleted",
           "type": {
-            "name": "BigInt",
+            "name": "Int64",
             "type": "named"
           }
         }
@@ -973,15 +939,12 @@
           {
             "name": "username",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "String"
             }
           }
         ],
         "requestBody": {
-          "required": true,
           "contentType": "application/json",
           "schema": {
             "type": "User"
@@ -1022,10 +985,8 @@
           {
             "name": "username",
             "in": "path",
-            "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "String"
             }
           }
         ]
@@ -1064,16 +1025,12 @@
     }
   ],
   "scalar_types": {
-    "Base64": {
+    "Binary": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "string"
+        "type": "bytes"
       }
-    },
-    "BigInt": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
     },
     "Boolean": {
       "aggregate_functions": {},
@@ -1082,18 +1039,18 @@
         "type": "boolean"
       }
     },
-    "DateTime": {
+    "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "string"
+        "type": "int32"
       }
     },
-    "Int": {
+    "Int64": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "type": "integer"
+        "type": "int64"
       }
     },
     "JSON": {
@@ -1129,6 +1086,13 @@
       "comparison_operators": {},
       "representation": {
         "type": "string"
+      }
+    },
+    "TimestampTZ": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "timestamptz"
       }
     }
   }
