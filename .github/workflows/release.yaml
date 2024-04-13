@@ -1,0 +1,47 @@
+name: Release CLI on github
+on:
+  push:
+    branches:
+      - "*"
+    tags:
+      - "v*"
+
+jobs:
+  tests:
+    uses: ./.github/workflows/test.yaml
+
+  build-cli-binaries:
+    name: build the CLI binaries
+    runs-on: ubuntu-20.04
+    needs: [tests]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+      - name: build the CLI
+        run: |
+          VERSION="$GITHUB_REF_NAME" make ci-build
+          mkdir release
+          mv _output/$VERSION/* release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: release/ndc-rest-schema-*
+          if-no-files-found: error
+
+      - name: Get version from tag
+        id: get-version
+        run: |
+          echo "tagged_version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: create a draft release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          tag: v${{ steps.get-version.outputs.tagged_version }}
+          artifacts: release/*
