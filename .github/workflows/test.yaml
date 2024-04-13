@@ -1,9 +1,9 @@
 name: Unit tests
 
 on:
+  workflow_call:
   pull_request:
   push:
-    workflow_call:
     paths:
       - "**.go"
       - "go.mod"
