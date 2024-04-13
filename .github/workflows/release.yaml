@@ -1,8 +1,6 @@
 name: Release CLI on github
 on:
   push:
-    branches:
-      - "*"
     tags:
       - "v*"
 
