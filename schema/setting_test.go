@@ -68,7 +68,7 @@ func TestNDCRestSettings(t *testing.T) {
 				SecuritySchemes: map[string]SecurityScheme{
 					"api_key": {
 						Type:  APIKeyScheme,
-						Value: *NewEnvStringFromTemplate(NewEnvTemplate("PET_STORE_API_KEY")),
+						Value: NewEnvStringFromTemplate(NewEnvTemplate("PET_STORE_API_KEY")),
 						APIKeyAuthConfig: &APIKeyAuthConfig{
 							In:   APIKeyInHeader,
 							Name: "api_key",
@@ -89,7 +89,7 @@ func TestNDCRestSettings(t *testing.T) {
 						},
 					},
 				},
-				Timeout: *NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_TIMEOUT")),
+				Timeout: NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_TIMEOUT")),
 				Retry: &RetryPolicy{
 					Times:      *NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_RETRY_TIMES")),
 					Delay:      *NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_RETRY_DELAY")),

@@ -60,7 +60,7 @@ func (et EnvTemplate) String() string {
 // MarshalJSON implements json.Marshaler.
 func (j EnvTemplate) MarshalJSON() ([]byte, error) {
 	if j.IsEmpty() {
-		return nil, nil
+		return json.Marshal(nil)
 	}
 	return json.Marshal(j.String())
 }
@@ -157,7 +157,7 @@ func (et *EnvString) Value() *string {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (j *EnvString) MarshalJSON() ([]byte, error) {
+func (j EnvString) MarshalJSON() ([]byte, error) {
 	return j.EnvTemplate.MarshalJSON()
 }
 
@@ -199,8 +199,8 @@ func NewEnvIntFromTemplate(template EnvTemplate) *EnvInt {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (j *EnvInt) MarshalJSON() ([]byte, error) {
-	return json.Marshal(j.EnvTemplate.String())
+func (j EnvInt) MarshalJSON() ([]byte, error) {
+	return j.EnvTemplate.MarshalJSON()
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -268,7 +268,7 @@ func NewEnvIntsFromTemplate(template EnvTemplate) *EnvInts {
 
 // MarshalJSON implements json.Marshaler.
 func (j *EnvInts) MarshalJSON() ([]byte, error) {
-	return json.Marshal(j.EnvTemplate.String())
+	return j.EnvTemplate.MarshalJSON()
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

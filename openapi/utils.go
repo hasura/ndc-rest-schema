@@ -417,7 +417,7 @@ func encodeHeaderArgumentName(name string) string {
 }
 
 func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
-	settings.Timeout = *rest.NewEnvIntFromTemplate(rest.EnvTemplate{
+	settings.Timeout = rest.NewEnvIntFromTemplate(rest.EnvTemplate{
 		Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "TIMEOUT"}),
 	})
 	settings.Retry = &rest.RetryPolicy{

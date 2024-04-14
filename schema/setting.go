@@ -13,7 +13,7 @@ type NDCRestSettings struct {
 	Servers []ServerConfig       `json:"servers" yaml:"servers" mapstructure:"servers"`
 	Headers map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	// configure the request timeout in seconds, default 30s
-	Timeout         EnvInt                    `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
+	Timeout         *EnvInt                   `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 	Retry           *RetryPolicy              `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
 	SecuritySchemes map[string]SecurityScheme `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty" mapstructure:"securitySchemes"`
 	Security        AuthSecurities            `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`

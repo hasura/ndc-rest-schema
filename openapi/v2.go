@@ -113,7 +113,7 @@ func (oc *openAPIv2Builder) convertSecuritySchemes(scheme orderedmap.Pair[string
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = *rest.NewEnvStringFromTemplate(rest.EnvTemplate{
+		result.Value = rest.NewEnvStringFromTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key}),
 		})
 		result.APIKeyAuthConfig = &apiConfig
@@ -122,7 +122,7 @@ func (oc *openAPIv2Builder) convertSecuritySchemes(scheme orderedmap.Pair[string
 			Scheme: "Basic",
 			Header: "Authorization",
 		}
-		result.Value = *rest.NewEnvStringFromTemplate(rest.EnvTemplate{
+		result.Value = rest.NewEnvStringFromTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"}),
 		})
 		result.HTTPAuthConfig = &httpConfig
