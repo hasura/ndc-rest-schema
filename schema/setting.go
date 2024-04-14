@@ -64,7 +64,7 @@ func (rs NDCRestSettings) Validate() error {
 type RetryPolicy struct {
 	// Number of retry times
 	Times EnvInt `json:"times,omitempty" yaml:"times,omitempty" mapstructure:"times"`
-	// Delay retry delay in seconds
+	// Delay retry delay in milliseconds
 	Delay EnvInt `json:"delay,omitempty" yaml:"delay,omitempty" mapstructure:"delay"`
 	// HTTPStatus retries if the remote service returns one of these http status
 	HTTPStatus EnvInts `json:"httpStatus,omitempty" yaml:"httpStatus,omitempty" mapstructure:"httpStatus"`
