@@ -14,7 +14,7 @@ type NDCRestSettings struct {
 	Headers map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	// configure the request timeout in seconds, default 30s
 	Timeout         *EnvInt                   `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
-	Retry           *RetryPolicy              `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
+	Retry           *RetryPolicySetting       `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
 	SecuritySchemes map[string]SecurityScheme `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty" mapstructure:"securitySchemes"`
 	Security        AuthSecurities            `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 	Version         string                    `json:"version,omitempty" yaml:"version,omitempty" mapstructure:"version"`
@@ -60,8 +60,8 @@ func (rs NDCRestSettings) Validate() error {
 	return nil
 }
 
-// RetryPolicy represents retry policy settings
-type RetryPolicy struct {
+// RetryPolicySetting represents retry policy settings
+type RetryPolicySetting struct {
 	// Number of retry times
 	Times EnvInt `json:"times,omitempty" yaml:"times,omitempty" mapstructure:"times"`
 	// Delay retry delay in milliseconds
@@ -71,7 +71,7 @@ type RetryPolicy struct {
 }
 
 // Validate if the current instance is valid
-func (rs RetryPolicy) Validate() error {
+func (rs RetryPolicySetting) Validate() error {
 	times, err := rs.Times.Value()
 	if err != nil {
 		return err

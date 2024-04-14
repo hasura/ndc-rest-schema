@@ -73,6 +73,7 @@ type Request struct {
 	Timeout     uint           `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 	Servers     []ServerConfig `json:"servers,omitempty" yaml:"servers,omitempty" mapstructure:"servers"`
 	RequestBody *RequestBody   `json:"requestBody,omitempty" yaml:"requestBody,omitempty" mapstructure:"requestBody"`
+	Retry       *RetryPolicy   `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
 }
 
 // Clone copies this instance to a new one
@@ -84,6 +85,7 @@ func (r Request) Clone() *Request {
 		Headers:     r.Headers,
 		Parameters:  r.Parameters,
 		Timeout:     r.Timeout,
+		Retry:       r.Retry,
 		Security:    r.Security,
 		Servers:     r.Servers,
 		RequestBody: r.RequestBody,
@@ -115,6 +117,16 @@ type TypeSchema struct {
 	Items       *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
 	Properties  map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
 	Description string                `json:"-" yaml:"-"`
+}
+
+// RetryPolicy represents the retry policy of request
+type RetryPolicy struct {
+	// Number of retry times
+	Times uint `json:"times,omitempty" yaml:"times,omitempty" mapstructure:"times"`
+	// Delay retry delay in milliseconds
+	Delay uint `json:"delay,omitempty" yaml:"delay,omitempty" mapstructure:"delay"`
+	// HTTPStatus retries if the remote service returns one of these http status
+	HTTPStatus []int `json:"httpStatus,omitempty" yaml:"httpStatus,omitempty" mapstructure:"httpStatus"`
 }
 
 // EncodingObject represents the [Encoding Object] that contains serialization strategy for application/x-www-form-urlencoded

@@ -420,7 +420,7 @@ func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
 	settings.Timeout = rest.NewEnvIntTemplate(rest.EnvTemplate{
 		Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "TIMEOUT"}),
 	})
-	settings.Retry = &rest.RetryPolicy{
+	settings.Retry = &rest.RetryPolicySetting{
 		Times: *rest.NewEnvIntTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_TIMES"}),
 		}),

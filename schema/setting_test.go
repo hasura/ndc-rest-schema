@@ -90,7 +90,7 @@ func TestNDCRestSettings(t *testing.T) {
 					},
 				},
 				Timeout: NewEnvIntTemplate(NewEnvTemplate("PET_STORE_TIMEOUT")),
-				Retry: &RetryPolicy{
+				Retry: &RetryPolicySetting{
 					Times:      *NewEnvIntTemplate(NewEnvTemplate("PET_STORE_RETRY_TIMES")),
 					Delay:      *NewEnvIntValue(1000),
 					HTTPStatus: *NewEnvIntsTemplate(NewEnvTemplate("PET_STORE_RETRY_HTTP_STATUS")),
