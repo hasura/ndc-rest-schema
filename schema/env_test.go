@@ -16,14 +16,14 @@ func TestEnvTemplate(t *testing.T) {
 		{
 			input: "{{SERVER_URL}}",
 			templates: []EnvTemplate{
-				*NewEnvTemplate("SERVER_URL"),
+				NewEnvTemplate("SERVER_URL"),
 			},
 			expected: "",
 		},
 		{
 			input: "{{SERVER_URL:-http://localhost:8080}}",
 			templates: []EnvTemplate{
-				*NewEnvTemplateWithDefault("SERVER_URL", "http://localhost:8080"),
+				NewEnvTemplateWithDefault("SERVER_URL", "http://localhost:8080"),
 			},
 			expected: "http://localhost:8080",
 		},

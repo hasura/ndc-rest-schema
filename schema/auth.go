@@ -91,7 +91,7 @@ func ParseAPIKeyLocation(value string) (APIKeyLocation, error) {
 // [OpenAPI 3]: https://swagger.io/docs/specification/authentication
 type SecurityScheme struct {
 	Type              SecuritySchemeType `json:"type" yaml:"type" mapstructure:"type"`
-	Value             string             `json:"value,omitempty" yaml:"value,omitempty" mapstructure:"value"`
+	Value             EnvString          `json:"value,omitempty" yaml:"value,omitempty" mapstructure:"value"`
 	*APIKeyAuthConfig `yaml:",inline"`
 	*HTTPAuthConfig   `yaml:",inline"`
 	*OAuth2Config     `yaml:",inline"`

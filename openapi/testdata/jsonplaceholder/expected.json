@@ -5,6 +5,12 @@
         "url": "{{SERVER_URL:-https://jsonplaceholder.typicode.com}}"
       }
     ],
+    "timeout": "{{TIMEOUT}}",
+    "retry": {
+      "times": "{{RETRY_TIMES}}",
+      "delay": "{{RETRY_DELAY}}",
+      "httpStatus": "{{RETRY_HTTP_STATUS}}"
+    },
     "version": "1.0.0"
   },
   "collections": [],

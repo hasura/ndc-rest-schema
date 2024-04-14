@@ -46,6 +46,8 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		schema:         rest.NewNDCRestSchema(),
 		ConvertOptions: opts,
 	}
+	setDefaultSettings(converter.schema.Settings, opts)
+
 	if docModel.Model.Info != nil {
 		converter.schema.Settings.Version = docModel.Model.Info.Version
 	}
@@ -80,7 +82,6 @@ func OpenAPIv3ToNDCSchema(input []byte, options *ConvertOptions) (*rest.NDCRestS
 		}
 	}
 	converter.schema.Settings.Security = convertSecurities(docModel.Model.Security)
-
 	return converter.schema, nil
 }
 
@@ -94,7 +95,7 @@ func (oc *openAPIv3Builder) convertServers(servers []*v3.Server) []rest.ServerCo
 				envName = fmt.Sprintf("%s_%d", envName, i+1)
 			}
 			results = append(results, rest.ServerConfig{
-				URL: rest.NewEnvTemplateWithDefault(envName, server.URL).String(),
+				URL: *rest.NewEnvStringFromTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
 			})
 		}
 	}
@@ -125,14 +126,14 @@ func (oc *openAPIv3Builder) convertSecuritySchemes(scheme orderedmap.Pair[string
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key})).String()
+		result.Value = *rest.NewEnvStringFromTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key})))
 		result.APIKeyAuthConfig = &apiConfig
 	case rest.HTTPAuthScheme:
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: security.Scheme,
 			Header: "Authorization",
 		}
-		result.Value = rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"})).String()
+		result.Value = *rest.NewEnvStringFromTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"})))
 		result.HTTPAuthConfig = &httpConfig
 	case rest.OAuth2Scheme:
 		if security.Flows == nil {

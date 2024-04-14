@@ -25,6 +25,12 @@
         }
       }
     },
+    "timeout": "{{TIMEOUT}}",
+    "retry": {
+      "times": "{{RETRY_TIMES}}",
+      "delay": "{{RETRY_DELAY}}",
+      "httpStatus": "{{RETRY_HTTP_STATUS}}"
+    },
     "version": "1.0.6"
   },
   "collections": [],
@@ -44,10 +50,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -88,10 +91,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -600,10 +600,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ],
         "requestBody": {
@@ -665,10 +662,7 @@
         "method": "post",
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ],
         "requestBody": {
@@ -703,10 +697,7 @@
         "method": "put",
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ],
         "requestBody": {
@@ -750,10 +741,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ],
         "requestBody": {
@@ -835,10 +823,7 @@
         ],
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
@@ -1061,11 +1046,7 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": [
-          "placed",
-          "approved",
-          "delivered"
-        ],
+        "one_of": ["placed", "approved", "delivered"],
         "type": "enum"
       }
     },
@@ -1073,11 +1054,7 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": [
-          "available",
-          "pending",
-          "sold"
-        ],
+        "one_of": ["available", "pending", "sold"],
         "type": "enum"
       }
     },
