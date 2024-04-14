@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 var envVariableRegex = regexp.MustCompile(`{{([A-Z0-9_]+)(:-([^}]*))?}}`)
@@ -73,6 +75,26 @@ func (j *EnvTemplate) UnmarshalJSON(b []byte) error {
 	}
 
 	value := FindEnvTemplate(rawValue)
+	if value != nil {
+		*j = *value
+	}
+	return nil
+}
+
+// MarshalYAML implements yaml.Marshaler interface
+func (j EnvTemplate) MarshalYAML() (any, error) {
+	if j.IsEmpty() {
+		return yaml.Marshal(nil)
+	}
+	return yaml.Marshal(j.String())
+}
+
+// UnmarshalYAML implements yaml.Unmarshaler interface
+func (j *EnvTemplate) UnmarshalYAML(node *yaml.Node) error {
+	if node.Value == "" {
+		return nil
+	}
+	value := FindEnvTemplate(node.Value)
 	if value != nil {
 		*j = *value
 	}
@@ -198,6 +220,29 @@ func (j *EnvString) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalYAML implements yaml.Marshaler interface
+func (j EnvString) MarshalYAML() (any, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return yaml.Marshal(j.value)
+	}
+	return j.EnvTemplate.MarshalYAML()
+}
+
+// UnmarshalYAML implements yaml.Unmarshaler.
+func (j *EnvString) UnmarshalYAML(node *yaml.Node) error {
+	if node.Value == "" {
+		return nil
+	}
+	value := FindEnvTemplate(node.Value)
+	if value != nil {
+		j.EnvTemplate = *value
+		j.Value()
+	} else {
+		j.value = &node.Value
+	}
+	return nil
+}
+
 // NewEnvStringValue creates an EnvString from value
 func NewEnvStringValue(value string) *EnvString {
 	return &EnvString{
@@ -288,6 +333,37 @@ func (j *EnvInt) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalYAML implements yaml.Marshaler interface
+func (j EnvInt) MarshalYAML() (any, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return yaml.Marshal(j.value)
+	}
+	return j.EnvTemplate.MarshalYAML()
+}
+
+// UnmarshalYAML implements yaml.Unmarshaler.
+func (j *EnvInt) UnmarshalYAML(node *yaml.Node) error {
+	if node.Value == "" {
+		return nil
+	}
+	value := FindEnvTemplate(node.Value)
+	if value != nil {
+		j.EnvTemplate = *value
+		_, err := j.Value()
+		return err
+	}
+	if node.Value != "" {
+		intValue, err := strconv.ParseInt(node.Value, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		j.value = &intValue
+	}
+
+	return nil
+}
+
 // Value returns the value which is retrieved from system or the default value if exist
 func (et *EnvInt) Value() (*int64, error) {
 	if et.value != nil {
@@ -349,6 +425,9 @@ func (et EnvInts) String() string {
 
 // MarshalJSON implements json.Marshaler.
 func (j *EnvInts) MarshalJSON() ([]byte, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return json.Marshal(j.value)
+	}
 	return j.EnvTemplate.MarshalJSON()
 }
 
@@ -374,6 +453,39 @@ func (j *EnvInts) UnmarshalJSON(b []byte) error {
 
 	if rawValue != "" {
 		intValues, err := parseIntsFromString(rawValue)
+		if err != nil {
+			return err
+		}
+
+		j.value = intValues
+	}
+
+	return nil
+}
+
+// MarshalYAML implements yaml.Marshaler.
+func (j *EnvInts) MarshalYAML() (any, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return yaml.Marshal(j.value)
+	}
+	return j.EnvTemplate.MarshalYAML()
+}
+
+// UnmarshalYAML implements yaml.Unmarshaler.
+func (j *EnvInts) UnmarshalYAML(node *yaml.Node) error {
+	if node.Value == "" {
+		return nil
+	}
+
+	value := FindEnvTemplate(node.Value)
+	if value != nil {
+		j.EnvTemplate = *value
+		_, err := j.Value()
+		return err
+	}
+
+	if node.Value != "" {
+		intValues, err := parseIntsFromString(node.Value)
 		if err != nil {
 			return err
 		}

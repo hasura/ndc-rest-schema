@@ -3,6 +3,8 @@ package schema
 import (
 	"encoding/json"
 	"testing"
+
+	"gopkg.in/yaml.v3"
 )
 
 func TestEnvTemplate(t *testing.T) {
@@ -110,6 +112,13 @@ func TestEnvInt(t *testing.T) {
 			}
 			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
 			assertDeepEqual(t, tc.expected.value, result.value)
+
+			if err := yaml.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.value, result.value)
 		})
 	}
 }
@@ -143,6 +152,13 @@ func TestEnvInts(t *testing.T) {
 		t.Run(tc.input, func(t *testing.T) {
 			var result EnvInts
 			if err := json.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.value, result.value)
+
+			if err := yaml.Unmarshal([]byte(tc.input), &result); err != nil {
 				t.Error(t, err)
 				t.FailNow()
 			}
