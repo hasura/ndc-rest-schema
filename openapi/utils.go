@@ -417,17 +417,17 @@ func encodeHeaderArgumentName(name string) string {
 }
 
 func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
-	settings.Timeout = rest.NewEnvIntFromTemplate(rest.EnvTemplate{
+	settings.Timeout = rest.NewEnvIntTemplate(rest.EnvTemplate{
 		Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "TIMEOUT"}),
 	})
 	settings.Retry = &rest.RetryPolicy{
-		Times: *rest.NewEnvIntFromTemplate(rest.EnvTemplate{
+		Times: *rest.NewEnvIntTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_TIMES"}),
 		}),
-		Delay: *rest.NewEnvIntFromTemplate(rest.EnvTemplate{
+		Delay: *rest.NewEnvIntTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_DELAY"}),
 		}),
-		HTTPStatus: *rest.NewEnvIntsFromTemplate(rest.EnvTemplate{
+		HTTPStatus: *rest.NewEnvIntsTemplate(rest.EnvTemplate{
 			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_HTTP_STATUS"}),
 		}),
 	}

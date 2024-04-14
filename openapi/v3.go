@@ -95,7 +95,7 @@ func (oc *openAPIv3Builder) convertServers(servers []*v3.Server) []rest.ServerCo
 				envName = fmt.Sprintf("%s_%d", envName, i+1)
 			}
 			results = append(results, rest.ServerConfig{
-				URL: *rest.NewEnvStringFromTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
+				URL: *rest.NewEnvStringTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
 			})
 		}
 	}
@@ -126,14 +126,14 @@ func (oc *openAPIv3Builder) convertSecuritySchemes(scheme orderedmap.Pair[string
 			In:   inLocation,
 			Name: security.Name,
 		}
-		result.Value = rest.NewEnvStringFromTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key})))
+		result.Value = rest.NewEnvStringTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key})))
 		result.APIKeyAuthConfig = &apiConfig
 	case rest.HTTPAuthScheme:
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: security.Scheme,
 			Header: "Authorization",
 		}
-		result.Value = rest.NewEnvStringFromTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"})))
+		result.Value = rest.NewEnvStringTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"})))
 		result.HTTPAuthConfig = &httpConfig
 	case rest.OAuth2Scheme:
 		if security.Flows == nil {

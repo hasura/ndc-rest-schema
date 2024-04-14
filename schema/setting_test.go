@@ -19,7 +19,7 @@ func TestNDCRestSettings(t *testing.T) {
 						"url": "{{PET_STORE_SERVER_URL:-https://petstore3.swagger.io/api/v3}}"
 					},
 					{
-						"url": "{{PET_STORE_SERVER_URL_2:-https://petstore3.swagger.io/api/v3.1}}"
+						"url": "https://petstore3.swagger.io/api/v3.1"
 					}
 				],
 				"securitySchemes": {
@@ -45,7 +45,7 @@ func TestNDCRestSettings(t *testing.T) {
 				"timeout": "{{PET_STORE_TIMEOUT}}",
 				"retry": {
 					"times": "{{PET_STORE_RETRY_TIMES}}",
-					"delay": "{{PET_STORE_RETRY_DELAY}}",
+					"delay": 1000,
 					"httpStatus": "{{PET_STORE_RETRY_HTTP_STATUS}}"
 				},
 				"security": [
@@ -59,16 +59,16 @@ func TestNDCRestSettings(t *testing.T) {
 			expected: NDCRestSettings{
 				Servers: []ServerConfig{
 					{
-						URL: *NewEnvStringFromTemplate(NewEnvTemplateWithDefault("PET_STORE_SERVER_URL", "https://petstore3.swagger.io/api/v3")),
+						URL: *NewEnvStringTemplate(NewEnvTemplateWithDefault("PET_STORE_SERVER_URL", "https://petstore3.swagger.io/api/v3")),
 					},
 					{
-						URL: *NewEnvStringFromTemplate(NewEnvTemplateWithDefault("PET_STORE_SERVER_URL_2", "https://petstore3.swagger.io/api/v3.1")),
+						URL: *EnvString{}.WithValue("https://petstore3.swagger.io/api/v3.1"),
 					},
 				},
 				SecuritySchemes: map[string]SecurityScheme{
 					"api_key": {
 						Type:  APIKeyScheme,
-						Value: NewEnvStringFromTemplate(NewEnvTemplate("PET_STORE_API_KEY")),
+						Value: NewEnvStringTemplate(NewEnvTemplate("PET_STORE_API_KEY")),
 						APIKeyAuthConfig: &APIKeyAuthConfig{
 							In:   APIKeyInHeader,
 							Name: "api_key",
@@ -89,11 +89,11 @@ func TestNDCRestSettings(t *testing.T) {
 						},
 					},
 				},
-				Timeout: NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_TIMEOUT")),
+				Timeout: NewEnvIntTemplate(NewEnvTemplate("PET_STORE_TIMEOUT")),
 				Retry: &RetryPolicy{
-					Times:      *NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_RETRY_TIMES")),
-					Delay:      *NewEnvIntFromTemplate(NewEnvTemplate("PET_STORE_RETRY_DELAY")),
-					HTTPStatus: *NewEnvIntsFromTemplate(NewEnvTemplate("PET_STORE_RETRY_HTTP_STATUS")),
+					Times:      *NewEnvIntTemplate(NewEnvTemplate("PET_STORE_RETRY_TIMES")),
+					Delay:      *NewEnvIntValue(1000),
+					HTTPStatus: *NewEnvIntsTemplate(NewEnvTemplate("PET_STORE_RETRY_HTTP_STATUS")),
 				},
 				Security: AuthSecurities{
 					AuthSecurity{},

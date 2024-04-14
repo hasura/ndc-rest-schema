@@ -137,6 +137,12 @@ type EnvString struct {
 	EnvTemplate
 }
 
+// WithValue returns a new EnvString instance with new value
+func (j EnvString) WithValue(value string) *EnvString {
+	j.value = &value
+	return &j
+}
+
 // Value returns the value which is retrieved from system or the default value if exist
 func (et *EnvString) Value() *string {
 	if et.value != nil {
@@ -156,8 +162,22 @@ func (et *EnvString) Value() *string {
 	return &copyVal
 }
 
+// String implements the Stringer interface
+func (et EnvString) String() string {
+	if et.IsEmpty() {
+		if et.value == nil {
+			return ""
+		}
+		return *et.value
+	}
+	return et.EnvTemplate.String()
+}
+
 // MarshalJSON implements json.Marshaler.
 func (j EnvString) MarshalJSON() ([]byte, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return json.Marshal(j.value)
+	}
 	return j.EnvTemplate.MarshalJSON()
 }
 
@@ -178,8 +198,15 @@ func (j *EnvString) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// NewEnvStringFromTemplate creates an EnvString from template
-func NewEnvStringFromTemplate(template EnvTemplate) *EnvString {
+// NewEnvStringValue creates an EnvString from value
+func NewEnvStringValue(value string) *EnvString {
+	return &EnvString{
+		value: &value,
+	}
+}
+
+// NewEnvStringTemplate creates an EnvString from template
+func NewEnvStringTemplate(template EnvTemplate) *EnvString {
 	return &EnvString{
 		EnvTemplate: template,
 	}
@@ -191,20 +218,53 @@ type EnvInt struct {
 	EnvTemplate
 }
 
-// NewEnvIntFromTemplate creates an EnvInt from template
-func NewEnvIntFromTemplate(template EnvTemplate) *EnvInt {
+// NewEnvIntValue creates an EnvInt from value
+func NewEnvIntValue(value int64) *EnvInt {
+	return &EnvInt{
+		value: &value,
+	}
+}
+
+// NewEnvIntTemplate creates an EnvInt from template
+func NewEnvIntTemplate(template EnvTemplate) *EnvInt {
 	return &EnvInt{
 		EnvTemplate: template,
 	}
 }
 
+// WithValue returns a new EnvInt instance with new value
+func (j EnvInt) WithValue(value int64) *EnvInt {
+	j.value = &value
+	return &j
+}
+
+// String implements the Stringer interface
+func (et EnvInt) String() string {
+	if et.IsEmpty() {
+		if et.value == nil {
+			return ""
+		}
+		return fmt.Sprint(*et.value)
+	}
+	return et.EnvTemplate.String()
+}
+
 // MarshalJSON implements json.Marshaler.
 func (j EnvInt) MarshalJSON() ([]byte, error) {
+	if j.EnvTemplate.IsEmpty() {
+		return json.Marshal(j.value)
+	}
 	return j.EnvTemplate.MarshalJSON()
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *EnvInt) UnmarshalJSON(b []byte) error {
+	var v int64
+	if err := json.Unmarshal(b, &v); err == nil {
+		j.value = &v
+		return nil
+	}
+
 	var rawValue string
 	if err := json.Unmarshal(b, &rawValue); err != nil {
 		return err
@@ -259,11 +319,32 @@ type EnvInts struct {
 	EnvTemplate
 }
 
-// NewEnvIntsFromTemplate creates EnvInts from template
-func NewEnvIntsFromTemplate(template EnvTemplate) *EnvInts {
+// NewEnvIntsValue creates EnvInts from value
+func NewEnvIntsValue(value []int64) *EnvInts {
+	return &EnvInts{
+		value: value,
+	}
+}
+
+// NewEnvIntsTemplate creates EnvInts from template
+func NewEnvIntsTemplate(template EnvTemplate) *EnvInts {
 	return &EnvInts{
 		EnvTemplate: template,
 	}
+}
+
+// WithValue returns a new EnvInts instance with new value
+func (j EnvInts) WithValue(value []int64) *EnvInts {
+	j.value = value
+	return &j
+}
+
+// String implements the Stringer interface
+func (et EnvInts) String() string {
+	if et.IsEmpty() {
+		return fmt.Sprintf("%v", et.value)
+	}
+	return et.EnvTemplate.String()
 }
 
 // MarshalJSON implements json.Marshaler.
@@ -273,6 +354,12 @@ func (j *EnvInts) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *EnvInts) UnmarshalJSON(b []byte) error {
+	var v []int64
+	if err := json.Unmarshal(b, &v); err == nil {
+		j.value = v
+		return nil
+	}
+
 	var rawValue string
 	if err := json.Unmarshal(b, &rawValue); err != nil {
 		return err
