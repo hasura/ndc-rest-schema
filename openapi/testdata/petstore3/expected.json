@@ -8,6 +8,12 @@
         "url": "{{PET_STORE_SERVER_URL_2:-https://petstore3.swagger.io/api/v3.1}}"
       }
     ],
+    "timeout": "{{PET_STORE_TIMEOUT}}",
+    "retry": {
+      "times": "{{PET_STORE_RETRY_TIMES}}",
+      "delay": "{{PET_STORE_RETRY_DELAY}}",
+      "httpStatus": "{{PET_STORE_RETRY_HTTP_STATUS}}"
+    },
     "securitySchemes": {
       "api_key": {
         "type": "apiKey",

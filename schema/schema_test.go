@@ -11,7 +11,7 @@ import (
 
 func assertDeepEqual(t *testing.T, expected any, reality any, msgs ...string) {
 	if !reflect.DeepEqual(expected, reality) {
-		t.Errorf("%s: not equal, expected: %+v\ngot     : %+v", strings.Join(msgs, " "), expected, reality)
+		t.Errorf("%s: not equal\nexpected: %+v\ngot     : %+v", strings.Join(msgs, " "), expected, reality)
 		t.FailNow()
 	}
 }

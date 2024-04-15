@@ -415,3 +415,20 @@ func isNullableType(input schema.TypeEncoder) bool {
 func encodeHeaderArgumentName(name string) string {
 	return fmt.Sprintf("header%s", utils.ToPascalCase(name))
 }
+
+func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
+	settings.Timeout = rest.NewEnvIntTemplate(rest.EnvTemplate{
+		Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "TIMEOUT"}),
+	})
+	settings.Retry = &rest.RetryPolicySetting{
+		Times: *rest.NewEnvIntTemplate(rest.EnvTemplate{
+			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_TIMES"}),
+		}),
+		Delay: *rest.NewEnvIntTemplate(rest.EnvTemplate{
+			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_DELAY"}),
+		}),
+		HTTPStatus: *rest.NewEnvIntsTemplate(rest.EnvTemplate{
+			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_HTTP_STATUS"}),
+		}),
+	}
+}

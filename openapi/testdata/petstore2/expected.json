@@ -5,6 +5,12 @@
         "url": "{{SERVER_URL:-https://petstore.swagger.io/v2}}"
       }
     ],
+    "timeout": "{{TIMEOUT}}",
+    "retry": {
+      "times": "{{RETRY_TIMES}}",
+      "delay": "{{RETRY_DELAY}}",
+      "httpStatus": "{{RETRY_HTTP_STATUS}}"
+    },
     "securitySchemes": {
       "api_key": {
         "type": "apiKey",
