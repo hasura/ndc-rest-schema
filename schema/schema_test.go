@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -9,10 +10,9 @@ import (
 	"github.com/hasura/ndc-sdk-go/schema"
 )
 
-func assertDeepEqual(t *testing.T, expected any, reality any, msgs ...string) {
+func assertDeepEqual(_ *testing.T, expected any, reality any, msgs ...string) {
 	if !reflect.DeepEqual(expected, reality) {
-		t.Errorf("%s: not equal\nexpected: %+v\ngot     : %+v", strings.Join(msgs, " "), expected, reality)
-		t.FailNow()
+		panic(fmt.Errorf("%s: not equal\nexpected: %+v\ngot     : %+v", strings.Join(msgs, " "), expected, reality))
 	}
 }
 

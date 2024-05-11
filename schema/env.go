@@ -3,6 +3,7 @@ package schema
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -86,7 +87,7 @@ func (j EnvTemplate) MarshalYAML() (any, error) {
 	if j.IsEmpty() {
 		return yaml.Marshal(nil)
 	}
-	return yaml.Marshal(j.String())
+	return j.String(), nil
 }
 
 // UnmarshalYAML implements yaml.Unmarshaler interface
@@ -223,7 +224,7 @@ func (j *EnvString) UnmarshalJSON(b []byte) error {
 // MarshalYAML implements yaml.Marshaler interface
 func (j EnvString) MarshalYAML() (any, error) {
 	if j.EnvTemplate.IsEmpty() {
-		return yaml.Marshal(j.value)
+		return j.value, nil
 	}
 	return j.EnvTemplate.MarshalYAML()
 }
@@ -336,7 +337,7 @@ func (j *EnvInt) UnmarshalJSON(b []byte) error {
 // MarshalYAML implements yaml.Marshaler interface
 func (j EnvInt) MarshalYAML() (any, error) {
 	if j.EnvTemplate.IsEmpty() {
-		return yaml.Marshal(j.value)
+		return j.value, nil
 	}
 	return j.EnvTemplate.MarshalYAML()
 }
@@ -424,7 +425,7 @@ func (et EnvInts) String() string {
 }
 
 // MarshalJSON implements json.Marshaler.
-func (j *EnvInts) MarshalJSON() ([]byte, error) {
+func (j EnvInts) MarshalJSON() ([]byte, error) {
 	if j.EnvTemplate.IsEmpty() {
 		return json.Marshal(j.value)
 	}
@@ -464,9 +465,10 @@ func (j *EnvInts) UnmarshalJSON(b []byte) error {
 }
 
 // MarshalYAML implements yaml.Marshaler.
-func (j *EnvInts) MarshalYAML() (any, error) {
+func (j EnvInts) MarshalYAML() (any, error) {
+	log.Println("value", j.value)
 	if j.EnvTemplate.IsEmpty() {
-		return yaml.Marshal(j.value)
+		return j.value, nil
 	}
 	return j.EnvTemplate.MarshalYAML()
 }

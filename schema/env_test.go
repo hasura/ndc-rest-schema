@@ -2,6 +2,8 @@ package schema
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
 	"testing"
 
 	"gopkg.in/yaml.v3"
@@ -9,9 +11,10 @@ import (
 
 func TestEnvTemplate(t *testing.T) {
 	testCases := []struct {
-		input     string
-		expected  string
-		templates []EnvTemplate
+		input       string
+		expected    string
+		templateStr string
+		templates   []EnvTemplate
 	}{
 		{},
 		{
@@ -23,14 +26,16 @@ func TestEnvTemplate(t *testing.T) {
 			templates: []EnvTemplate{
 				NewEnvTemplate("SERVER_URL"),
 			},
-			expected: "",
+			templateStr: "{{SERVER_URL}}",
+			expected:    "",
 		},
 		{
 			input: "{{SERVER_URL:-http://localhost:8080}}",
 			templates: []EnvTemplate{
 				NewEnvTemplateWithDefault("SERVER_URL", "http://localhost:8080"),
 			},
-			expected: "http://localhost:8080",
+			templateStr: "{{SERVER_URL:-http://localhost:8080}}",
+			expected:    "http://localhost:8080",
 		},
 		{
 			input: "{{SERVER_URL:-}}",
@@ -40,7 +45,8 @@ func TestEnvTemplate(t *testing.T) {
 					DefaultValue: toPtr(""),
 				},
 			},
-			expected: "",
+			templateStr: "{{SERVER_URL:-}}",
+			expected:    "",
 		},
 		{
 			input: "{{SERVER_URL:-http://localhost:8080}},{{SERVER_URL:-http://localhost:8080}},{{SERVER_URL}}",
@@ -53,7 +59,8 @@ func TestEnvTemplate(t *testing.T) {
 					Name: "SERVER_URL",
 				},
 			},
-			expected: "http://localhost:8080,http://localhost:8080,",
+			templateStr: "{{SERVER_URL:-http://localhost:8080}},{{SERVER_URL}}",
+			expected:    "http://localhost:8080,http://localhost:8080,",
 		},
 	}
 
@@ -66,14 +73,80 @@ func TestEnvTemplate(t *testing.T) {
 				}
 			} else {
 				assertDeepEqual(t, tc.templates[0].String(), tmpl.String())
+
+				var jTemplate EnvTemplate
+				if err := json.Unmarshal([]byte(fmt.Sprintf(`"%s"`, tc.input)), &jTemplate); err != nil {
+					t.Errorf("failed to unmarshal template from json: %s", err)
+					t.FailNow()
+				}
+				assertDeepEqual(t, jTemplate, *tmpl)
+				bs, err := json.Marshal(jTemplate)
+				if err != nil {
+					t.Errorf("failed to marshal template from json: %s", err)
+					t.FailNow()
+				}
+				assertDeepEqual(t, tmpl.String(), strings.Trim(string(bs), `"`))
+
+				if err := yaml.Unmarshal([]byte(fmt.Sprintf(`"%s"`, tc.input)), &jTemplate); err != nil {
+					t.Errorf("failed to unmarshal template from yaml: %s", err)
+					t.FailNow()
+				}
+				assertDeepEqual(t, jTemplate, *tmpl)
+				bs, err = yaml.Marshal(jTemplate)
+				if err != nil {
+					t.Errorf("failed to marshal template from yaml: %s", err)
+					t.FailNow()
+				}
+				assertDeepEqual(t, tmpl.String(), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
 			}
 
 			templates := FindAllEnvTemplates(tc.input)
 			assertDeepEqual(t, tc.templates, templates)
+			templateStrings := []string{}
 			for i, item := range templates {
 				assertDeepEqual(t, tc.templates[i].String(), item.String())
+				templateStrings = append(templateStrings, item.String())
 			}
 			assertDeepEqual(t, tc.expected, ReplaceEnvTemplates(tc.input, templates))
+			if len(templateStrings) > 0 {
+				assertDeepEqual(t, tc.templateStr, strings.Join(templateStrings, ","))
+			}
+		})
+	}
+}
+
+func TestEnvString(t *testing.T) {
+	testCases := []struct {
+		input    string
+		expected EnvString
+	}{
+		{
+			input: `"{{FOO:-bar}}"`,
+			expected: *NewEnvStringTemplate(EnvTemplate{
+				Name:         "FOO",
+				DefaultValue: toPtr("bar"),
+			}),
+		},
+		{
+			input:    `"baz"`,
+			expected: *NewEnvStringValue("baz"),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.input, func(t *testing.T) {
+			var result EnvString
+			if err := yaml.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, strings.Trim(tc.input, "\""), tc.expected.String())
+			bs, err := yaml.Marshal(result)
+			if err != nil {
+				t.Fatal(t, err)
+			}
+			assertDeepEqual(t, strings.Trim(tc.input, `"`), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
 		})
 	}
 }
@@ -89,7 +162,7 @@ func TestEnvInt(t *testing.T) {
 		},
 		{
 			input:    `"400"`,
-			expected: EnvInt{value: toPtr[int64](400)},
+			expected: *EnvInt{}.WithValue(400),
 		},
 		{
 			input: `"{{FOO:-401}}"`,
@@ -119,22 +192,35 @@ func TestEnvInt(t *testing.T) {
 			}
 			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
 			assertDeepEqual(t, tc.expected.value, result.value)
+			assertDeepEqual(t, strings.Trim(tc.input, "\""), tc.expected.String())
+			bs, err := yaml.Marshal(result)
+			if err != nil {
+				t.Fatal(t, err)
+			}
+			assertDeepEqual(t, strings.Trim(tc.input, `"`), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
 		})
 	}
 }
 
 func TestEnvInts(t *testing.T) {
 	testCases := []struct {
-		input    string
-		expected EnvInts
+		input        string
+		expected     EnvInts
+		expectedYaml string
 	}{
 		{
 			input:    `[400, 401, 403]`,
 			expected: EnvInts{value: []int64{400, 401, 403}},
+			expectedYaml: `- 400
+- 401
+- 403`,
 		},
 		{
 			input:    `"400, 401, 403"`,
-			expected: EnvInts{value: []int64{400, 401, 403}},
+			expected: *NewEnvIntsValue(nil).WithValue([]int64{400, 401, 403}),
+			expectedYaml: `- 400
+- 401
+- 403`,
 		},
 		{
 			input: `"{{FOO:-400, 401, 403}}"`,
@@ -145,6 +231,7 @@ func TestEnvInts(t *testing.T) {
 					DefaultValue: toPtr("400, 401, 403"),
 				},
 			},
+			expectedYaml: `{{FOO:-400, 401, 403}}`,
 		},
 	}
 
@@ -162,8 +249,13 @@ func TestEnvInts(t *testing.T) {
 				t.Error(t, err)
 				t.FailNow()
 			}
-			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.String(), result.String())
 			assertDeepEqual(t, tc.expected.value, result.value)
+			bs, err := yaml.Marshal(result)
+			if err != nil {
+				t.Fatal(t, err)
+			}
+			assertDeepEqual(t, tc.expectedYaml, strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
 		})
 	}
 }
