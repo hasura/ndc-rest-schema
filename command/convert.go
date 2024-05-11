@@ -72,7 +72,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 			err = utils.WriteSchemaFile(args.Output, result)
 		}
 		if err != nil {
-			slog.Error("failed to write schema file: %s", err)
+			slog.Error("failed to write schema file", slog.String("error", err.Error()))
 			return err
 		}
 
@@ -83,7 +83,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 	// print to stderr
 	format, err := schema.ParseSchemaFileFormat(args.Format)
 	if err != nil {
-		slog.Error("failed to parse format: %s", err)
+		slog.Error("failed to parse format", slog.Any("error", err))
 		return err
 	}
 
@@ -94,7 +94,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 
 	resultBytes, err := utils.MarshalSchema(rawResult, format)
 	if err != nil {
-		slog.Error("failed to encode schema: %s", err)
+		slog.Error("failed to encode schema", slog.Any("error", err))
 		return err
 	}
 
