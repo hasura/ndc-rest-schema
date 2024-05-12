@@ -117,6 +117,8 @@ type TypeSchema struct {
 	Items       *TypeSchema           `json:"items,omitempty" yaml:"items,omitempty" mapstructure:"items"`
 	Properties  map[string]TypeSchema `json:"properties,omitempty" yaml:"properties,omitempty" mapstructure:"properties"`
 	Description string                `json:"-" yaml:"-"`
+	ReadOnly    bool                  `json:"-" yaml:"-"`
+	WriteOnly   bool                  `json:"-" yaml:"-"`
 }
 
 // RetryPolicy represents the retry policy of request
