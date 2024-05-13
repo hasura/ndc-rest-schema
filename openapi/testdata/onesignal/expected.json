@@ -7191,7 +7191,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /notifications",
+          "description": "Request body of POST /notifications",
           "type": {
             "name": "NotificationInput",
             "type": "named"
@@ -7293,7 +7293,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /notifications/{notification_id}/history",
+          "description": "Request body of POST /notifications/{notification_id}/history",
           "type": {
             "name": "GetNotificationHistoryBody",
             "type": "named"

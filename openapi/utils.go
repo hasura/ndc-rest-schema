@@ -378,6 +378,7 @@ func convertSecurity(security *base.SecurityRequirement) rest.AuthSecurity {
 	return results
 }
 
+// check if the OAS type is a scalar
 func isPrimitiveScalar(name string) bool {
 	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long"}, name)
 }
@@ -394,12 +395,16 @@ func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParamete
 	return input
 }
 
-func getNamedType(typeSchema schema.TypeEncoder, defaultValue string) string {
+// get the inner named type of the type encoder
+func getNamedType(typeSchema schema.TypeEncoder, recursive bool, defaultValue string) string {
 	switch ty := typeSchema.(type) {
 	case *schema.NullableType:
-		return getNamedType(ty.UnderlyingType.Interface(), defaultValue)
+		return getNamedType(ty.UnderlyingType.Interface(), recursive, defaultValue)
 	case *schema.ArrayType:
-		return getNamedType(ty.ElementType.Interface(), defaultValue)
+		if !recursive {
+			return defaultValue
+		}
+		return getNamedType(ty.ElementType.Interface(), recursive, defaultValue)
 	case *schema.NamedType:
 		return ty.Name
 	default:
@@ -447,13 +452,7 @@ func getSchemaFromProxy(proxy *base.SchemaProxy) (*base.Schema, bool) {
 		return nil, false
 	}
 	sc := proxy.Schema()
-	if sc == nil {
-		return nil, false
-	}
-	if len(sc.Type) > 0 || len(sc.AllOf) > 0 || len(sc.AnyOf) > 0 || len(sc.OneOf) > 0 {
-		return sc, true
-	}
-	if len(sc.Type) == 0 || (sc.Type[0] == "string" && len(sc.Enum) == 1 && sc.Enum[0] == nil || sc.Enum[0].Value == "") {
+	if sc == nil || (len(sc.Type) == 0 && len(sc.AllOf) == 0 && len(sc.AnyOf) == 0 && len(sc.OneOf) == 0) {
 		return sc, false
 	}
 	return sc, true

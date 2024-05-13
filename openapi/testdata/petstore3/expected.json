@@ -3370,7 +3370,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /pet",
+          "description": "Request body of POST /pet",
           "type": {
             "name": "Pet",
             "type": "named"
@@ -3405,7 +3405,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of put /pet",
+          "description": "Request body of PUT /pet",
           "type": {
             "name": "Pet",
             "type": "named"
@@ -3603,7 +3603,7 @@
           }
         },
         "body": {
-          "description": "Request body of post /pet/{petId}/uploadImage",
+          "description": "Request body of POST /pet/{petId}/uploadImage",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3683,7 +3683,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /pet/multipart",
+          "description": "Request body of POST /pet/multipart",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3720,7 +3720,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /store/order",
+          "description": "Request body of POST /store/order",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3784,7 +3784,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of post /user/createWithList",
+          "description": "Request body of POST /user/createWithList",
           "type": {
             "type": "nullable",
             "underlying_type": {

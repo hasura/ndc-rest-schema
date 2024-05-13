@@ -471,6 +471,7 @@ func (oc *openAPIv3Builder) getSchemaType(typeSchema *base.Schema, apiPath strin
 	return result, typeResult, isRef, nil
 }
 
+// Support converting allOf and anyOf to object types with merge strategy
 func (oc *openAPIv3Builder) buildAllOfAnyOfSchemaType(schemaProxies []*base.SchemaProxy, nullable bool, apiPath string, writeMode bool, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, bool, error) {
 	if len(schemaProxies) == 1 {
 		return oc.getSchemaTypeFromProxy(schemaProxies[0], nullable, apiPath, writeMode, fieldPaths)
@@ -496,7 +497,7 @@ func (oc *openAPIv3Builder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sche
 			return nil, nil, false, err
 		}
 
-		name := getNamedType(enc, "")
+		name := getNamedType(enc, true, "")
 		writeName := formatWriteObjectName(name)
 		isObject := !isPrimitiveScalar(ty.Type) && ty.Type != "array"
 		if isObject {
@@ -910,7 +911,7 @@ func (oc *openAPIv3OperationBuilder) BuildProcedure(pathKey string, method strin
 				ContentType: rest.ContentTypeFormURLEncoded,
 			}
 		} else {
-			description := fmt.Sprintf("Request body of %s %s", method, pathKey)
+			description := fmt.Sprintf("Request body of %s %s", strings.ToUpper(method), pathKey)
 			// renaming query parameter name `body` if exist to avoid conflicts
 			if paramData, ok := oc.Arguments["body"]; ok {
 				oc.Arguments["paramBody"] = paramData
@@ -1006,6 +1007,7 @@ func (oc *openAPIv3OperationBuilder) convertParameters(params []*v3.Parameter, a
 	return nil
 }
 
+// build a named type for JSON scalar
 func (oc *openAPIv3Builder) buildScalarJSON() *schema.NamedType {
 	scalarName := string(rest.ScalarJSON)
 	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {

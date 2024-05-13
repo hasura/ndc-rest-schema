@@ -551,7 +551,7 @@ func (oc *openAPIv2OperationBuilder) convertParameters(params []*v2.Parameter, a
 			}
 			nullable := !paramRequired
 			typeSchema = &rest.TypeSchema{
-				Type:     getNamedType(schemaType, param.Type),
+				Type:     getNamedType(schemaType, false, param.Type),
 				Pattern:  param.Pattern,
 				Nullable: nullable,
 			}
