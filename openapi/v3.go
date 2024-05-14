@@ -511,8 +511,11 @@ func (oc *openAPIv3Builder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sche
 				delete(oc.schema.ObjectTypes, writeName)
 				delete(oc.schema.ScalarTypes, name)
 			}
-			if name == ty.Type {
-				ty.Type = string(rest.ScalarJSON)
+			// TODO: should we keep the original anyOf or allOf type schema
+			ty = &rest.TypeSchema{
+				Type:        string(rest.ScalarJSON),
+				Nullable:    ty.Nullable,
+				Description: ty.Description,
 			}
 			return oc.buildScalarJSON(), ty, false, nil
 		}

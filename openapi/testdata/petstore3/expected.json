@@ -4324,29 +4324,12 @@
                   "nullable": true,
                   "properties": {
                     "account_tax_ids": {
-                      "type": "array",
-                      "nullable": true,
-                      "items": {
-                        "type": "String",
-                        "maxLength": 5000
-                      }
+                      "type": "JSON",
+                      "nullable": true
                     },
                     "custom_fields": {
-                      "type": "array",
-                      "nullable": true,
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "String",
-                            "maxLength": 40
-                          },
-                          "value": {
-                            "type": "String",
-                            "maxLength": 140
-                          }
-                        }
-                      }
+                      "type": "JSON",
+                      "nullable": true
                     },
                     "description": {
                       "type": "String",
