@@ -2928,7 +2928,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "ConnectEmbeddedAccountFeatures",
+              "name": "JSON",
               "type": "named"
             }
           }
@@ -3067,6 +3067,7 @@
           }
         },
         "failure_details": {
+          "description": "Details about this InboundTransfer's failure. Only set when status is `failed`.",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3216,6 +3217,15 @@
     },
     "UploadPetMultipartBody": {
       "fields": {
+        "address": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
         "addresses": {
           "type": {
             "type": "nullable",
@@ -3360,7 +3370,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of /pet",
+          "description": "Request body of POST /pet",
           "type": {
             "name": "Pet",
             "type": "named"
@@ -3395,7 +3405,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of /pet",
+          "description": "Request body of PUT /pet",
           "type": {
             "name": "Pet",
             "type": "named"
@@ -3593,7 +3603,7 @@
           }
         },
         "body": {
-          "description": "Request body of /pet/{petId}/uploadImage",
+          "description": "Request body of POST /pet/{petId}/uploadImage",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3627,6 +3637,10 @@
             "type": "object",
             "nullable": true,
             "properties": {
+              "address": {
+                "type": "JSON",
+                "nullable": true
+              },
               "addresses": {
                 "type": "array",
                 "nullable": true
@@ -3669,7 +3683,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of /pet/multipart",
+          "description": "Request body of POST /pet/multipart",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3706,7 +3720,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of /store/order",
+          "description": "Request body of POST /store/order",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -3770,7 +3784,7 @@
       },
       "arguments": {
         "body": {
-          "description": "Request body of /user/createWithList",
+          "description": "Request body of POST /user/createWithList",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -5890,6 +5904,18 @@
         "type": "enum"
       }
     },
+    "CheckoutAmountTaxDisplay": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "one_of": [
+          "",
+          "exclude_tax",
+          "include_inclusive_tax"
+        ],
+        "type": "enum"
+      }
+    },
     "CheckoutBillingAddressCollection": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -6281,10 +6307,6 @@
         ],
         "type": "enum"
       }
-    },
-    "ConnectEmbeddedAccountFeatures": {
-      "aggregate_functions": {},
-      "comparison_operators": {}
     },
     "Float64": {
       "aggregate_functions": {},

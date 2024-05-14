@@ -214,7 +214,7 @@ func (oc *openAPIv2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string,
 func (oc *openAPIv2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nullable bool, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if schemaProxy == nil {
-		return nil, nil, errParameterSchemaEmpty
+		return nil, nil, errParameterSchemaEmpty(fieldPaths)
 	}
 	innerSchema := schemaProxy.Schema()
 	if innerSchema == nil {
@@ -251,7 +251,7 @@ func (oc *openAPIv2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy
 func (oc *openAPIv2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
 
 	if param.Type == "" {
-		return nil, errParameterSchemaEmpty
+		return nil, errParameterSchemaEmpty(fieldPaths)
 	}
 
 	var result schema.TypeEncoder
@@ -285,7 +285,7 @@ func (oc *openAPIv2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiP
 func (oc *openAPIv2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, error) {
 
 	if typeSchema == nil {
-		return nil, nil, errParameterSchemaEmpty
+		return nil, nil, errParameterSchemaEmpty(fieldPaths)
 	}
 
 	var typeResult *rest.TypeSchema
@@ -299,7 +299,7 @@ func (oc *openAPIv2Builder) getSchemaType(typeSchema *base.Schema, apiPath strin
 	}
 
 	if len(typeSchema.Type) == 0 {
-		return nil, nil, errParameterSchemaEmpty
+		return nil, nil, errParameterSchemaEmpty(fieldPaths)
 	}
 
 	var result schema.TypeEncoder
@@ -551,7 +551,7 @@ func (oc *openAPIv2OperationBuilder) convertParameters(params []*v2.Parameter, a
 			}
 			nullable := !paramRequired
 			typeSchema = &rest.TypeSchema{
-				Type:     getNamedType(schemaType, param.Type),
+				Type:     getNamedType(schemaType, false, param.Type),
 				Pattern:  param.Pattern,
 				Nullable: nullable,
 			}

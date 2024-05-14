@@ -15,15 +15,23 @@ import (
 func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 
 	testCases := []struct {
-		Name     string
-		Source   string
-		Expected string
+		Name      string
+		Source    string
+		EnvPrefix string
+		Expected  string
 	}{
 		// go run . convert -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
 		{
-			Name:     "petstore3",
-			Source:   "testdata/petstore3/source.json",
-			Expected: "testdata/petstore3/expected.json",
+			Name:      "petstore3",
+			Source:    "testdata/petstore3/source.json",
+			Expected:  "testdata/petstore3/expected.json",
+			EnvPrefix: "PET_STORE",
+		},
+		// go run . convert -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
+		{
+			Name:     "onesignal",
+			Source:   "testdata/onesignal/source.json",
+			Expected: "testdata/onesignal/expected.json",
 		},
 	}
 
@@ -38,7 +46,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
 			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, &ConvertOptions{
-				EnvPrefix:  "PET_STORE",
+				EnvPrefix:  tc.EnvPrefix,
 				TrimPrefix: "/v1",
 			})
 			if output == nil {

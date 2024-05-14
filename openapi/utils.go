@@ -1,7 +1,6 @@
 package openapi
 
 import (
-	"errors"
 	"fmt"
 	"log/slog"
 	"regexp"
@@ -19,8 +18,6 @@ var (
 	bracketRegexp         = regexp.MustCompile(`[\{\}]`)
 	schemaRefNameV2Regexp = regexp.MustCompile(`^#/definitions/([a-zA-Z0-9\.\-_]+)$`)
 	schemaRefNameV3Regexp = regexp.MustCompile(`^#/components/schemas/([a-zA-Z0-9\.\-_]+)$`)
-
-	errParameterSchemaEmpty = errors.New("parameter schema is empty")
 )
 
 var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
@@ -332,6 +329,8 @@ func createSchemaFromOpenAPISchema(input *base.Schema, typeName string) *rest.Ty
 	ps.MaxLength = input.MaxLength
 	ps.MinLength = input.MinLength
 	ps.Description = input.Description
+	ps.ReadOnly = input.ReadOnly != nil && *input.ReadOnly
+	ps.WriteOnly = input.WriteOnly != nil && *input.WriteOnly
 
 	return ps
 }
@@ -379,6 +378,7 @@ func convertSecurity(security *base.SecurityRequirement) rest.AuthSecurity {
 	return results
 }
 
+// check if the OAS type is a scalar
 func isPrimitiveScalar(name string) bool {
 	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long"}, name)
 }
@@ -395,10 +395,16 @@ func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParamete
 	return input
 }
 
-func getNamedType(typeSchema schema.TypeEncoder, defaultValue string) string {
+// get the inner named type of the type encoder
+func getNamedType(typeSchema schema.TypeEncoder, recursive bool, defaultValue string) string {
 	switch ty := typeSchema.(type) {
 	case *schema.NullableType:
-		return getNamedType(ty.UnderlyingType.Interface(), defaultValue)
+		return getNamedType(ty.UnderlyingType.Interface(), recursive, defaultValue)
+	case *schema.ArrayType:
+		if !recursive {
+			return defaultValue
+		}
+		return getNamedType(ty.ElementType.Interface(), recursive, defaultValue)
 	case *schema.NamedType:
 		return ty.Name
 	default:
@@ -431,4 +437,23 @@ func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
 			Name: utils.StringSliceToConstantCase([]string{opts.EnvPrefix, "RETRY_HTTP_STATUS"}),
 		}),
 	}
+}
+
+func formatWriteObjectName(name string) string {
+	return fmt.Sprintf("%sInput", name)
+}
+
+func errParameterSchemaEmpty(fieldPaths []string) error {
+	return fmt.Errorf("parameter schema of $.%s is empty", strings.Join(fieldPaths, "."))
+}
+
+func getSchemaFromProxy(proxy *base.SchemaProxy) (*base.Schema, bool) {
+	if proxy == nil {
+		return nil, false
+	}
+	sc := proxy.Schema()
+	if sc == nil || (len(sc.Type) == 0 && len(sc.AllOf) == 0 && len(sc.AnyOf) == 0 && len(sc.OneOf) == 0) {
+		return sc, false
+	}
+	return sc, true
 }
