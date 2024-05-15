@@ -20,6 +20,8 @@ type ConvertCommandArguments struct {
 	TrimPrefix  string            `help:"Trim the prefix in URL, e.g. /v1"`
 	EnvPrefix   string            `help:"The environment variable prefix for security values, e.g. PET_STORE"`
 	MethodAlias map[string]string `help:"Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser"`
+	PatchBefore []string          `help:"Patch files to be applied into the input file before converting"`
+	PatchAfter  []string          `help:"Patch files to be applied into the input file after converting"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
@@ -32,9 +34,17 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 		slog.String("format", args.Format),
 		slog.String("trim_prefix", args.TrimPrefix),
 		slog.String("env_prefix", args.EnvPrefix),
+		slog.Any("patch_before", args.PatchBefore),
+		slog.Any("patch_after", args.PatchAfter),
 		slog.Bool("pure", args.Pure),
 	)
 	rawContent, err := utils.ReadFileFromPath(args.File)
+	if err != nil {
+		slog.Error(err.Error())
+		return err
+	}
+
+	rawContent, err = utils.ApplyPatch(rawContent, stringSliceToPatchConfigs(args.PatchBefore))
 	if err != nil {
 		slog.Error(err.Error())
 		return err
@@ -65,6 +75,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 		return errors.Join(errs...)
 	}
 
+	result, err = utils.ApplyPatchToRestSchema(result, stringSliceToPatchConfigs(args.PatchAfter))
 	if args.Output != "" {
 		if args.Pure {
 			err = utils.WriteSchemaFile(args.Output, result.ToSchemaResponse())
@@ -100,4 +111,12 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 
 	fmt.Print(string(resultBytes))
 	return nil
+}
+
+func stringSliceToPatchConfigs(input []string) []utils.PatchConfig {
+	result := make([]utils.PatchConfig, len(input))
+	for i, str := range input {
+		result[i] = utils.PatchConfig{Path: str}
+	}
+	return result
 }
