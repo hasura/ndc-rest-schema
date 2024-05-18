@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
@@ -16,7 +17,7 @@ type oas2OperationBuilder struct {
 	RequestParams []rest.RequestParameter
 }
 
-func newOpenAPIv2OperationBuilder(builder *OAS2Builder) *oas2OperationBuilder {
+func newOAS2OperationBuilder(builder *OAS2Builder) *oas2OperationBuilder {
 	return &oas2OperationBuilder{
 		builder:   builder,
 		Arguments: make(map[string]schema.ArgumentInfo),
@@ -33,6 +34,10 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 	if funcName == "" {
 		funcName = buildPathMethodName(pathKey, "get", oc.builder.ConvertOptions)
 	}
+	oc.builder.Logger.Debug("function",
+		slog.String("name", funcName),
+		slog.String("path", pathKey),
+	)
 	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{funcName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -78,6 +83,12 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 	if procName == "" {
 		procName = buildPathMethodName(pathKey, method, oc.builder.ConvertOptions)
 	}
+
+	oc.builder.Logger.Debug("procedure",
+		slog.String("name", procName),
+		slog.String("path", pathKey),
+		slog.String("method", method),
+	)
 
 	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
 	if err != nil {

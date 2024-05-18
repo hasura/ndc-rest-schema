@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
@@ -34,6 +35,12 @@ func (oc *oas3OperationBuilder) BuildFunction(itemGet *v3.Operation) (*rest.REST
 	if funcName == "" {
 		funcName = buildPathMethodName(oc.pathKey, "get", oc.builder.ConvertOptions)
 	}
+
+	oc.builder.Logger.Debug("function",
+		slog.String("name", funcName),
+		slog.String("path", oc.pathKey),
+		slog.String("method", oc.method),
+	)
 	resultType, err := oc.convertResponse(itemGet.Responses, oc.pathKey, []string{funcName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
@@ -79,6 +86,11 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 		procName = buildPathMethodName(oc.pathKey, oc.method, oc.builder.ConvertOptions)
 	}
 
+	oc.builder.Logger.Debug("procedure",
+		slog.String("name", procName),
+		slog.String("path", oc.pathKey),
+		slog.String("method", oc.method),
+	)
 	resultType, err := oc.convertResponse(operation.Responses, oc.pathKey, []string{procName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
@@ -102,7 +114,7 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 			// convert URL encoded body to parameters
 			if reqBody.Schema != nil {
 				if reqBody.Schema.Type == "object" {
-					objectType, objectTypeName, err := oc.builder.getObjectTypeFromSchemaType(schemaType.Encode())
+					objectType, objectTypeName, err := oc.getObjectTypeFromSchemaType(schemaType.Encode())
 					if err != nil {
 						return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
 					}
@@ -401,4 +413,24 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 		return nil, err
 	}
 	return schemaType, nil
+}
+
+func (oc *oas3OperationBuilder) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
+	iSchemaType, err := schemaType.InterfaceT()
+
+	switch st := iSchemaType.(type) {
+	case *schema.NullableType:
+		return oc.getObjectTypeFromSchemaType(st.UnderlyingType)
+	case *schema.NamedType:
+		objectType, ok := oc.builder.schema.ObjectTypes[st.Name]
+		if !ok {
+			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
+		}
+
+		return &objectType, st.Name, nil
+	case *schema.ArrayType:
+		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
+	default:
+		return nil, "", err
+	}
 }

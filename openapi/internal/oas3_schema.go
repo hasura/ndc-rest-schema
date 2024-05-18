@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 	"strings"
 
@@ -37,57 +38,53 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 	if innerSchema == nil {
 		return nil, nil, false, fmt.Errorf("cannot get schema of $.%s from proxy: %s", strings.Join(fieldPaths, "."), schemaProxy.GetReference())
 	}
-	refName := getSchemaRefTypeNameV3(schemaProxy.GetReference())
 
-	// return early object from ref
-	if refName != "" {
+	var ndcType schema.TypeEncoder
+	var typeSchema *rest.TypeSchema
+	var isRef bool
+	var err error
+
+	rawRefName := schemaProxy.GetReference()
+
+	if rawRefName == "" {
+		ndcType, typeSchema, isRef, err = oc.getSchemaType(innerSchema, fieldPaths)
+		if err != nil {
+			return nil, nil, false, err
+		}
+	} else if objectName, ok := oc.builder.componentAlias[rawRefName]; ok {
+		isRef = true
+		ndcType = schema.NewNamedType(objectName)
+		typeSchema = &rest.TypeSchema{
+			Type:        objectName,
+			Description: innerSchema.Description,
+		}
+	} else {
+		// return early object from ref
+		refName := getSchemaRefTypeNameV3(rawRefName)
 		objectName := utils.ToPascalCase(refName)
+		isRef = true
+		oc.builder.componentAlias[rawRefName] = objectName
+
 		_, ok := oc.builder.schema.ObjectTypes[objectName]
 		if !ok {
-			ndcType, typeSchema, _, err := oc.getSchemaType(innerSchema, []string{refName})
+			ndcType, typeSchema, _, err = oc.getSchemaType(innerSchema, []string{refName})
 			if err != nil {
 				return nil, nil, false, err
 			}
 			typeSchema.Description = innerSchema.Description
-			if nullable && ndcType != nil {
-				typeSchema.Nullable = true
-				if !isNullableType(ndcType) {
-					ndcType = schema.NewNullableType(ndcType)
-				}
-			}
-			return ndcType, typeSchema, true, nil
-		}
-
-		var ndcType schema.TypeEncoder = schema.NewNamedType(objectName)
-		typeSchema := &rest.TypeSchema{
-			Type:        objectName,
-			Description: innerSchema.Description,
-		}
-
-		if oc.writeMode {
-			writeObjectName := formatWriteObjectName(objectName)
-			if _, ok := oc.builder.schema.ObjectTypes[writeObjectName]; ok {
-				ndcType = schema.NewNamedType(writeObjectName)
-				typeSchema.Type = writeObjectName
+		} else {
+			ndcType = schema.NewNamedType(objectName)
+			typeSchema = &rest.TypeSchema{
+				Type:        objectName,
+				Description: innerSchema.Description,
 			}
 		}
-		if nullable {
-			typeSchema.Nullable = true
-			if !isNullableType(ndcType) {
-				ndcType = schema.NewNullableType(ndcType)
-			}
-		}
-		return ndcType, typeSchema, true, nil
-	}
-
-	ndcType, typeSchema, isRef, err := oc.getSchemaType(innerSchema, fieldPaths)
-	if err != nil {
-		return nil, nil, false, err
 	}
 
 	if ndcType == nil {
 		return nil, nil, false, nil
 	}
+
 	if nullable {
 		typeSchema.Nullable = true
 		if !isNullableType(ndcType) {
@@ -188,6 +185,10 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 			typeResult.Properties = make(map[string]rest.TypeSchema)
 			for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
 				propName := prop.Key()
+				oc.builder.Logger.Debug(
+					"property",
+					slog.String("name", propName),
+					slog.Any("field", fieldPaths))
 				nullable := !slices.Contains(typeSchema.Required, propName)
 				propType, propApiSchema, _, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, append(fieldPaths, propName))
 				if err != nil {
@@ -318,9 +319,6 @@ func (oc *oas3SchemaBuilder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sch
 			return oc.builder.buildScalarJSON(), ty, false, nil
 		}
 
-		for k, v := range ty.Properties {
-			ty.Properties[k] = v
-		}
 		readObj, ok := oc.builder.schema.ObjectTypes[name]
 		if ok {
 			if readObject.Description == nil && readObj.Description != nil {

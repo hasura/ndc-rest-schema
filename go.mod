@@ -7,7 +7,7 @@ require (
 	github.com/evanphx/json-patch v0.5.2
 	github.com/hasura/ndc-sdk-go v1.1.4
 	github.com/lmittmann/tint v1.0.4
-	github.com/pb33f/libopenapi v0.16.6
+	github.com/pb33f/libopenapi v0.16.7
 	gopkg.in/yaml.v3 v3.0.1
 )
 

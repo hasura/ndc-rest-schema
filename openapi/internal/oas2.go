@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"slices"
 	"strings"
 
@@ -158,7 +159,7 @@ func (oc *OAS2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.
 	pathKey := pathItem.Key()
 	pathValue := pathItem.Value()
 
-	funcGet, err := newOpenAPIv2OperationBuilder(oc).BuildFunction(pathKey, pathValue.Get)
+	funcGet, err := newOAS2OperationBuilder(oc).BuildFunction(pathKey, pathValue.Get)
 	if err != nil {
 		return err
 	}
@@ -166,7 +167,7 @@ func (oc *OAS2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.
 		oc.schema.Functions = append(oc.schema.Functions, funcGet)
 	}
 
-	procPost, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "post", pathValue.Post)
+	procPost, err := newOAS2OperationBuilder(oc).BuildProcedure(pathKey, "post", pathValue.Post)
 	if err != nil {
 		return err
 	}
@@ -174,7 +175,7 @@ func (oc *OAS2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.
 		oc.schema.Procedures = append(oc.schema.Procedures, procPost)
 	}
 
-	procPut, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "put", pathValue.Put)
+	procPut, err := newOAS2OperationBuilder(oc).BuildProcedure(pathKey, "put", pathValue.Put)
 	if err != nil {
 		return err
 	}
@@ -182,7 +183,7 @@ func (oc *OAS2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.
 		oc.schema.Procedures = append(oc.schema.Procedures, procPut)
 	}
 
-	procPatch, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "patch", pathValue.Patch)
+	procPatch, err := newOAS2OperationBuilder(oc).BuildProcedure(pathKey, "patch", pathValue.Patch)
 	if err != nil {
 		return err
 	}
@@ -190,7 +191,7 @@ func (oc *OAS2Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v2.
 		oc.schema.Procedures = append(oc.schema.Procedures, procPatch)
 	}
 
-	procDelete, err := newOpenAPIv2OperationBuilder(oc).BuildProcedure(pathKey, "delete", pathValue.Delete)
+	procDelete, err := newOAS2OperationBuilder(oc).BuildProcedure(pathKey, "delete", pathValue.Delete)
 	if err != nil {
 		return err
 	}
@@ -375,13 +376,15 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 }
 
 func (oc *OAS2Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
+	typeKey := schemaItem.Key()
 	typeValue := schemaItem.Value()
 	typeSchema := typeValue.Schema()
 
+	oc.Logger.Debug("component schema", slog.String("name", typeKey))
 	if typeSchema == nil || !slices.Contains(typeSchema.Type, "object") {
 		return nil
 	}
-	_, _, err := oc.getSchemaType(typeSchema, "", []string{schemaItem.Key()})
+	_, _, err := oc.getSchemaType(typeSchema, "", []string{typeKey})
 	return err
 }
 

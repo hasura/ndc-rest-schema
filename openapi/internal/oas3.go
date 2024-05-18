@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
@@ -14,13 +15,15 @@ import (
 )
 
 type OAS3Builder struct {
-	schema *rest.NDCRestSchema
+	schema         *rest.NDCRestSchema
+	componentAlias map[string]string
 	*ConvertOptions
 }
 
 func NewOAS3Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS3Builder {
 	builder := &OAS3Builder{
 		schema:         schema,
+		componentAlias: make(map[string]string),
 		ConvertOptions: applyConvertOptions(options),
 	}
 
@@ -64,6 +67,8 @@ func (oc *OAS3Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v3.
 		}
 	}
 	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+	oc.transformWriteSchema()
+
 	return nil
 }
 
@@ -197,26 +202,6 @@ func (oc *OAS3Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.
 	return nil
 }
 
-func (oc *OAS3Builder) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
-	iSchemaType, err := schemaType.InterfaceT()
-
-	switch st := iSchemaType.(type) {
-	case *schema.NullableType:
-		return oc.getObjectTypeFromSchemaType(st.UnderlyingType)
-	case *schema.NamedType:
-		objectType, ok := oc.schema.ObjectTypes[st.Name]
-		if !ok {
-			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
-		}
-
-		return &objectType, st.Name, nil
-	case *schema.ArrayType:
-		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
-	default:
-		return nil, "", err
-	}
-}
-
 func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
 	typeValue := schemaItem.Value()
 	typeSchema := typeValue.Schema()
@@ -226,6 +211,7 @@ func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string
 	}
 
 	typeKey := schemaItem.Key()
+	oc.Logger.Debug("component schema", slog.String("name", typeKey))
 	if _, ok := oc.schema.ObjectTypes[typeKey]; ok {
 		return nil
 	}
@@ -258,6 +244,56 @@ func (oc *OAS3Builder) buildScalarJSON() *schema.NamedType {
 		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 	}
 	return schema.NewNamedType(scalarName)
+}
+
+// transform and reassign write object types to arguments
+func (oc *OAS3Builder) transformWriteSchema() {
+	for _, fn := range oc.schema.Functions {
+		for key, arg := range fn.Arguments {
+			ty, name := oc.populateWriteSchemaType(arg.Type)
+			if name != "" {
+				arg.Type = ty
+				fn.Arguments[key] = arg
+			}
+		}
+	}
+	for _, proc := range oc.schema.Procedures {
+		var bodyName string
+		for key, arg := range proc.Arguments {
+			ty, name := oc.populateWriteSchemaType(arg.Type)
+			if name == "" {
+				continue
+			}
+			arg.Type = ty
+			proc.Arguments[key] = arg
+			if key == "body" {
+				bodyName = name
+			}
+		}
+
+		if bodyName != "" && proc.Request.RequestBody != nil && proc.Request.RequestBody.Schema != nil && !isOASType(proc.Request.RequestBody.Schema.Type) {
+			proc.Request.RequestBody.Schema.Type = bodyName
+		}
+	}
+}
+
+func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.Type, string) {
+	switch ty := schemaType.Interface().(type) {
+	case *schema.NullableType:
+		ut, name := oc.populateWriteSchemaType(ty.UnderlyingType)
+		return schema.NewNullableType(ut.Interface()).Encode(), name
+	case *schema.ArrayType:
+		ut, name := oc.populateWriteSchemaType(ty.ElementType)
+		return schema.NewArrayType(ut.Interface()).Encode(), name
+	case *schema.NamedType:
+		writeName := formatWriteObjectName(ty.Name)
+		if _, ok := oc.schema.ObjectTypes[writeName]; ok {
+			return schema.NewNamedType(writeName).Encode(), writeName
+		}
+		return schemaType, ty.Name
+	default:
+		return schemaType, getNamedType(schemaType.Interface(), true, "")
+	}
 }
 
 func convertV3OAuthFLow(input *v3.OAuthFlow) *rest.OAuthFlow {

@@ -372,6 +372,10 @@ func isPrimitiveScalar(name string) bool {
 	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long"}, name)
 }
 
+func isOASType(name string) bool {
+	return slices.Contains([]string{"boolean", "integer", "number", "string", "file", "long", "array", "object"}, name)
+}
+
 // sort request parameters in order: in -> name
 func sortRequestParameters(input []rest.RequestParameter) []rest.RequestParameter {
 	slices.SortFunc(input, func(a rest.RequestParameter, b rest.RequestParameter) int {
