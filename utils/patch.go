@@ -84,7 +84,7 @@ func ApplyPatchFromRawJSON(input []byte, patchFiles []PatchConfig) ([]byte, erro
 			}
 			strategy := patchFile.Strategy
 			if strategy == "" {
-				strategy, err = guessPatchStrategy(input)
+				strategy, err = guessPatchStrategy(jsonPatch)
 				if err != nil {
 					return fmt.Errorf("%s: %s", patchFile.Path, err)
 				}
@@ -127,6 +127,7 @@ func convertMaybeYAMLToJSONBytes(input []byte) ([]byte, error) {
 	if (runes[0] == '{' && runes[len(runes)-1] == '}') || (runes[0] == '[' && runes[len(runes)-1] == ']') {
 		return []byte(runes), nil
 	}
+
 	var anyOutput any
 	if err := yaml.Unmarshal(input, &anyOutput); err != nil {
 		return nil, fmt.Errorf("input bytes are not in either yaml or json format: %s", err)

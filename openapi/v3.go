@@ -1014,7 +1014,7 @@ func (oc *openAPIv3OperationBuilder) convertParameters(params []*v3.Parameter, a
 func (oc *openAPIv3Builder) buildScalarJSON() *schema.NamedType {
 	scalarName := string(rest.ScalarJSON)
 	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
-		oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
+		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 	}
 	return schema.NewNamedType(scalarName)
 }

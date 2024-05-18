@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 	"testing"
 
@@ -44,7 +43,7 @@ func TestJson2Yaml(t *testing.T) {
 			err := Json2Yaml(&Json2YamlCommandArguments{
 				File:   tc.filePath,
 				Output: outputFilePath,
-			}, slog.Default())
+			}, nopLogger)
 
 			if tc.errorMsg != "" {
 				assertError(t, err, tc.errorMsg)

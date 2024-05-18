@@ -3,7 +3,6 @@ package schema
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -466,7 +465,6 @@ func (j *EnvInts) UnmarshalJSON(b []byte) error {
 
 // MarshalYAML implements yaml.Marshaler.
 func (j EnvInts) MarshalYAML() (any, error) {
-	log.Println("value", j.value)
 	if j.EnvTemplate.IsEmpty() {
 		return j.value, nil
 	}
