@@ -855,7 +855,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "PostCheckoutSessionsBodyCustomTextAfterSubmit",
               "type": "named"
             }
           }
@@ -864,7 +864,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "PostCheckoutSessionsBodyCustomTextShippingAddress",
               "type": "named"
             }
           }
@@ -873,7 +873,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "PostCheckoutSessionsBodyCustomTextSubmit",
               "type": "named"
             }
           }
@@ -882,9 +882,49 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "PostCheckoutSessionsBodyCustomTextTermsOfServiceAcceptance",
               "type": "named"
             }
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyCustomTextAfterSubmit": {
+      "fields": {
+        "message": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyCustomTextShippingAddress": {
+      "fields": {
+        "message": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyCustomTextSubmit": {
+      "fields": {
+        "message": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyCustomTextTermsOfServiceAcceptance": {
+      "fields": {
+        "message": {
+          "type": {
+            "name": "String",
+            "type": "named"
           }
         }
       }
@@ -969,8 +1009,11 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
-              "type": "named"
+              "element_type": {
+                "name": "String",
+                "type": "named"
+              },
+              "type": "array"
             }
           }
         },
@@ -978,8 +1021,11 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
-              "type": "named"
+              "element_type": {
+                "name": "PostCheckoutSessionsBodyInvoiceCreationInvoiceDataCustomFields",
+                "type": "named"
+              },
+              "type": "array"
             }
           }
         },
@@ -1023,9 +1069,25 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "PostCheckoutSessionsBodyInvoiceCreationInvoiceDataRenderingOptions",
               "type": "named"
             }
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyInvoiceCreationInvoiceDataCustomFields": {
+      "fields": {
+        "name": {
+          "type": {
+            "name": "String",
+            "type": "named"
+          }
+        },
+        "value": {
+          "type": {
+            "name": "String",
+            "type": "named"
           }
         }
       }
@@ -1045,6 +1107,19 @@
           "type": {
             "name": "CheckoutType",
             "type": "named"
+          }
+        }
+      }
+    },
+    "PostCheckoutSessionsBodyInvoiceCreationInvoiceDataRenderingOptions": {
+      "fields": {
+        "amount_tax_display": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "CheckoutAmountTaxDisplay",
+              "type": "named"
+            }
           }
         }
       }
@@ -1824,7 +1899,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "JSON",
+              "name": "String",
               "type": "named"
             }
           }
@@ -4193,20 +4268,44 @@
               "nullable": true,
               "properties": {
                 "after_submit": {
-                  "type": "JSON",
-                  "nullable": true
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "message": {
+                      "type": "String",
+                      "maxLength": 1200
+                    }
+                  }
                 },
                 "shipping_address": {
-                  "type": "JSON",
-                  "nullable": true
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "message": {
+                      "type": "String",
+                      "maxLength": 1200
+                    }
+                  }
                 },
                 "submit": {
-                  "type": "JSON",
-                  "nullable": true
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "message": {
+                      "type": "String",
+                      "maxLength": 1200
+                    }
+                  }
                 },
                 "terms_of_service_acceptance": {
-                  "type": "JSON",
-                  "nullable": true
+                  "type": "object",
+                  "nullable": true,
+                  "properties": {
+                    "message": {
+                      "type": "String",
+                      "maxLength": 1200
+                    }
+                  }
                 }
               }
             }
@@ -4324,12 +4423,29 @@
                   "nullable": true,
                   "properties": {
                     "account_tax_ids": {
-                      "type": "JSON",
-                      "nullable": true
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "type": "String",
+                        "maxLength": 5000
+                      }
                     },
                     "custom_fields": {
-                      "type": "JSON",
-                      "nullable": true
+                      "type": "array",
+                      "nullable": true,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "String",
+                            "maxLength": 40
+                          },
+                          "value": {
+                            "type": "String",
+                            "maxLength": 140
+                          }
+                        }
+                      }
                     },
                     "description": {
                       "type": "String",
@@ -4359,8 +4475,14 @@
                       "nullable": true
                     },
                     "rendering_options": {
-                      "type": "JSON",
-                      "nullable": true
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "amount_tax_display": {
+                          "type": "CheckoutAmountTaxDisplay",
+                          "nullable": true
+                        }
+                      }
                     }
                   }
                 }
@@ -4686,7 +4808,7 @@
                       "nullable": true,
                       "properties": {
                         "custom_mandate_url": {
-                          "type": "JSON",
+                          "type": "String",
                           "nullable": true
                         },
                         "default_for": {

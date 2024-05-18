@@ -1,0 +1,284 @@
+package internal
+
+import (
+	"fmt"
+	"strings"
+
+	rest "github.com/hasura/ndc-rest-schema/schema"
+	"github.com/hasura/ndc-rest-schema/utils"
+	"github.com/hasura/ndc-sdk-go/schema"
+	"github.com/pb33f/libopenapi"
+	"github.com/pb33f/libopenapi/datamodel/high/base"
+	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
+	"github.com/pb33f/libopenapi/orderedmap"
+)
+
+type OAS3Builder struct {
+	schema *rest.NDCRestSchema
+	*ConvertOptions
+}
+
+func NewOAS3Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS3Builder {
+	builder := &OAS3Builder{
+		schema:         schema,
+		ConvertOptions: applyConvertOptions(options),
+	}
+
+	setDefaultSettings(builder.schema.Settings, builder.ConvertOptions)
+	return builder
+}
+
+// Schema returns the inner NDC REST schema
+func (oc *OAS3Builder) Schema() *rest.NDCRestSchema {
+	return oc.schema
+}
+
+func (oc *OAS3Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v3.Document]) error {
+
+	if docModel.Model.Info != nil {
+		oc.schema.Settings.Version = docModel.Model.Info.Version
+	}
+
+	oc.schema.Settings.Servers = oc.convertServers(docModel.Model.Servers)
+
+	if docModel.Model.Components != nil && docModel.Model.Components.Schemas != nil {
+		for cSchema := docModel.Model.Components.Schemas.First(); cSchema != nil; cSchema = cSchema.Next() {
+			if err := oc.convertComponentSchemas(cSchema); err != nil {
+				return err
+			}
+		}
+	}
+	for iterPath := docModel.Model.Paths.PathItems.First(); iterPath != nil; iterPath = iterPath.Next() {
+		if err := oc.pathToNDCOperations(iterPath); err != nil {
+			return err
+		}
+	}
+
+	if docModel.Model.Components.SecuritySchemes != nil {
+		oc.schema.Settings.SecuritySchemes = make(map[string]rest.SecurityScheme)
+		for scheme := docModel.Model.Components.SecuritySchemes.First(); scheme != nil; scheme = scheme.Next() {
+			err := oc.convertSecuritySchemes(scheme)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+	return nil
+}
+
+func (oc *OAS3Builder) convertServers(servers []*v3.Server) []rest.ServerConfig {
+	var results []rest.ServerConfig
+
+	for i, server := range servers {
+		if server.URL != "" {
+			envName := utils.StringSliceToConstantCase([]string{oc.ConvertOptions.EnvPrefix, "SERVER_URL"})
+			if i > 0 {
+				envName = fmt.Sprintf("%s_%d", envName, i+1)
+			}
+			results = append(results, rest.ServerConfig{
+				URL: *rest.NewEnvStringTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
+			})
+		}
+	}
+
+	return results
+}
+
+func (oc *OAS3Builder) convertSecuritySchemes(scheme orderedmap.Pair[string, *v3.SecurityScheme]) error {
+	key := scheme.Key()
+	security := scheme.Value()
+	if security == nil {
+		return nil
+	}
+	securityType, err := rest.ParseSecuritySchemeType(security.Type)
+	if err != nil {
+		return err
+	}
+	result := rest.SecurityScheme{
+		Type: securityType,
+	}
+	switch securityType {
+	case rest.APIKeyScheme:
+		inLocation, err := rest.ParseAPIKeyLocation(security.In)
+		if err != nil {
+			return err
+		}
+		apiConfig := rest.APIKeyAuthConfig{
+			In:   inLocation,
+			Name: security.Name,
+		}
+		result.Value = rest.NewEnvStringTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key})))
+		result.APIKeyAuthConfig = &apiConfig
+	case rest.HTTPAuthScheme:
+		httpConfig := rest.HTTPAuthConfig{
+			Scheme: security.Scheme,
+			Header: "Authorization",
+		}
+		result.Value = rest.NewEnvStringTemplate(rest.NewEnvTemplate(utils.StringSliceToConstantCase([]string{oc.EnvPrefix, key, "TOKEN"})))
+		result.HTTPAuthConfig = &httpConfig
+	case rest.OAuth2Scheme:
+		if security.Flows == nil {
+			return fmt.Errorf("flows of security scheme %s is required", key)
+		}
+		oauthConfig := rest.OAuth2Config{
+			Flows: make(map[rest.OAuthFlowType]rest.OAuthFlow),
+		}
+		if security.Flows.Implicit != nil {
+			oauthConfig.Flows[rest.ImplicitFlow] = *convertV3OAuthFLow(security.Flows.Implicit)
+		}
+		if security.Flows.AuthorizationCode != nil {
+			oauthConfig.Flows[rest.AuthorizationCodeFlow] = *convertV3OAuthFLow(security.Flows.AuthorizationCode)
+		}
+		if security.Flows.ClientCredentials != nil {
+			oauthConfig.Flows[rest.ClientCredentialsFlow] = *convertV3OAuthFLow(security.Flows.ClientCredentials)
+		}
+		if security.Flows.Password != nil {
+			oauthConfig.Flows[rest.PasswordFlow] = *convertV3OAuthFLow(security.Flows.Password)
+		}
+		result.OAuth2Config = &oauthConfig
+	case rest.OpenIDConnectScheme:
+		result.OpenIDConfig = &rest.OpenIDConfig{
+			OpenIDConnectURL: security.OpenIdConnectUrl,
+		}
+	default:
+		return fmt.Errorf("invalid security scheme: %s", security.Type)
+	}
+
+	oc.schema.Settings.SecuritySchemes[key] = result
+	return nil
+}
+
+func (oc *OAS3Builder) pathToNDCOperations(pathItem orderedmap.Pair[string, *v3.PathItem]) error {
+	pathKey := pathItem.Key()
+	pathValue := pathItem.Value()
+
+	if pathValue.Get != nil {
+		funcGet, err := newOAS3OperationBuilder(oc, pathKey, "get").BuildFunction(pathValue.Get)
+		if err != nil {
+			return err
+		}
+		if funcGet != nil {
+			oc.schema.Functions = append(oc.schema.Functions, funcGet)
+		}
+	}
+
+	procPost, err := newOAS3OperationBuilder(oc, pathKey, "post").BuildProcedure(pathValue.Post)
+	if err != nil {
+		return err
+	}
+	if procPost != nil {
+		oc.schema.Procedures = append(oc.schema.Procedures, procPost)
+	}
+
+	procPut, err := newOAS3OperationBuilder(oc, pathKey, "put").BuildProcedure(pathValue.Put)
+	if err != nil {
+		return err
+	}
+	if procPut != nil {
+		oc.schema.Procedures = append(oc.schema.Procedures, procPut)
+	}
+
+	procPatch, err := newOAS3OperationBuilder(oc, pathKey, "patch").BuildProcedure(pathValue.Patch)
+	if err != nil {
+		return err
+	}
+	if procPatch != nil {
+		oc.schema.Procedures = append(oc.schema.Procedures, procPatch)
+	}
+
+	procDelete, err := newOAS3OperationBuilder(oc, pathKey, "delete").BuildProcedure(pathValue.Delete)
+	if err != nil {
+		return err
+	}
+	if procDelete != nil {
+		oc.schema.Procedures = append(oc.schema.Procedures, procDelete)
+	}
+	return nil
+}
+
+func (oc *OAS3Builder) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
+	iSchemaType, err := schemaType.InterfaceT()
+
+	switch st := iSchemaType.(type) {
+	case *schema.NullableType:
+		return oc.getObjectTypeFromSchemaType(st.UnderlyingType)
+	case *schema.NamedType:
+		objectType, ok := oc.schema.ObjectTypes[st.Name]
+		if !ok {
+			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
+		}
+
+		return &objectType, st.Name, nil
+	case *schema.ArrayType:
+		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
+	default:
+		return nil, "", err
+	}
+}
+
+func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string, *base.SchemaProxy]) error {
+	typeValue := schemaItem.Value()
+	typeSchema := typeValue.Schema()
+
+	if typeSchema == nil {
+		return nil
+	}
+
+	typeKey := schemaItem.Key()
+	if _, ok := oc.schema.ObjectTypes[typeKey]; ok {
+		return nil
+	}
+	typeEncoder, _, _, err := newOAS3SchemaBuilder(oc, "", rest.InBody, false).
+		getSchemaType(typeSchema, []string{typeKey})
+	if err != nil {
+		return err
+	}
+
+	// treat no-property objects as a Arbitrary JSON scalar
+	if typeEncoder == nil {
+		refName := utils.ToPascalCase(typeKey)
+		oc.schema.ScalarTypes[refName] = *schema.NewScalarType()
+	}
+
+	return err
+}
+
+func (oc *OAS3Builder) trimPathPrefix(input string) string {
+	if oc.ConvertOptions.TrimPrefix == "" {
+		return input
+	}
+	return strings.TrimPrefix(input, oc.ConvertOptions.TrimPrefix)
+}
+
+// build a named type for JSON scalar
+func (oc *OAS3Builder) buildScalarJSON() *schema.NamedType {
+	scalarName := string(rest.ScalarJSON)
+	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
+		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
+	}
+	return schema.NewNamedType(scalarName)
+}
+
+func convertV3OAuthFLow(input *v3.OAuthFlow) *rest.OAuthFlow {
+	result := &rest.OAuthFlow{
+		AuthorizationURL: input.AuthorizationUrl,
+		TokenURL:         input.TokenUrl,
+		RefreshURL:       input.RefreshUrl,
+	}
+
+	if input.Scopes != nil {
+		scopes := make(map[string]string)
+		for iter := input.Scopes.First(); iter != nil; iter = iter.Next() {
+			key := iter.Key()
+			value := iter.Value()
+			if key == "" || value == "" {
+				continue
+			}
+			scopes[key] = value
+		}
+		result.Scopes = scopes
+	}
+
+	return result
+}

@@ -173,7 +173,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Contents",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -224,7 +224,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Headings",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -266,7 +266,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Subtitle",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -276,48 +276,6 @@
             "type": "nullable",
             "underlying_type": {
               "name": "PlayerNotificationTargetTargetChannel",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "BasicNotification1Contents": {
-      "fields": {
-        "en": {
-          "description": "Text in English.  Will be used as a fallback",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "BasicNotification1Headings": {
-      "fields": {
-        "en": {
-          "description": "Text in English.  Will be used as a fallback",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "BasicNotification1Subtitle": {
-      "fields": {
-        "en": {
-          "description": "Text in English.  Will be used as a fallback",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
               "type": "named"
             }
           }
@@ -604,7 +562,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Contents",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -655,7 +613,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Headings",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -697,7 +655,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Subtitle",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -856,7 +814,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Contents",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -937,7 +895,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Headings",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -1041,7 +999,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "BasicNotification1Subtitle",
+              "name": "StringMap",
               "type": "named"
             }
           }
@@ -1163,7 +1121,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "PlatformDeliveryDataEmail",
+              "name": "DeliveryData",
               "type": "named"
             }
           }
@@ -1199,115 +1157,7 @@
           "type": {
             "type": "nullable",
             "underlying_type": {
-              "name": "PlatformDeliveryDataSms",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "PlatformDeliveryDataEmail": {
-      "fields": {
-        "converted": {
-          "description": "Number of messages that were clicked.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "errored": {
-          "description": "Number of errors reported.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "failed": {
-          "description": "Number of messages sent to unsubscribed devices.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "received": {
-          "description": "Number of devices that received the message.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "successful": {
-          "description": "Number of messages delivered to push servers, mobile carriers, or email service providers.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "PlatformDeliveryDataSms": {
-      "fields": {
-        "converted": {
-          "description": "Number of messages that were clicked.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "errored": {
-          "description": "Number of errors reported.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "failed": {
-          "description": "Number of messages sent to unsubscribed devices.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "received": {
-          "description": "Number of devices that received the message.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
-              "type": "named"
-            }
-          }
-        },
-        "successful": {
-          "description": "Number of messages delivered to push servers, mobile carriers, or email service providers.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int32",
+              "name": "DeliveryData",
               "type": "named"
             }
           }

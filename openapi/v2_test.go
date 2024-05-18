@@ -14,7 +14,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 	testCases := []struct {
 		Name     string
 		Source   string
-		Options  *ConvertOptions
+		Options  ConvertOptions
 		Expected string
 	}{
 		// go run . convert -f ./openapi/testdata/jsonplaceholder/swagger.json -o ./openapi/testdata/jsonplaceholder/expected.json --spec openapi2 --trim-prefix /v1
@@ -22,7 +22,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 			Name:     "jsonplaceholder",
 			Source:   "testdata/jsonplaceholder/swagger.json",
 			Expected: "testdata/jsonplaceholder/expected.json",
-			Options: &ConvertOptions{
+			Options: ConvertOptions{
 				TrimPrefix: "/v1",
 			},
 		},
@@ -55,7 +55,7 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 	}
 
 	t.Run("failure_empty", func(t *testing.T) {
-		_, err := OpenAPIv2ToNDCSchema([]byte(""), nil)
+		_, err := OpenAPIv2ToNDCSchema([]byte(""), ConvertOptions{})
 		assertError(t, errors.Join(err...), "there is nothing in the spec, it's empty")
 	})
 }

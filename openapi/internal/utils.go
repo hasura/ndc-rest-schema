@@ -1,4 +1,4 @@
-package openapi
+package internal
 
 import (
 	"fmt"
@@ -122,23 +122,12 @@ type ConvertOptions struct {
 	Logger      *slog.Logger
 }
 
-func validateConvertOptions(opts *ConvertOptions) (*ConvertOptions, error) {
-	logger := slog.Default()
-	if opts == nil {
-		return &ConvertOptions{
-			MethodAlias: getMethodAlias(),
-			Logger:      logger,
-		}, nil
+func applyConvertOptions(opts ConvertOptions) *ConvertOptions {
+	if opts.Logger == nil {
+		opts.Logger = slog.Default()
 	}
-	if opts.Logger != nil {
-		logger = opts.Logger
-	}
-	return &ConvertOptions{
-		MethodAlias: getMethodAlias(opts.MethodAlias),
-		TrimPrefix:  opts.TrimPrefix,
-		EnvPrefix:   opts.EnvPrefix,
-		Logger:      logger,
-	}, nil
+	opts.MethodAlias = getMethodAlias(opts.MethodAlias)
+	return &opts
 }
 
 func buildPathMethodName(apiPath string, method string, options *ConvertOptions) string {
@@ -439,21 +428,36 @@ func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
 	}
 }
 
+// evaluate and filter invalid types in allOf, anyOf or oneOf schemas
+func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.ParameterLocation) ([]*base.SchemaProxy, bool) {
+	var results []*base.SchemaProxy
+	nullable := false
+	for _, proxy := range schemaProxies {
+		if proxy == nil {
+			continue
+		}
+		sc := proxy.Schema()
+		if sc == nil || (len(sc.Type) == 0 && len(sc.AllOf) == 0 && len(sc.AnyOf) == 0 && len(sc.OneOf) == 0) {
+			continue
+		}
+
+		switch location {
+		case rest.InQuery:
+			// empty string enum is considered as nullable, e.g. key1=&key2=
+			// however, it's redundant and prevents the tool converting correct types
+			if sc.Type[0] == "string" && len(sc.Enum) == 1 && (sc.Enum[0] == nil || sc.Enum[0].Value == "") {
+				nullable = true
+				continue
+			}
+		}
+		results = append(results, proxy)
+	}
+	return results, nullable
+}
 func formatWriteObjectName(name string) string {
 	return fmt.Sprintf("%sInput", name)
 }
 
 func errParameterSchemaEmpty(fieldPaths []string) error {
 	return fmt.Errorf("parameter schema of $.%s is empty", strings.Join(fieldPaths, "."))
-}
-
-func getSchemaFromProxy(proxy *base.SchemaProxy) (*base.Schema, bool) {
-	if proxy == nil {
-		return nil, false
-	}
-	sc := proxy.Schema()
-	if sc == nil || (len(sc.Type) == 0 && len(sc.AllOf) == 0 && len(sc.AnyOf) == 0 && len(sc.OneOf) == 0) {
-		return sc, false
-	}
-	return sc, true
 }

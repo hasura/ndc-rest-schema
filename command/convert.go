@@ -52,7 +52,7 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 
 	var result *schema.NDCRestSchema
 	var errs []error
-	options := &openapi.ConvertOptions{
+	options := openapi.ConvertOptions{
 		MethodAlias: args.MethodAlias,
 		TrimPrefix:  args.TrimPrefix,
 		EnvPrefix:   args.EnvPrefix,
@@ -76,6 +76,10 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 	}
 
 	result, err = utils.ApplyPatchToRestSchema(result, stringSliceToPatchConfigs(args.PatchAfter))
+	if err != nil {
+		return err
+	}
+
 	if args.Output != "" {
 		if args.Pure {
 			err = utils.WriteSchemaFile(args.Output, result.ToSchemaResponse())
