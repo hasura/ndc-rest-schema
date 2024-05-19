@@ -84,9 +84,15 @@ func (oc *OAS3Builder) convertServers(servers []*v3.Server) []rest.ServerConfig 
 			if i > 0 {
 				envName = fmt.Sprintf("%s_%d", envName, i+1)
 			}
-			results = append(results, rest.ServerConfig{
+
+			groupExt := server.Extensions.GetOrZero("x-server-group")
+			conf := rest.ServerConfig{
 				URL: *rest.NewEnvStringTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
-			})
+			}
+			if groupExt != nil {
+				conf.Group = groupExt.Value
+			}
+			results = append(results, conf)
 		}
 	}
 
