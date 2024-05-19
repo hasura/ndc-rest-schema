@@ -109,6 +109,7 @@ func (oc *OAS2Builder) convertSecuritySchemes(scheme orderedmap.Pair[string, *v2
 		})
 		result.APIKeyAuthConfig = &apiConfig
 	case "basic":
+		result.Type = rest.HTTPAuthScheme
 		httpConfig := rest.HTTPAuthConfig{
 			Scheme: "Basic",
 			Header: "Authorization",
