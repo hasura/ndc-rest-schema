@@ -944,7 +944,7 @@
             "description": "successful operation",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/snake_object"}
+                "schema": { "$ref": "#/components/schemas/snake_object" }
               }
             }
           }
@@ -961,7 +961,7 @@
             "description": "successful operation",
             "content": {
               "application/json": {
-                "schema": {"$ref": "#/components/schemas/snake_object"}
+                "schema": { "$ref": "#/components/schemas/snake_object" }
               }
             }
           }
@@ -2964,7 +2964,7 @@
           "id": {
             "type": "object",
             "properties": {
-              "id": {"type": "integer", "format": "int64", "example": 10},
+              "id": { "type": "integer", "format": "int64", "example": 10 },
               "petId": {
                 "type": "integer",
                 "format": "int64",
@@ -2975,16 +2975,16 @@
                 "format": "int32",
                 "example": 7
               },
-              "shipDate": {"type": "string", "format": "date-time"},
+              "shipDate": { "type": "string", "format": "date-time" },
               "status": {
                 "type": "string",
                 "description": "Order Status",
                 "example": "approved",
                 "enum": ["placed", "approved", "delivered"]
               },
-              "complete": {"type": "boolean"}
+              "complete": { "type": "boolean" }
             },
-            "xml": {"name": "order"}
+            "xml": { "name": "order" }
           },
           "features": {
             "$ref": "#/components/schemas/connect_embedded_account_features"
@@ -3233,6 +3233,10 @@
       }
     },
     "securitySchemes": {
+      "basic": {
+        "type": "http",
+        "scheme": "basic"
+      },
       "petstore_auth": {
         "type": "oauth2",
         "flows": {
@@ -3252,5 +3256,5 @@
       }
     }
   },
-  "security": [{}, {"petstore_auth": ["write:pets", "read:pets"]}]
+  "security": [{}, { "petstore_auth": ["write:pets", "read:pets"] }]
 }

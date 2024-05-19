@@ -21,6 +21,12 @@
         "in": "header",
         "name": "api_key"
       },
+      "basic": {
+        "type": "http",
+        "value": "{{PET_STORE_BASIC_TOKEN}}",
+        "header": "Authorization",
+        "scheme": "basic"
+      },
       "petstore_auth": {
         "type": "oauth2",
         "flows": {
