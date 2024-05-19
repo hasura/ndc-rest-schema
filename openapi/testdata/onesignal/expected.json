@@ -1479,6 +1479,13 @@
         "type": "float64"
       }
     },
+    "IdentityObject": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "json"
+      }
+    },
     "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1494,6 +1501,13 @@
       }
     },
     "JSON": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "json"
+      }
+    },
+    "Notification200Errors": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
