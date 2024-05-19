@@ -37,9 +37,9 @@ const (
 
 // PatchConfig the configuration for JSON patch
 type PatchConfig struct {
-	Path     string         `json:"path"`
-	When     PatchHookEvent `json:"when"`
-	Strategy PatchStrategy  `json:"strategy"`
+	Path     string         `json:"path" yaml:"path"`
+	Hook     PatchHookEvent `json:"hook" yaml:"hook"`
+	Strategy PatchStrategy  `json:"strategy" yaml:"strategy"`
 }
 
 // ApplyPatchToRestSchema applies JSON patches to NDC rest schema and validate the output

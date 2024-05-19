@@ -18,6 +18,7 @@ var nopLogger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{})
 func TestConvertToNDCSchema(t *testing.T) {
 	testCases := []struct {
 		name        string
+		config      string
 		filePath    string
 		spec        schema.SchemaSpecType
 		pure        bool
@@ -31,7 +32,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 		{
 			name:     "file_not_found",
 			filePath: "foo.json",
-			spec:     schema.OpenAPIv3Spec,
+			spec:     schema.OAS3Spec,
 			errorMsg: "failed to read content from foo.json: open foo.json: no such file or directory",
 		},
 		{
@@ -43,12 +44,12 @@ func TestConvertToNDCSchema(t *testing.T) {
 		{
 			name:     "openapi3",
 			filePath: "../openapi/testdata/petstore3/source.json",
-			spec:     schema.OpenAPIv3Spec,
+			spec:     schema.OAS3Spec,
 		},
 		{
 			name:     "openapi2",
 			filePath: "../openapi/testdata/petstore2/swagger.json",
-			spec:     schema.OpenAPIv2Spec,
+			spec:     schema.OAS2Spec,
 			pure:     true,
 			noOutput: true,
 			format:   schema.SchemaFileYAML,
@@ -56,24 +57,30 @@ func TestConvertToNDCSchema(t *testing.T) {
 		{
 			name:     "invalid_output_format",
 			filePath: "../openapi/testdata/petstore2/swagger.json",
-			spec:     schema.OpenAPIv2Spec,
+			spec:     schema.OAS2Spec,
 			pure:     true,
 			noOutput: true,
+			format:   "test",
 			errorMsg: "invalid SchemaFileFormat",
 		},
 		{
 			name:     "openapi3_failure",
 			filePath: "../openapi/testdata/petstore2/swagger.json",
-			spec:     schema.OpenAPIv3Spec,
+			spec:     schema.OAS3Spec,
 			errorMsg: "unable to build openapi document, supplied spec is a different version (oas2)",
 		},
 		{
 			name:        "patch",
 			filePath:    "../openapi/testdata/onesignal/source.json",
-			spec:        schema.OpenAPIv3Spec,
+			spec:        schema.OAS3Spec,
 			patchBefore: []string{"../openapi/testdata/onesignal/patch-before.json"},
 			patchAfter:  []string{"../openapi/testdata/onesignal/patch-after.json"},
 			expected:    "../openapi/testdata/onesignal/expected-patch.json",
+		},
+		{
+			name:     "config",
+			config:   "../openapi/testdata/onesignal/config.yaml",
+			expected: "../openapi/testdata/onesignal/expected-patch.json",
 		},
 	}
 
@@ -84,7 +91,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 				tempDir := t.TempDir()
 				outputFilePath = fmt.Sprintf("%s/output.json", tempDir)
 			}
-			err := ConvertToNDCSchema(&ConvertCommandArguments{
+			args := &ConvertCommandArguments{
 				File:        tc.filePath,
 				Output:      outputFilePath,
 				Pure:        tc.pure,
@@ -92,7 +99,20 @@ func TestConvertToNDCSchema(t *testing.T) {
 				Format:      string(tc.format),
 				PatchBefore: tc.patchBefore,
 				PatchAfter:  tc.patchAfter,
-			}, nopLogger)
+			}
+			if tc.config != "" {
+				args = &ConvertCommandArguments{
+					Config:     tc.config,
+					Output:     outputFilePath,
+					EnvPrefix:  "",
+					TrimPrefix: "/test",
+					MethodAlias: map[string]string{
+						"get":  "get",
+						"post": "post",
+					},
+				}
+			}
+			err := ConvertToNDCSchema(args, nopLogger)
 
 			if tc.errorMsg != "" {
 				assertError(t, err, tc.errorMsg)

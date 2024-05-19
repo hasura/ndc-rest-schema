@@ -5,8 +5,8 @@ This module includes libraries and tools to convert other API schemas to Native 
 ## Features
 
 - Convert API documentation to NDC schema
-  - OpenAPI [2.0](https://swagger.io/specification/v2/) (`openapi2`)
-  - OpenAPI [3.0](https://swagger.io/specification/v3)/[3.1](https://swagger.io/specification/) (`openapi3`)
+  - OpenAPI [2.0](https://swagger.io/specification/v2/) (`oas2`)
+  - OpenAPI [3.0](https://swagger.io/specification/v3)/[3.1](https://swagger.io/specification/) (`oas3`)
 - Convert JSON to YAML. It's helpful to convert JSON schema
 
 ## Installation
@@ -36,7 +36,7 @@ Commands:
   convert --file=STRING
     Convert API spec to NDC schema. For example:
 
-        ndc-rest-schema convert -f petstore.yaml -o petstore.json
+        ndc-rest-schema convert -f petstore.yaml --spec oas2 -o petstore.json
 
   json2yaml --file=STRING
     Convert JSON file to YAML. For example:
@@ -50,15 +50,21 @@ Commands:
 Convert an OpenAPI v3 file to NDC schema with the `convert` command. The tool can accept either file path or URL. The output format can be in JSON or YAML, depending on the file extension:
 
 ```sh
-ndc-rest-schema convert -f https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml -o petstore.json --spec openapi3
+ndc-rest-schema convert -f https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/examples/v3.0/petstore.yaml -o petstore.json --spec oas3
 ```
 
 The `--spec` flag represents the input specification:
 
-- `openapi3`: OpenAPI 3.0 and 3.1 (default)
-- `openapi2`: OpenAPI 2.0
+- `oas3` (`openapi3`): OpenAPI 3.0 and 3.1 (default)
+- `oas2` (`openapi2`): OpenAPI 2.0
 
 The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can convert the pure NDC schema with `--pure` flag.
+
+You also can use a config file to convert ([example](./config.example.yaml)).
+
+```sh
+ndc-rest-schema convert -c ./config.yaml
+```
 
 ## NDC REST configuration
 
