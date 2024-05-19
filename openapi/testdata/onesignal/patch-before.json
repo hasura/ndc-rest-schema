@@ -1,0 +1,6 @@
+[
+  {
+    "op": "remove",
+    "path": "/paths/~1notifications~1{notification_id}~1history"
+  }
+]

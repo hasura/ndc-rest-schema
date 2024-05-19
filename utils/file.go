@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
@@ -70,6 +71,7 @@ func ReadFileFromPath(filePath string) ([]byte, error) {
 		}
 
 		if resp.Body != nil {
+			defer resp.Body.Close()
 			result, err = io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, fmt.Errorf("failed to read content from %s: %s", filePath, err)
@@ -94,4 +96,68 @@ func ReadFileFromPath(filePath string) ([]byte, error) {
 	}
 
 	return result, nil
+}
+
+// WalkFiles read one file or many files in a folder if the file path is a directory
+func WalkFiles(filePath string, callback func(data []byte) error) error {
+	fileURL, err := url.Parse(filePath)
+	if err == nil && slices.Contains([]string{"http", "https"}, strings.ToLower(fileURL.Scheme)) {
+		resp, err := http.DefaultClient.Get(filePath)
+		if err != nil {
+			return err
+		}
+
+		var result []byte
+		if resp.Body != nil {
+			defer resp.Body.Close()
+			result, err = io.ReadAll(resp.Body)
+			if err != nil {
+				return fmt.Errorf("failed to read content from %s: %s", filePath, err)
+			}
+		}
+		if resp.StatusCode != http.StatusOK {
+			errorMsg := string(result)
+			if errorMsg == "" {
+				errorMsg = resp.Status
+			}
+			return fmt.Errorf("failed to download file from %s: %s", filePath, errorMsg)
+		}
+		if len(result) == 0 {
+			return fmt.Errorf("failed to read file from %s: no content", filePath)
+		}
+		return callback(result)
+	}
+
+	stat, err := os.Stat(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read content from %s: %s", filePath, err)
+	}
+
+	readFunc := func(p string) error {
+		result, err := os.ReadFile(p)
+		if err != nil {
+			return fmt.Errorf("failed to read content from %s: %s", p, err)
+		}
+		if len(result) == 0 {
+			return fmt.Errorf("failed to read file from %s: no content", p)
+		}
+		return callback(result)
+	}
+
+	if !stat.IsDir() {
+		return readFunc(filePath)
+	}
+
+	return filepath.WalkDir(filePath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// only read files in the root folder
+		if d.IsDir() {
+			return nil
+		}
+
+		return readFunc(path)
+	})
 }

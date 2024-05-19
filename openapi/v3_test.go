@@ -20,14 +20,14 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 		EnvPrefix string
 		Expected  string
 	}{
-		// go run . convert -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
+		// go run . convert --log-level debug -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
 		{
 			Name:      "petstore3",
 			Source:    "testdata/petstore3/source.json",
 			Expected:  "testdata/petstore3/expected.json",
 			EnvPrefix: "PET_STORE",
 		},
-		// go run . convert -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
+		// go run . convert --log-level debug -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
 		{
 			Name:     "onesignal",
 			Source:   "testdata/onesignal/source.json",
@@ -45,13 +45,12 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
-			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, &ConvertOptions{
+			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, ConvertOptions{
 				EnvPrefix:  tc.EnvPrefix,
 				TrimPrefix: "/v1",
 			})
 			if output == nil {
-				t.Error(errors.Join(errs...))
-				t.FailNow()
+				t.Fatal(errors.Join(errs...))
 			}
 
 			assertRESTSchemaEqual(t, &expected, output)
@@ -59,7 +58,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 	}
 
 	t.Run("failure_empty", func(t *testing.T) {
-		_, err := OpenAPIv3ToNDCSchema([]byte(""), nil)
+		_, err := OpenAPIv3ToNDCSchema([]byte(""), ConvertOptions{})
 		assertError(t, errors.Join(err...), "there is nothing in the spec, it's empty")
 	})
 }
