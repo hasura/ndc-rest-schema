@@ -290,3 +290,24 @@ See [OAuth 2.0](https://swagger.io/docs/specification/authentication/oauth2) sec
 **OpenID Connect Discovery**
 
 See [OpenID Connect Discovery](https://swagger.io/docs/specification/authentication/oauth2) section of OpenAPI 3.
+
+## Patch
+
+You may want to modify the API document but don't want to edit the original file. That's possible with patch files. This tool supports following specifications:
+
+- `merge`: [RFC7396](https://tools.ietf.org/html/rfc7396) JSON merge patch.
+- `json6902`: [RFC6902](https://datatracker.ietf.org/doc/html/rfc6902) JSON patch.
+
+Patches can be applied before (`--patch-before`) and after (`--patch-after`) the conversion. The pre-hook is useful for applying against raw documents such OpenAPI, and the post-hook patches are applied against the output schema.
+
+> [!NOTE]
+> You must convert slashes in paths to `~1` or the RFC6902 JSON patch will confuses them with [JSON Pointer reference tokens](https://datatracker.ietf.org/doc/html/rfc6901).
+>
+> ```json
+> [
+>   {
+>     "op": "remove",
+>     "path": "/paths/~1notifications~1{notification_id}~1history"
+>   }
+> ]
+> ```

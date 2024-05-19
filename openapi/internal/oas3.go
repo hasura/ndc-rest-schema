@@ -225,9 +225,11 @@ func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string
 	}
 
 	// treat no-property objects as a Arbitrary JSON scalar
-	if typeEncoder == nil {
+	if typeEncoder == nil || getNamedType(typeEncoder, true, "") == string(rest.ScalarJSON) {
 		refName := utils.ToPascalCase(typeKey)
-		oc.schema.ScalarTypes[refName] = *schema.NewScalarType()
+		scalar := schema.NewScalarType()
+		scalar.Representation = schema.NewTypeRepresentationJSON().Encode()
+		oc.schema.ScalarTypes[refName] = *scalar
 	}
 
 	return err

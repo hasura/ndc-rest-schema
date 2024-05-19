@@ -6430,6 +6430,13 @@
         "type": "enum"
       }
     },
+    "ConnectEmbeddedAccountFeatures": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "json"
+      }
+    },
     "Float64": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -6468,6 +6475,13 @@
           "delivered"
         ],
         "type": "enum"
+      }
+    },
+    "PaymentMethodAffirm": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "json"
       }
     },
     "PetStatus": {
