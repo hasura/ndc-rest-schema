@@ -15,16 +15,16 @@ import (
 )
 
 type OAS3Builder struct {
-	schema         *rest.NDCRestSchema
-	componentAlias map[string]string
+	schema          *rest.NDCRestSchema
+	evaluatingTypes map[string]string
 	*ConvertOptions
 }
 
 func NewOAS3Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS3Builder {
 	builder := &OAS3Builder{
-		schema:         schema,
-		componentAlias: make(map[string]string),
-		ConvertOptions: applyConvertOptions(options),
+		schema:          schema,
+		evaluatingTypes: make(map[string]string),
+		ConvertOptions:  applyConvertOptions(options),
 	}
 
 	setDefaultSettings(builder.schema.Settings, builder.ConvertOptions)
@@ -67,6 +67,9 @@ func (oc *OAS3Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v3.
 		}
 	}
 	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+
+	// reevaluate write argument types
+	oc.evaluatingTypes = make(map[string]string)
 	oc.transformWriteSchema()
 
 	return nil
@@ -248,9 +251,10 @@ func (oc *OAS3Builder) buildScalarJSON() *schema.NamedType {
 
 // transform and reassign write object types to arguments
 func (oc *OAS3Builder) transformWriteSchema() {
+
 	for _, fn := range oc.schema.Functions {
 		for key, arg := range fn.Arguments {
-			ty, name := oc.populateWriteSchemaType(arg.Type)
+			ty, name, _ := oc.populateWriteSchemaType(arg.Type)
 			if name != "" {
 				arg.Type = ty
 				fn.Arguments[key] = arg
@@ -260,7 +264,7 @@ func (oc *OAS3Builder) transformWriteSchema() {
 	for _, proc := range oc.schema.Procedures {
 		var bodyName string
 		for key, arg := range proc.Arguments {
-			ty, name := oc.populateWriteSchemaType(arg.Type)
+			ty, name, _ := oc.populateWriteSchemaType(arg.Type)
 			if name == "" {
 				continue
 			}
@@ -277,22 +281,56 @@ func (oc *OAS3Builder) transformWriteSchema() {
 	}
 }
 
-func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.Type, string) {
+func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.Type, string, bool) {
 	switch ty := schemaType.Interface().(type) {
 	case *schema.NullableType:
-		ut, name := oc.populateWriteSchemaType(ty.UnderlyingType)
-		return schema.NewNullableType(ut.Interface()).Encode(), name
+		ut, name, isInput := oc.populateWriteSchemaType(ty.UnderlyingType)
+		return schema.NewNullableType(ut.Interface()).Encode(), name, isInput
 	case *schema.ArrayType:
-		ut, name := oc.populateWriteSchemaType(ty.ElementType)
-		return schema.NewArrayType(ut.Interface()).Encode(), name
+		ut, name, isInput := oc.populateWriteSchemaType(ty.ElementType)
+		return schema.NewArrayType(ut.Interface()).Encode(), name, isInput
 	case *schema.NamedType:
+		_, evaluated := oc.evaluatingTypes[ty.Name]
+		if !evaluated {
+			oc.evaluatingTypes[ty.Name] = ""
+		}
+
 		writeName := formatWriteObjectName(ty.Name)
 		if _, ok := oc.schema.ObjectTypes[writeName]; ok {
-			return schema.NewNamedType(writeName).Encode(), writeName
+			return schema.NewNamedType(writeName).Encode(), writeName, true
 		}
-		return schemaType, ty.Name
+		if evaluated {
+			return schemaType, ty.Name, false
+		}
+		objectType, ok := oc.schema.ObjectTypes[ty.Name]
+		if !ok {
+			return schemaType, ty.Name, false
+		}
+		writeObject := schema.ObjectType{
+			Description: objectType.Description,
+			Fields:      make(schema.ObjectTypeFields),
+		}
+		var hasWriteField bool
+		for key, field := range objectType.Fields {
+			ut, name, isInput := oc.populateWriteSchemaType(field.Type)
+			if name == "" {
+				continue
+			}
+			writeObject.Fields[key] = schema.ObjectField{
+				Description: field.Description,
+				Type:        ut,
+			}
+			if isInput {
+				hasWriteField = true
+			}
+		}
+		if hasWriteField {
+			oc.schema.ObjectTypes[writeName] = writeObject
+			return schema.NewNamedType(writeName).Encode(), writeName, true
+		}
+		return schemaType, ty.Name, false
 	default:
-		return schemaType, getNamedType(schemaType.Interface(), true, "")
+		return schemaType, getNamedType(schemaType.Interface(), true, ""), false
 	}
 }
 
