@@ -104,7 +104,7 @@ func (rs RetryPolicySetting) Validate() error {
 // ServerConfig contains server configurations
 type ServerConfig struct {
 	URL     EnvString            `json:"url" yaml:"url" mapstructure:"url"`
-	Group   string               `json:"group,omitempty" yaml:"group" mapstructure:"group"`
+	ID      string               `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"group"`
 	Headers map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	// configure the request timeout in seconds, default 30s
 	Timeout         *EnvInt                   `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`

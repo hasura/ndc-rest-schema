@@ -108,7 +108,8 @@ The `settings` object contains global configuration about servers, authenticatio
 
 - `servers`: list of servers that serve the API service.
   - `url`: the base URL of the API server.
-    `group`: use to group servers. It's useful if there are many different microservices. This value can be parsed from `x-server-group` extension field (OAS3).
+  - `id`: the unique identity for the server. The array index will be used if empty. If the server ID is present, the variable name of the server URL will be `[prefix]_[server-id]_SERVER_URL`. This value can be parsed from `x-server-id` extension field (OAS 3.0).
+  - `headers`, `timeout`, `securitySchemes`, `security`: same as below but take effect to the current server only.
 - `headers`: default headers will be injected into all requests.
 - `timeout`: default timeout for all requests
 - `securitySchemes`: global configurations for authentication, follow the [security scheme](https://swagger.io/docs/specification/authentication/) of OpenAPI 3.

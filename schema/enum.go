@@ -104,10 +104,15 @@ func (j *SchemaFileFormat) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// IsEmpty checks if the style enum is valid
+func (j SchemaFileFormat) IsValid() bool {
+	return slices.Contains(schemaFileFormat_enums, j)
+}
+
 // ParseSchemaFileFormat parses SchemaFileFormat from file extension
 func ParseSchemaFileFormat(extension string) (SchemaFileFormat, error) {
 	result := SchemaFileFormat(extension)
-	if !slices.Contains(schemaFileFormat_enums, result) {
+	if !result.IsValid() {
 		return result, fmt.Errorf("invalid SchemaFileFormat. Expected %+v, got <%s>", schemaFileFormat_enums, extension)
 	}
 	return result, nil
@@ -146,10 +151,15 @@ func (j *ParameterLocation) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// IsEmpty checks if the style enum is valid
+func (j ParameterLocation) IsValid() bool {
+	return slices.Contains(parameterLocation_enums, j)
+}
+
 // ParseParameterLocation parses ParameterLocation from string
 func ParseParameterLocation(input string) (ParameterLocation, error) {
 	result := ParameterLocation(input)
-	if !slices.Contains(parameterLocation_enums, result) {
+	if !result.IsValid() {
 		return result, fmt.Errorf("invalid ParameterLocation. Expected %+v, got <%s>", parameterLocation_enums, input)
 	}
 	return result, nil
@@ -247,7 +257,7 @@ func (j ParameterEncodingStyle) IsValid() bool {
 // ParseParameterEncodingStyle parses ParameterEncodingStyle from string
 func ParseParameterEncodingStyle(input string) (ParameterEncodingStyle, error) {
 	result := ParameterEncodingStyle(input)
-	if !slices.Contains(parameterEncodingStyle_enums, result) {
+	if !result.IsValid() {
 		return result, fmt.Errorf("invalid ParameterEncodingStyle. Expected %+v, got <%s>", parameterEncodingStyle_enums, input)
 	}
 	return result, nil
