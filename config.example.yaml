@@ -1,7 +1,7 @@
 # -- File path needs to be converted.
 file: ""
 
-# -- The location where the ndc schema file will be generated. 
+# -- The location where the ndc schema file will be generated.
 # Print to stdout if empty
 output: ""
 
@@ -16,16 +16,18 @@ spec: oas3
 # envPrefix: ""
 
 # -- Patch files to be applied into the input file
-# patches: 
+# patchBefore:
 #   - path: ""
 #     strategy: merge # @enum: merge, json6902
-#     hook: before # @enum: before, after
+#
+# patchAfter:
+#   - path: ""
+#     strategy: merge # @enum: merge, json6902
 
 # -- Return the pure NDC schema only
 pure: false
-
 # -- Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser
-# methodAlias: 
+# methodAlias:
 #   get: get
 #   post: post
 #   put: put

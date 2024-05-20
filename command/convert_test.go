@@ -112,7 +112,7 @@ func TestConvertToNDCSchema(t *testing.T) {
 					},
 				}
 			}
-			err := ConvertToNDCSchema(args, nopLogger)
+			err := CommandConvertToNDCSchema(args, nopLogger)
 
 			if tc.errorMsg != "" {
 				assertError(t, err, tc.errorMsg)

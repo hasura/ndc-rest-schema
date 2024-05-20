@@ -30,7 +30,7 @@ func main() {
 
 	switch cmd.Command() {
 	case "convert":
-		err = command.ConvertToNDCSchema(&cli.Convert, logger)
+		err = command.CommandConvertToNDCSchema(&cli.Convert, logger)
 	case "json2yaml":
 		err = command.Json2Yaml(&cli.Json2Yaml, logger)
 	case "version":

@@ -2,15 +2,14 @@
 file: ../openapi/testdata/onesignal/source.json
 output: ""
 spec: oas3
-patches: 
+patchBefore:
   - path: "../openapi/testdata/onesignal/patch-before.json"
-    strategy: json6902 
-    hook: before
+    strategy: json6902
+patchAfter:
   - path: "../openapi/testdata/onesignal/patch-after.json"
-    strategy: json6902 
-    hook: after
+    strategy: json6902
 pure: false
-methodAlias: 
+methodAlias:
   get: get
   post: post
   put: put

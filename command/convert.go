@@ -1,6 +1,7 @@
 package command
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -27,7 +28,7 @@ type ConvertCommandArguments struct {
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from file
-func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) error {
+func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) error {
 	logger.Debug(
 		"converting the document to NDC REST schema",
 		slog.String("file", args.File),
@@ -61,47 +62,11 @@ func ConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logger) erro
 		}
 	}
 
-	patchBefore, patchAfter := mergeConvertArgumentsToConfig(&config, args)
+	mergeConvertArgumentsToConfig(&config, args)
+	result, err := ConvertToNDCSchema(&config, logger)
 
-	rawContent, err := utils.ReadFileFromPath(config.File)
 	if err != nil {
 		logger.Error(err.Error())
-		return err
-	}
-
-	rawContent, err = utils.ApplyPatch(rawContent, patchBefore)
-	if err != nil {
-		logger.Error(err.Error())
-		return err
-	}
-
-	var result *schema.NDCRestSchema
-	var errs []error
-	options := openapi.ConvertOptions{
-		MethodAlias: config.MethodAlias,
-		TrimPrefix:  config.TrimPrefix,
-		EnvPrefix:   config.EnvPrefix,
-		Logger:      logger,
-	}
-	switch config.Spec {
-	case schema.OpenAPIv3Spec, schema.OAS3Spec:
-		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, options)
-	case schema.OpenAPIv2Spec, (schema.OAS2Spec):
-		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
-	default:
-		err := fmt.Errorf("invalid spec %s, expected %+v", config.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec})
-		logger.Error(err.Error())
-		return err
-	}
-	if len(errs) > 0 {
-		logger.Error(errors.Join(errs...).Error())
-	}
-	if result == nil {
-		return errors.Join(errs...)
-	}
-
-	result, err = utils.ApplyPatchToRestSchema(result, patchAfter)
-	if err != nil {
 		return err
 	}
 
@@ -153,11 +118,55 @@ type ConvertConfig struct {
 	TrimPrefix  string                `json:"trimPrefix" yaml:"trimPrefix"`
 	EnvPrefix   string                `json:"envPrefix" yaml:"envPrefix"`
 	Pure        bool                  `json:"pure" yaml:"pure"`
-	Patches     []utils.PatchConfig   `json:"patches" yaml:"patches"`
+	PatchBefore []utils.PatchConfig   `json:"patchBefore" yaml:"patchBefore"`
+	PatchAfter  []utils.PatchConfig   `json:"patchAfter" yaml:"patchAfter"`
 	Output      string                `json:"output" yaml:"output"`
 }
 
-func mergeConvertArgumentsToConfig(config *ConvertConfig, args *ConvertCommandArguments) ([]utils.PatchConfig, []utils.PatchConfig) {
+// ConvertToNDCSchema converts to NDC REST schema from config
+func ConvertToNDCSchema(config *ConvertConfig, logger *slog.Logger) (*schema.NDCRestSchema, error) {
+
+	rawContent, err := utils.ReadFileFromPath(config.File)
+	if err != nil {
+		return nil, err
+	}
+
+	rawContent, err = utils.ApplyPatch(rawContent, config.PatchBefore)
+	if err != nil {
+		return nil, err
+	}
+
+	var result *schema.NDCRestSchema
+	var errs []error
+	options := openapi.ConvertOptions{
+		MethodAlias: config.MethodAlias,
+		TrimPrefix:  config.TrimPrefix,
+		EnvPrefix:   config.EnvPrefix,
+		Logger:      logger,
+	}
+	switch config.Spec {
+	case schema.OpenAPIv3Spec, schema.OAS3Spec:
+		result, errs = openapi.OpenAPIv3ToNDCSchema(rawContent, options)
+	case schema.OpenAPIv2Spec, (schema.OAS2Spec):
+		result, errs = openapi.OpenAPIv2ToNDCSchema(rawContent, options)
+	case schema.NDCSpec:
+		if err := json.Unmarshal(rawContent, &result); err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("invalid spec %s, expected %+v", config.Spec, []schema.SchemaSpecType{schema.OpenAPIv3Spec, schema.OpenAPIv2Spec})
+	}
+
+	if result == nil {
+		return nil, errors.Join(errs...)
+	} else if len(errs) > 0 {
+		logger.Error(errors.Join(errs...).Error())
+	}
+
+	return utils.ApplyPatchToRestSchema(result, config.PatchAfter)
+}
+
+func mergeConvertArgumentsToConfig(config *ConvertConfig, args *ConvertCommandArguments) {
 	if args.File != "" {
 		config.File = args.File
 	}
@@ -180,27 +189,20 @@ func mergeConvertArgumentsToConfig(config *ConvertConfig, args *ConvertCommandAr
 	if args.Pure {
 		config.Pure = args.Pure
 	}
-	var patchBefore, patchAfter []utils.PatchConfig
-	if len(args.PatchBefore) > 0 || len(args.PatchAfter) > 0 {
-		for _, p := range args.PatchBefore {
-			patchBefore = append(patchBefore, utils.PatchConfig{
+	if len(args.PatchBefore) > 0 {
+		config.PatchBefore = make([]utils.PatchConfig, len(args.PatchBefore))
+		for i, p := range args.PatchBefore {
+			config.PatchBefore[i] = utils.PatchConfig{
 				Path: p,
-			})
-		}
-		for _, p := range args.PatchAfter {
-			patchAfter = append(patchAfter, utils.PatchConfig{
-				Path: p,
-			})
-		}
-	} else {
-		for _, p := range config.Patches {
-			switch p.Hook {
-			case utils.PatchBefore:
-				patchBefore = append(patchBefore, p)
-			case utils.PatchAfter:
-				patchAfter = append(patchAfter, p)
 			}
 		}
 	}
-	return patchBefore, patchAfter
+	if len(args.PatchAfter) > 0 {
+		config.PatchAfter = make([]utils.PatchConfig, len(args.PatchAfter))
+		for i, p := range args.PatchAfter {
+			config.PatchAfter[i] = utils.PatchConfig{
+				Path: p,
+			}
+		}
+	}
 }

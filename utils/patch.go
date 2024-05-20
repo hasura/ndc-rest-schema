@@ -25,21 +25,10 @@ const (
 	PatchStrategyJSON6902 PatchStrategy = "json6902"
 )
 
-// PatchHookEvent represents the hook event enum of patch file
-type PatchHookEvent string
-
-const (
-	// PatchBefore should apply the patch before conversion
-	PatchBefore PatchHookEvent = "before"
-	// PatchBefore should apply the patch after conversion
-	PatchAfter PatchHookEvent = "after"
-)
-
 // PatchConfig the configuration for JSON patch
 type PatchConfig struct {
-	Path     string         `json:"path" yaml:"path"`
-	Hook     PatchHookEvent `json:"hook" yaml:"hook"`
-	Strategy PatchStrategy  `json:"strategy" yaml:"strategy"`
+	Path     string        `json:"path" yaml:"path"`
+	Strategy PatchStrategy `json:"strategy" yaml:"strategy"`
 }
 
 // ApplyPatchToRestSchema applies JSON patches to NDC rest schema and validate the output
