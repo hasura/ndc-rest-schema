@@ -1,12 +1,12 @@
 # -- File path needs to be converted.
-file: ../openapi/testdata/onesignal/source.json
+file: source.json
 output: ""
 spec: oas3
 patchBefore:
-  - path: "../openapi/testdata/onesignal/patch-before.json"
+  - path: "patch-before.json"
     strategy: json6902
 patchAfter:
-  - path: "../openapi/testdata/onesignal/patch-after.json"
+  - path: "patch-after.json"
     strategy: json6902
 pure: false
 methodAlias:

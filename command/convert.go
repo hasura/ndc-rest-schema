@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
+	"path/filepath"
 
 	"github.com/hasura/ndc-rest-schema/openapi"
 	"github.com/hasura/ndc-rest-schema/schema"
@@ -49,6 +51,12 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 		return err
 	}
 
+	configDir, err := os.Getwd()
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to get work dir: %s", err.Error()))
+		return err
+	}
+
 	var config ConvertConfig
 	if args.Config != "" {
 		rawConfig, err := utils.ReadFileFromPath(args.Config)
@@ -60,9 +68,10 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 			logger.Error(err.Error())
 			return err
 		}
+		configDir = filepath.Dir(args.Config)
 	}
 
-	mergeConvertArgumentsToConfig(&config, args)
+	ResolveConvertConfigArguments(&config, configDir, args)
 	result, err := ConvertToNDCSchema(&config, logger)
 
 	if err != nil {
@@ -166,43 +175,63 @@ func ConvertToNDCSchema(config *ConvertConfig, logger *slog.Logger) (*schema.NDC
 	return utils.ApplyPatchToRestSchema(result, config.PatchAfter)
 }
 
-func mergeConvertArgumentsToConfig(config *ConvertConfig, args *ConvertCommandArguments) {
-	if args.File != "" {
-		config.File = args.File
-	}
-	if args.Spec != "" {
-		config.Spec = schema.SchemaSpecType(args.Spec)
-	}
-	if len(args.MethodAlias) > 0 {
-		config.MethodAlias = args.MethodAlias
-	}
-	if args.TrimPrefix != "" {
-		config.TrimPrefix = args.TrimPrefix
-	}
-	if args.EnvPrefix != "" {
-		config.EnvPrefix = args.EnvPrefix
-	}
-	if args.Output != "" {
-		config.Output = args.Output
+// ResolveConvertConfigArguments resolves convert config arguments
+func ResolveConvertConfigArguments(config *ConvertConfig, configDir string, args *ConvertCommandArguments) {
+	if args != nil {
+		if args.Spec != "" {
+			config.Spec = schema.SchemaSpecType(args.Spec)
+		}
+		if len(args.MethodAlias) > 0 {
+			config.MethodAlias = args.MethodAlias
+		}
+		if args.TrimPrefix != "" {
+			config.TrimPrefix = args.TrimPrefix
+		}
+		if args.EnvPrefix != "" {
+			config.EnvPrefix = args.EnvPrefix
+		}
+		if args.Pure {
+			config.Pure = args.Pure
+		}
 	}
 
-	if args.Pure {
-		config.Pure = args.Pure
+	if args != nil && args.File != "" {
+		config.File = args.File
+	} else if config.File != "" {
+		config.File = utils.ResolveFilePath(configDir, config.File)
 	}
-	if len(args.PatchBefore) > 0 {
+
+	if args != nil && args.Output != "" {
+		config.Output = args.Output
+	} else if config.Output != "" {
+		config.Output = utils.ResolveFilePath(configDir, config.Output)
+	}
+
+	if args != nil && len(args.PatchBefore) > 0 {
 		config.PatchBefore = make([]utils.PatchConfig, len(args.PatchBefore))
 		for i, p := range args.PatchBefore {
 			config.PatchBefore[i] = utils.PatchConfig{
 				Path: p,
 			}
 		}
+	} else {
+		for i, p := range config.PatchBefore {
+			p.Path = utils.ResolveFilePath(configDir, p.Path)
+			config.PatchBefore[i] = p
+		}
 	}
-	if len(args.PatchAfter) > 0 {
+
+	if args != nil && len(args.PatchAfter) > 0 {
 		config.PatchAfter = make([]utils.PatchConfig, len(args.PatchAfter))
 		for i, p := range args.PatchAfter {
 			config.PatchAfter[i] = utils.PatchConfig{
 				Path: p,
 			}
+		}
+	} else {
+		for i, p := range config.PatchAfter {
+			p.Path = utils.ResolveFilePath(configDir, p.Path)
+			config.PatchAfter[i] = p
 		}
 	}
 }

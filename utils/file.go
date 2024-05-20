@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -160,4 +161,12 @@ func WalkFiles(filePath string, callback func(data []byte) error) error {
 
 		return readFunc(path)
 	})
+}
+
+// ResolveFilePath resolves file path with directory
+func ResolveFilePath(dir string, filePath string) string {
+	if !strings.HasPrefix(filePath, "/") && !strings.HasPrefix(filePath, "http") {
+		return path.Join(dir, filePath)
+	}
+	return filePath
 }
