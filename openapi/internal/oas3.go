@@ -86,9 +86,9 @@ func (oc *OAS3Builder) convertServers(servers []*v3.Server) []rest.ServerConfig 
 				serverID = idExtension.Value
 			}
 			if serverID != "" {
-				envName = utils.StringSliceToConstantCase([]string{oc.ConvertOptions.EnvPrefix, "SERVER_URL"})
-			} else {
 				envName = utils.StringSliceToConstantCase([]string{oc.ConvertOptions.EnvPrefix, serverID, "SERVER_URL"})
+			} else {
+				envName = utils.StringSliceToConstantCase([]string{oc.ConvertOptions.EnvPrefix, "SERVER_URL"})
 				if i > 0 {
 					envName = fmt.Sprintf("%s_%d", envName, i+1)
 				}

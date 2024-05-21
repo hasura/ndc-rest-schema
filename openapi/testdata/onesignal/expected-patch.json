@@ -2,7 +2,8 @@
   "settings": {
     "servers": [
       {
-        "url": "{{SERVER_URL:-https://onesignal.com/api/v1}}"
+        "id": "foo",
+        "url": "{{FOO_SERVER_URL:-https://onesignal.com/api/v1}}"
       }
     ],
     "timeout": "{{TIMEOUT}}",
@@ -113,7 +114,7 @@
     "Boolean": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "boolean"}
+      "representation": { "type": "boolean" }
     },
     "FilterRelation": {
       "aggregate_functions": {},
@@ -135,57 +136,57 @@
     "Float64": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "float64"}
+      "representation": { "type": "float64" }
     },
     "IdentityObject": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "json"}
+      "representation": { "type": "json" }
     },
     "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "int32"}
+      "representation": { "type": "int32" }
     },
     "Int64": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "int64"}
+      "representation": { "type": "int64" }
     },
     "JSON": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "json"}
+      "representation": { "type": "json" }
     },
     "Notification200Errors": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "json"}
+      "representation": { "type": "json" }
     },
     "OperatorOperator": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"one_of": ["OR", "AND"], "type": "enum"}
+      "representation": { "one_of": ["OR", "AND"], "type": "enum" }
     },
     "OutcomeDataAggregation": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"one_of": ["sum", "count"], "type": "enum"}
+      "representation": { "one_of": ["sum", "count"], "type": "enum" }
     },
     "PlayerNotificationTargetTargetChannel": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"one_of": ["push", "email", "sms"], "type": "enum"}
+      "representation": { "one_of": ["push", "email", "sms"], "type": "enum" }
     },
     "String": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "string"}
+      "representation": { "type": "string" }
     },
     "TimestampTZ": {
       "aggregate_functions": {},
       "comparison_operators": {},
-      "representation": {"type": "timestamptz"}
+      "representation": { "type": "timestamptz" }
     }
   }
 }

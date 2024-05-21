@@ -60,11 +60,14 @@ The `--spec` flag represents the input specification:
 
 The output schema can extend from NDC schema with REST information that will be used for NDC REST connector. You can convert the pure NDC schema with `--pure` flag.
 
-You also can use a config file to convert ([example](./config.example.yaml)).
+You also can use a config file to convert ([example](./config.example.yaml)). If you use both config file and other arguments, arguments will override the config file.
 
 ```sh
 ndc-rest-schema convert -c ./config.yaml
 ```
+
+> [!NOTE]
+> The tool will consider the path of config file as the root directory. For example, if the config path is `./foo/bar/config.yaml`, the tool will look for relative patch files from `./foo/bar` folder. Extra arguments will take the execution location as the root directory.
 
 ## NDC REST configuration
 

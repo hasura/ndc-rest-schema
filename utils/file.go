@@ -165,7 +165,7 @@ func WalkFiles(filePath string, callback func(data []byte) error) error {
 
 // ResolveFilePath resolves file path with directory
 func ResolveFilePath(dir string, filePath string) string {
-	if !strings.HasPrefix(filePath, "/") && !strings.HasPrefix(filePath, "http") {
+	if !strings.HasPrefix(filePath, "/") && !strings.HasPrefix(filePath, "\\") && !strings.HasPrefix(filePath, "http") {
 		return path.Join(dir, filePath)
 	}
 	return filePath
