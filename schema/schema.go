@@ -225,3 +225,7 @@ func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 	j.ProcedureInfo = procedure
 	return nil
 }
+
+func toPtr[V any](value V) *V {
+	return &value
+}

@@ -103,7 +103,14 @@ func (rs RetryPolicySetting) Validate() error {
 
 // ServerConfig contains server configurations
 type ServerConfig struct {
-	URL EnvString `json:"url" yaml:"url" mapstructure:"url"`
+	URL     EnvString            `json:"url" yaml:"url" mapstructure:"url"`
+	ID      string               `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"group"`
+	Headers map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
+	// configure the request timeout in seconds, default 30s
+	Timeout         *EnvInt                   `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
+	Retry           *RetryPolicySetting       `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
+	SecuritySchemes map[string]SecurityScheme `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty" mapstructure:"securitySchemes"`
+	Security        AuthSecurities            `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
 }
 
 // Validate if the current instance is valid

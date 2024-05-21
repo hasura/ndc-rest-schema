@@ -458,6 +458,7 @@ func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.Par
 	}
 	return results, nullable
 }
+
 func formatWriteObjectName(name string) string {
 	return fmt.Sprintf("%sInput", name)
 }

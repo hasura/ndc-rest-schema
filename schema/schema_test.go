@@ -16,10 +16,6 @@ func assertDeepEqual(_ *testing.T, expected any, reality any, msgs ...string) {
 	}
 }
 
-func toPtr[T any](v T) *T {
-	return &v
-}
-
 func TestDecodeRESTProcedureInfo(t *testing.T) {
 	testCases := []struct {
 		name     string
