@@ -219,7 +219,8 @@ func (oc *OAS2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nul
 	refName := getSchemaRefTypeNameV2(schemaProxy.GetReference())
 	// return early object from ref
 	if refName != "" && len(innerSchema.Type) > 0 && innerSchema.Type[0] == "object" {
-		ndcType = schema.NewNamedType(utils.ToPascalCase(refName))
+		refName = utils.ToPascalCase(refName)
+		ndcType = schema.NewNamedType(refName)
 		typeSchema = &rest.TypeSchema{Type: refName}
 	} else {
 		if innerSchema.Title != "" && !strings.Contains(innerSchema.Title, " ") {

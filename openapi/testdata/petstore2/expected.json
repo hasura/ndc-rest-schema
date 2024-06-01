@@ -1179,6 +1179,31 @@
         "name": "SnakeObject",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/oauth2/register",
+        "method": "post",
+        "requestBody": {
+          "contentType": "application/json",
+          "schema": {
+            "type": "OAuth2Client"
+          }
+        }
+      },
+      "arguments": {
+        "body": {
+          "type": {
+            "name": "OAuth2Client",
+            "type": "named"
+          }
+        }
+      },
+      "name": "dynamicClientRegistrationCreateOAuth2Client",
+      "result_type": {
+        "name": "OAuth2Client",
+        "type": "named"
+      }
     }
   ],
   "scalar_types": {

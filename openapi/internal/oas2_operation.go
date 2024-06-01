@@ -154,7 +154,7 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 			return nil, errors.New("parameter name is empty")
 		}
 
-		var schemaType schema.TypeEncoder
+		var typeEncoder schema.TypeEncoder
 		var typeSchema *rest.TypeSchema
 		var err error
 
@@ -164,13 +164,13 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 		}
 
 		if param.Type != "" {
-			schemaType, err = oc.builder.getSchemaTypeFromParameter(param, apiPath, fieldPaths)
+			typeEncoder, err = oc.builder.getSchemaTypeFromParameter(param, apiPath, fieldPaths)
 			if err != nil {
 				return nil, err
 			}
 			nullable := !paramRequired
 			typeSchema = &rest.TypeSchema{
-				Type:     getNamedType(schemaType, false, param.Type),
+				Type:     getNamedType(typeEncoder, false, param.Type),
 				Pattern:  param.Pattern,
 				Nullable: nullable,
 			}
@@ -191,7 +191,7 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 				typeSchema.MinLength = &minLength
 			}
 		} else if param.Schema != nil {
-			schemaType, typeSchema, err = oc.builder.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, fieldPaths)
+			typeEncoder, typeSchema, err = oc.builder.getSchemaTypeFromProxy(param.Schema, !paramRequired, apiPath, fieldPaths)
 			if err != nil {
 				return nil, err
 			}
@@ -203,7 +203,7 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 		}
 
 		argument := schema.ArgumentInfo{
-			Type: schemaType.Encode(),
+			Type: typeEncoder.Encode(),
 		}
 		if param.Description != "" {
 			argument.Description = &param.Description

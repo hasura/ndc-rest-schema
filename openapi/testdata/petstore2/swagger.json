@@ -644,6 +644,37 @@
           }
         }
       }
+    },
+    "/oauth2/register": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "operationId": "dynamicClientRegistrationCreateOAuth2Client",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/oAuth2Client"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "oAuth2Client",
+            "schema": {
+              "$ref": "#/definitions/oAuth2Client"
+            }
+          },
+          "default": {
+            "description": "jsonError",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
