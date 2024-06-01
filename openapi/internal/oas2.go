@@ -348,6 +348,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 
 			itemName := getSchemaRefTypeNameV2(typeSchema.Items.A.GetReference())
 			if itemName != "" {
+				itemName := utils.ToPascalCase(itemName)
 				result = schema.NewArrayType(schema.NewNamedType(itemName))
 			} else {
 				itemSchemaA := typeSchema.Items.A.Schema()

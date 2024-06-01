@@ -56,7 +56,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -97,7 +100,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -294,6 +300,97 @@
         "name": "SnakeObject",
         "type": "named"
       }
+    },
+    {
+      "request": {
+        "url": "/clients",
+        "method": "get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "Int64",
+              "nullable": true
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "Int64",
+              "nullable": true
+            }
+          },
+          {
+            "name": "client_name",
+            "in": "query",
+            "schema": {
+              "type": "String",
+              "nullable": true
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "schema": {
+              "type": "String",
+              "nullable": true
+            }
+          }
+        ]
+      },
+      "arguments": {
+        "client_name": {
+          "description": "The name of the clients to filter by.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "limit": {
+          "description": "The maximum amount of clients to returned, upper bound is 500 clients.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int64",
+              "type": "named"
+            }
+          }
+        },
+        "offset": {
+          "description": "The offset from where to start looking.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int64",
+              "type": "named"
+            }
+          }
+        },
+        "owner": {
+          "description": "The owner of the clients to filter by.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      },
+      "description": "List OAuth 2.0 Clients",
+      "name": "listOAuth2Clients",
+      "result_type": {
+        "element_type": {
+          "name": "OAuth2Client",
+          "type": "named"
+        },
+        "type": "array"
+      }
     }
   ],
   "object_types": {
@@ -340,6 +437,60 @@
           }
         },
         "name": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "OAuth2Client": {
+      "fields": {
+        "client_id": {
+          "description": "ID  is the id for this client.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "client_name": {
+          "description": "Name is the human-readable string name of the client to be presented to the\nend-user during authorization.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "client_secret": {
+          "description": "Secret is the client's secret. The secret will be included in the create request as cleartext, and then\nnever again. The secret is stored using BCrypt so it is impossible to recover it. Tell your users\nthat they need to write the secret down as it will not be made available again.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "client_secret_expires_at": {
+          "description": "SecretExpiresAt is an integer holding the time at which the client\nsecret will expire or 0 if it will not expire. The time is\nrepresented as the number of seconds from 1970-01-01T00:00:00Z as\nmeasured in UTC until the date/time of expiration.\n\nThis feature is currently not supported and it's value will always\nbe set to 0.",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int64",
+              "type": "named"
+            }
+          }
+        },
+        "client_uri": {
+          "description": "ClientURI is an URL string of a web page providing information about the client.\nIf present, the server SHOULD display this URL to the end-user in\na clickable fashion.",
           "type": {
             "type": "nullable",
             "underlying_type": {
@@ -606,7 +757,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -668,7 +822,10 @@
         "method": "post",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -703,7 +860,10 @@
         "method": "put",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -747,7 +907,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -829,7 +992,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -1052,7 +1218,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -1060,7 +1230,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["available", "pending", "sold"],
+        "one_of": [
+          "available",
+          "pending",
+          "sold"
+        ],
         "type": "enum"
       }
     },
