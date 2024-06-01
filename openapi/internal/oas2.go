@@ -283,9 +283,9 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 
 	var typeResult *rest.TypeSchema
 	if len(typeSchema.AnyOf) > 0 || typeSchema.AdditionalProperties != nil || len(typeSchema.Type) > 1 {
-		scalarName := "JSON"
+		scalarName := string(rest.ScalarJSON)
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
-			oc.schema.ScalarTypes[scalarName] = *schema.NewScalarType()
+			oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 		}
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 		return schema.NewNamedType(scalarName), typeResult, nil
@@ -311,7 +311,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 
 			if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
 				// treat no-property objects as a JSON scalar
-				oc.schema.ScalarTypes[refName] = *schema.NewScalarType()
+				oc.schema.ScalarTypes[refName] = *defaultScalarTypes[rest.ScalarJSON]
 			} else {
 				object := schema.ObjectType{
 					Fields: make(schema.ObjectTypeFields),
