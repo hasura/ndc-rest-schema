@@ -153,6 +153,11 @@
       "comparison_operators": {},
       "representation": { "type": "json" }
     },
+    "Notification200Errors": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": { "type": "json" }
+    },
     "OperatorOperator": {
       "aggregate_functions": {},
       "comparison_operators": {},

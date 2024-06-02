@@ -1861,6 +1861,15 @@
     },
     "PostCheckoutSessionsBodyPaymentMethodOptionsAcssDebit": {
       "fields": {
+        "affirm": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodAffirm",
+              "type": "named"
+            }
+          }
+        },
         "currency": {
           "type": {
             "type": "nullable",
@@ -4805,6 +4814,10 @@
                   "type": "object",
                   "nullable": true,
                   "properties": {
+                    "affirm": {
+                      "type": "PaymentMethodAffirm",
+                      "nullable": true
+                    },
                     "currency": {
                       "type": "CheckoutCurrency",
                       "nullable": true
@@ -6474,6 +6487,13 @@
           "delivered"
         ],
         "type": "enum"
+      }
+    },
+    "PaymentMethodAffirm": {
+      "aggregate_functions": {},
+      "comparison_operators": {},
+      "representation": {
+        "type": "json"
       }
     },
     "PetStatus": {

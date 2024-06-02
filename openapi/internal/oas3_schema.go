@@ -45,7 +45,6 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 	var err error
 
 	rawRefName := schemaProxy.GetReference()
-
 	if rawRefName == "" {
 		ndcType, typeSchema, isRef, err = oc.getSchemaType(innerSchema, fieldPaths)
 		if err != nil {
@@ -58,6 +57,7 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 			Type:        objectName,
 			Description: innerSchema.Description,
 		}
+		oc.builder.typeUsageCounter.Increase(objectName)
 	} else {
 		// return early object from ref
 		refName := getSchemaRefTypeNameV3(rawRefName)
@@ -72,12 +72,14 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 				return nil, nil, false, err
 			}
 			typeSchema.Description = innerSchema.Description
+			oc.builder.typeUsageCounter.Increase(getNamedType(ndcType, true, ""))
 		} else {
 			ndcType = schema.NewNamedType(objectName)
 			typeSchema = &rest.TypeSchema{
 				Type:        objectName,
 				Description: innerSchema.Description,
 			}
+			oc.builder.typeUsageCounter.Increase(objectName)
 		}
 	}
 

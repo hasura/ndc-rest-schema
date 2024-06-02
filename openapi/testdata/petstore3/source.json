@@ -1908,6 +1908,9 @@
                     "properties": {
                       "acss_debit": {
                         "properties": {
+                          "affirm": {
+                            "$ref": "#/components/schemas/payment_method_affirm"
+                          },
                           "currency": {
                             "enum": ["cad", "usd"],
                             "type": "string"

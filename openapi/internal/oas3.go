@@ -248,6 +248,7 @@ func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string
 		scalar := schema.NewScalarType()
 		scalar.Representation = schema.NewTypeRepresentationJSON().Encode()
 		oc.schema.ScalarTypes[refName] = *scalar
+		oc.evaluatingTypes[fmt.Sprintf("#/components/schemas/%s", typeKey)] = refName
 	}
 
 	return err
