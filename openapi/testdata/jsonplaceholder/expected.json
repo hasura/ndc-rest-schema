@@ -1162,13 +1162,6 @@
         "type": "int64"
       }
     },
-    "NotFoundError": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "json"
-      }
-    },
     "String": {
       "aggregate_functions": {},
       "comparison_operators": {},

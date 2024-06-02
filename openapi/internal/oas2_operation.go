@@ -202,6 +202,7 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 			return nil, err
 		}
 
+		oc.builder.typeUsageCounter.Increase(getNamedType(typeEncoder, true, ""))
 		argument := schema.ArgumentInfo{
 			Type: typeEncoder.Encode(),
 		}
@@ -262,12 +263,15 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 
 	// return nullable boolean type if the response content is null
 	if resp == nil || resp.Schema == nil {
-		return schema.NewNullableNamedType("Boolean"), nil
+		scalarName := string(rest.ScalarBoolean)
+		oc.builder.typeUsageCounter.Increase(scalarName)
+		return schema.NewNullableNamedType(scalarName), nil
 	}
 
 	schemaType, _, err := oc.builder.getSchemaTypeFromProxy(resp.Schema, false, apiPath, fieldPaths)
 	if err != nil {
 		return nil, err
 	}
+	oc.builder.typeUsageCounter.Increase(getNamedType(schemaType, true, ""))
 	return schemaType, nil
 }

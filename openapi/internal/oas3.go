@@ -14,17 +14,22 @@ import (
 	"github.com/pb33f/libopenapi/orderedmap"
 )
 
+// OAS3Builder the NDC schema builder from OpenAPI 3.0 specification
 type OAS3Builder struct {
-	schema          *rest.NDCRestSchema
-	evaluatingTypes map[string]string
 	*ConvertOptions
+
+	schema           *rest.NDCRestSchema
+	evaluatingTypes  map[string]string
+	typeUsageCounter TypeUsageCounter
 }
 
+// NewOAS3Builder creates an OAS3Builder instance
 func NewOAS3Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS3Builder {
 	builder := &OAS3Builder{
-		schema:          schema,
-		evaluatingTypes: make(map[string]string),
-		ConvertOptions:  applyConvertOptions(options),
+		schema:           schema,
+		evaluatingTypes:  make(map[string]string),
+		typeUsageCounter: TypeUsageCounter{},
+		ConvertOptions:   applyConvertOptions(options),
 	}
 
 	setDefaultSettings(builder.schema.Settings, builder.ConvertOptions)
@@ -71,6 +76,7 @@ func (oc *OAS3Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v3.
 	// reevaluate write argument types
 	oc.evaluatingTypes = make(map[string]string)
 	oc.transformWriteSchema()
+	cleanUnusedSchemaTypes(oc.schema, oc.typeUsageCounter)
 
 	return nil
 }
@@ -260,6 +266,7 @@ func (oc *OAS3Builder) buildScalarJSON() *schema.NamedType {
 	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 	}
+	oc.typeUsageCounter.Increase(scalarName)
 	return schema.NewNamedType(scalarName)
 }
 
@@ -311,6 +318,8 @@ func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.T
 
 		writeName := formatWriteObjectName(ty.Name)
 		if _, ok := oc.schema.ObjectTypes[writeName]; ok {
+			oc.typeUsageCounter.Increase(writeName)
+			oc.typeUsageCounter.Decrease(ty.Name)
 			return schema.NewNamedType(writeName).Encode(), writeName, true
 		}
 		if evaluated {
@@ -339,6 +348,8 @@ func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.T
 			}
 		}
 		if hasWriteField {
+			oc.typeUsageCounter.Increase(writeName)
+			oc.typeUsageCounter.Decrease(ty.Name)
 			oc.schema.ObjectTypes[writeName] = writeObject
 			return schema.NewNamedType(writeName).Encode(), writeName, true
 		}

@@ -303,6 +303,7 @@ func (oc *oas3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody, apiP
 		return nil, nil, nil
 	}
 
+	oc.builder.typeUsageCounter.Increase(getNamedType(schemaType, true, ""))
 	bodyResult := &rest.RequestBody{
 		ContentType: contentType,
 		Schema:      typeSchema,
@@ -366,6 +367,7 @@ func (oc *oas3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody, apiP
 						EncodingObject: headerEncoding,
 					}
 
+					oc.builder.typeUsageCounter.Increase(getNamedType(ndcType, true, ""))
 					argument := schema.ArgumentInfo{
 						Type: ndcType.Encode(),
 					}
@@ -400,7 +402,9 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 
 	// return nullable boolean type if the response content is null
 	if resp == nil || resp.Content == nil {
-		return schema.NewNullableNamedType("Boolean"), nil
+		scalarName := string(rest.ScalarBoolean)
+		oc.builder.typeUsageCounter.Increase(scalarName)
+		return schema.NewNullableNamedType(scalarName), nil
 	}
 	jsonContent, ok := resp.Content.Get("application/json")
 	if !ok {
@@ -412,6 +416,7 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 	if err != nil {
 		return nil, err
 	}
+	oc.builder.typeUsageCounter.Increase(getNamedType(schemaType, true, ""))
 	return schemaType, nil
 }
 

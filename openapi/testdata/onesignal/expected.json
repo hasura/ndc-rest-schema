@@ -1479,13 +1479,6 @@
         "type": "float64"
       }
     },
-    "IdentityObject": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "json"
-      }
-    },
     "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1507,18 +1500,14 @@
         "type": "json"
       }
     },
-    "Notification200Errors": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "json"
-      }
-    },
     "NotificationsEvents": {
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["sent", "clicked"],
+        "one_of": [
+          "sent",
+          "clicked"
+        ],
         "type": "enum"
       }
     },
@@ -1526,7 +1515,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["OR", "AND"],
+        "one_of": [
+          "OR",
+          "AND"
+        ],
         "type": "enum"
       }
     },
@@ -1534,7 +1526,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["sum", "count"],
+        "one_of": [
+          "sum",
+          "count"
+        ],
         "type": "enum"
       }
     },
@@ -1542,7 +1537,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["push", "email", "sms"],
+        "one_of": [
+          "push",
+          "email",
+          "sms"
+        ],
         "type": "enum"
       }
     },
