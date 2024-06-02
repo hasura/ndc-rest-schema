@@ -597,6 +597,84 @@
           }
         }
       }
+    },
+    "/clients": {
+      "get": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "summary": "List OAuth 2.0 Clients",
+        "operationId": "listOAuth2Clients",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "The maximum amount of clients to returned, upper bound is 500 clients.",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "The offset from where to start looking.",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The name of the clients to filter by.",
+            "name": "client_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "The owner of the clients to filter by.",
+            "name": "owner",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/oAuth2ClientList"
+          },
+          "default": {
+            "description": "jsonError",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
+    "/oauth2/register": {
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "operationId": "dynamicClientRegistrationCreateOAuth2Client",
+        "parameters": [
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/oAuth2Client"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "oAuth2Client",
+            "schema": {
+              "$ref": "#/definitions/oAuth2Client"
+            }
+          },
+          "default": {
+            "description": "jsonError",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -611,6 +689,17 @@
       "scopes": {
         "read:pets": "read your pets",
         "write:pets": "modify pets in your account"
+      }
+    }
+  },
+  "responses": {
+    "oAuth2ClientList": {
+      "description": "A list of clients.",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/oAuth2Client"
+        }
       }
     }
   },
@@ -705,6 +794,33 @@
         "username": { "type": "string" }
       },
       "xml": { "name": "User" }
+    },
+    "oAuth2Client": {
+      "type": "object",
+      "title": "Client represents an OAuth 2.0 Client.",
+      "properties": {
+        "client_id": {
+          "description": "ID  is the id for this client.",
+          "type": "string"
+        },
+        "client_name": {
+          "description": "Name is the human-readable string name of the client to be presented to the\nend-user during authorization.",
+          "type": "string"
+        },
+        "client_secret": {
+          "description": "Secret is the client's secret. The secret will be included in the create request as cleartext, and then\nnever again. The secret is stored using BCrypt so it is impossible to recover it. Tell your users\nthat they need to write the secret down as it will not be made available again.",
+          "type": "string"
+        },
+        "client_secret_expires_at": {
+          "description": "SecretExpiresAt is an integer holding the time at which the client\nsecret will expire or 0 if it will not expire. The time is\nrepresented as the number of seconds from 1970-01-01T00:00:00Z as\nmeasured in UTC until the date/time of expiration.\n\nThis feature is currently not supported and it's value will always\nbe set to 0.",
+          "type": "integer",
+          "format": "int64"
+        },
+        "client_uri": {
+          "description": "ClientURI is an URL string of a web page providing information about the client.\nIf present, the server SHOULD display this URL to the end-user in\na clickable fashion.",
+          "type": "string"
+        }
+      }
     }
   },
   "externalDocs": {

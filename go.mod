@@ -20,6 +20,6 @@ require (
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
-	golang.org/x/exp v0.0.0-20240529005216-23cca8864a10 // indirect
+	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc // indirect
 	golang.org/x/sync v0.7.0 // indirect
 )

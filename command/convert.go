@@ -19,7 +19,7 @@ type ConvertCommandArguments struct {
 	File        string            `help:"File path needs to be converted." short:"f"`
 	Config      string            `help:"Path of the config file." short:"c"`
 	Output      string            `help:"The location where the ndc schema file will be generated. Print to stdout if not set" short:"o"`
-	Spec        string            `help:"The API specification of the file, is one of oas3 (openapi3), oas2 (openapi2)" default:"oas3"`
+	Spec        string            `help:"The API specification of the file, is one of oas3 (openapi3), oas2 (openapi2)"`
 	Format      string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
 	Pure        bool              `help:"Return the pure NDC schema only" default:"false"`
 	TrimPrefix  string            `help:"Trim the prefix in URL, e.g. /v1"`
@@ -193,6 +193,9 @@ func ResolveConvertConfigArguments(config *ConvertConfig, configDir string, args
 		if args.Pure {
 			config.Pure = args.Pure
 		}
+	}
+	if config.Spec == "" {
+		config.Spec = schema.OAS3Spec
 	}
 
 	if args != nil && args.File != "" {
