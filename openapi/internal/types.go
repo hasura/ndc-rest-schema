@@ -121,20 +121,27 @@ type TypeUsageCounter map[string]int
 
 // Increase increases the usage of an element
 func (tuc *TypeUsageCounter) Increase(name string) {
-	counter, _ := (*tuc)[name]
-	(*tuc)[name] = counter + 1
+	if counter, ok := (*tuc)[name]; ok {
+		(*tuc)[name] = counter + 1
+	} else {
+		(*tuc)[name] = 1
+	}
 }
 
 // Decrease decreases the usage of an element
 func (tuc *TypeUsageCounter) Decrease(name string) {
-	counter, _ := (*tuc)[name]
-	if counter > 0 {
+	if counter, ok := (*tuc)[name]; ok && counter > 1 {
 		(*tuc)[name] = counter - 1
+	} else {
+		(*tuc)[name] = 0
 	}
 }
 
 // Get returns the usage count of the input name
 func (tuc *TypeUsageCounter) Get(name string) int {
-	counter, _ := (*tuc)[name]
+	counter, ok := (*tuc)[name]
+	if !ok {
+		return 0
+	}
 	return counter
 }
