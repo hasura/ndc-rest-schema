@@ -22,8 +22,7 @@
       "url": "https://petstore3.swagger.io/api/v3"
     },
     {
-      "url": "https://petstore3.swagger.io/api/v3.1",
-      "x-server-group": "test"
+      "url": "https://petstore3.swagger.io/api/v3.1"
     }
   ],
   "tags": [
@@ -1909,6 +1908,9 @@
                     "properties": {
                       "acss_debit": {
                         "properties": {
+                          "affirm": {
+                            "$ref": "#/components/schemas/payment_method_affirm"
+                          },
                           "currency": {
                             "enum": ["cad", "usd"],
                             "type": "string"

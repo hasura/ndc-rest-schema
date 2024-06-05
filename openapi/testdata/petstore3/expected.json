@@ -5,8 +5,7 @@
         "url": "{{PET_STORE_SERVER_URL:-https://petstore3.swagger.io/api/v3}}"
       },
       {
-        "url": "{{PET_STORE_SERVER_URL_2:-https://petstore3.swagger.io/api/v3.1}}",
-        "group": "test"
+        "url": "{{PET_STORE_SERVER_URL_2:-https://petstore3.swagger.io/api/v3.1}}"
       }
     ],
     "timeout": "{{PET_STORE_TIMEOUT}}",
@@ -44,7 +43,10 @@
     "security": [
       {},
       {
-        "petstore_auth": ["write:pets", "read:pets"]
+        "petstore_auth": [
+          "write:pets",
+          "read:pets"
+        ]
       }
     ],
     "version": "1.0.19"
@@ -68,7 +70,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -114,7 +119,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -161,7 +169,10 @@
             "api_key": []
           },
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -1850,6 +1861,15 @@
     },
     "PostCheckoutSessionsBodyPaymentMethodOptionsAcssDebit": {
       "fields": {
+        "affirm": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "PaymentMethodAffirm",
+              "type": "named"
+            }
+          }
+        },
         "currency": {
           "type": {
             "type": "nullable",
@@ -3425,7 +3445,10 @@
         "method": "post",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -3457,7 +3480,10 @@
         "method": "put",
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -3514,7 +3540,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -3580,7 +3609,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ]
       },
@@ -3635,7 +3667,10 @@
         ],
         "security": [
           {
-            "petstore_auth": ["write:pets", "read:pets"]
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
           }
         ],
         "requestBody": {
@@ -3719,7 +3754,10 @@
           },
           "encoding": {
             "profileImage": {
-              "contentType": ["image/png", "image/jpeg"],
+              "contentType": [
+                "image/png",
+                "image/jpeg"
+              ],
               "headers": {
                 "X-Rate-Limit-Limit": {
                   "explode": false,
@@ -4776,6 +4814,10 @@
                   "type": "object",
                   "nullable": true,
                   "properties": {
+                    "affirm": {
+                      "type": "PaymentMethodAffirm",
+                      "nullable": true
+                    },
                     "currency": {
                       "type": "CheckoutCurrency",
                       "nullable": true
@@ -5985,7 +6027,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "never"],
+        "one_of": [
+          "auto",
+          "never"
+        ],
         "type": "enum"
       }
     },
@@ -5993,7 +6038,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["AC", "AD"],
+        "one_of": [
+          "AC",
+          "AD"
+        ],
         "type": "enum"
       }
     },
@@ -6001,7 +6049,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["", "exclude_tax", "include_inclusive_tax"],
+        "one_of": [
+          "",
+          "exclude_tax",
+          "include_inclusive_tax"
+        ],
         "type": "enum"
       }
     },
@@ -6009,7 +6061,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "required"],
+        "one_of": [
+          "auto",
+          "required"
+        ],
         "type": "enum"
       }
     },
@@ -6017,7 +6072,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["automatic", "automatic_async", "manual"],
+        "one_of": [
+          "automatic",
+          "automatic_async",
+          "manual"
+        ],
         "type": "enum"
       }
     },
@@ -6025,7 +6084,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["android", "ios", "web"],
+        "one_of": [
+          "android",
+          "ios",
+          "web"
+        ],
         "type": "enum"
       }
     },
@@ -6033,7 +6096,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["cad", "usd"],
+        "one_of": [
+          "cad",
+          "usd"
+        ],
         "type": "enum"
       }
     },
@@ -6041,7 +6107,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["always", "if_required"],
+        "one_of": [
+          "always",
+          "if_required"
+        ],
         "type": "enum"
       }
     },
@@ -6049,7 +6118,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["invoice", "subscription"],
+        "one_of": [
+          "invoice",
+          "subscription"
+        ],
         "type": "enum"
       }
     },
@@ -6057,7 +6129,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["bank_transfer"],
+        "one_of": [
+          "bank_transfer"
+        ],
         "type": "enum"
       }
     },
@@ -6065,7 +6139,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["day", "month", "week", "year"],
+        "one_of": [
+          "day",
+          "month",
+          "week",
+          "year"
+        ],
         "type": "enum"
       }
     },
@@ -6073,7 +6152,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "bg", "cs"],
+        "one_of": [
+          "auto",
+          "bg",
+          "cs"
+        ],
         "type": "enum"
       }
     },
@@ -6081,7 +6164,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["cancel", "create_invoice", "pause"],
+        "one_of": [
+          "cancel",
+          "create_invoice",
+          "pause"
+        ],
         "type": "enum"
       }
     },
@@ -6089,7 +6176,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["payment", "setup", "subscription"],
+        "one_of": [
+          "payment",
+          "setup",
+          "subscription"
+        ],
         "type": "enum"
       }
     },
@@ -6097,7 +6188,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "never"],
+        "one_of": [
+          "auto",
+          "never"
+        ],
         "type": "enum"
       }
     },
@@ -6105,7 +6199,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["always", "if_required"],
+        "one_of": [
+          "always",
+          "if_required"
+        ],
         "type": "enum"
       }
     },
@@ -6113,7 +6210,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["acss_debit", "affirm"],
+        "one_of": [
+          "acss_debit",
+          "affirm"
+        ],
         "type": "enum"
       }
     },
@@ -6121,7 +6221,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["combined", "interval", "sporadic"],
+        "one_of": [
+          "combined",
+          "interval",
+          "sporadic"
+        ],
         "type": "enum"
       }
     },
@@ -6129,7 +6233,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["balances", "ownership", "payment_method", "transactions"],
+        "one_of": [
+          "balances",
+          "ownership",
+          "payment_method",
+          "transactions"
+        ],
         "type": "enum"
       }
     },
@@ -6137,7 +6246,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "hidden"],
+        "one_of": [
+          "auto",
+          "hidden"
+        ],
         "type": "enum"
       }
     },
@@ -6145,7 +6257,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["cs-CZ", "da-DK"],
+        "one_of": [
+          "cs-CZ",
+          "da-DK"
+        ],
         "type": "enum"
       }
     },
@@ -6153,7 +6268,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["balances", "transactions"],
+        "one_of": [
+          "balances",
+          "transactions"
+        ],
         "type": "enum"
       }
     },
@@ -6161,7 +6279,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "none"],
+        "one_of": [
+          "auto",
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6169,7 +6290,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["create_prorations", "none"],
+        "one_of": [
+          "create_prorations",
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6177,7 +6301,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["always", "if_required", "never"],
+        "one_of": [
+          "always",
+          "if_required",
+          "never"
+        ],
         "type": "enum"
       }
     },
@@ -6185,7 +6313,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["any", "automatic", "challenge"],
+        "one_of": [
+          "any",
+          "automatic",
+          "challenge"
+        ],
         "type": "enum"
       }
     },
@@ -6193,7 +6325,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["aba", "iban"],
+        "one_of": [
+          "aba",
+          "iban"
+        ],
         "type": "enum"
       }
     },
@@ -6201,7 +6336,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["off_session", "on_session"],
+        "one_of": [
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6209,7 +6347,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "never"],
+        "one_of": [
+          "auto",
+          "never"
+        ],
         "type": "enum"
       }
     },
@@ -6217,7 +6358,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["auto", "book", "donate", "pay"],
+        "one_of": [
+          "auto",
+          "book",
+          "donate",
+          "pay"
+        ],
         "type": "enum"
       }
     },
@@ -6225,7 +6371,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["exclusive", "inclusive", "unspecified"],
+        "one_of": [
+          "exclusive",
+          "inclusive",
+          "unspecified"
+        ],
         "type": "enum"
       }
     },
@@ -6233,7 +6383,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "required"],
+        "one_of": [
+          "none",
+          "required"
+        ],
         "type": "enum"
       }
     },
@@ -6241,7 +6394,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["business", "personal"],
+        "one_of": [
+          "business",
+          "personal"
+        ],
         "type": "enum"
       }
     },
@@ -6249,7 +6405,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["account", "self"],
+        "one_of": [
+          "account",
+          "self"
+        ],
         "type": "enum"
       }
     },
@@ -6257,7 +6416,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["embedded", "hosted"],
+        "one_of": [
+          "embedded",
+          "hosted"
+        ],
         "type": "enum"
       }
     },
@@ -6265,7 +6427,13 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["business_day", "day", "hour", "month", "week"],
+        "one_of": [
+          "business_day",
+          "day",
+          "hour",
+          "month",
+          "week"
+        ],
         "type": "enum"
       }
     },
@@ -6273,15 +6441,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["automatic", "instant", "microdeposits"],
+        "one_of": [
+          "automatic",
+          "instant",
+          "microdeposits"
+        ],
         "type": "enum"
-      }
-    },
-    "ConnectEmbeddedAccountFeatures": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "json"
       }
     },
     "Float64": {
@@ -6316,7 +6481,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -6331,7 +6500,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["available", "pending", "sold"],
+        "one_of": [
+          "available",
+          "pending",
+          "sold"
+        ],
         "type": "enum"
       }
     },
@@ -6339,7 +6512,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["custom"],
+        "one_of": [
+          "custom"
+        ],
         "type": "enum"
       }
     },
@@ -6347,7 +6522,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["dropdown", "numeric", "text"],
+        "one_of": [
+          "dropdown",
+          "numeric",
+          "text"
+        ],
         "type": "enum"
       }
     },
@@ -6355,7 +6534,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6363,7 +6546,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6371,7 +6556,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6379,7 +6566,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6387,7 +6576,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6395,7 +6586,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6403,7 +6598,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6411,7 +6608,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6419,7 +6620,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6427,7 +6632,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["eu_bank_transfer", "gb_bank_transfer"],
+        "one_of": [
+          "eu_bank_transfer",
+          "gb_bank_transfer"
+        ],
         "type": "enum"
       }
     },
@@ -6435,7 +6643,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6443,7 +6653,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6451,7 +6663,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6459,7 +6673,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6467,7 +6683,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6475,7 +6693,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6483,7 +6703,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6491,7 +6713,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6499,7 +6723,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session"],
+        "one_of": [
+          "none",
+          "off_session"
+        ],
         "type": "enum"
       }
     },
@@ -6507,7 +6734,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6515,7 +6744,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6523,7 +6754,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6531,7 +6764,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["", "manual"],
+        "one_of": [
+          "",
+          "manual"
+        ],
         "type": "enum"
       }
     },
@@ -6539,7 +6775,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["", "none", "off_session"],
+        "one_of": [
+          "",
+          "none",
+          "off_session"
+        ],
         "type": "enum"
       }
     },
@@ -6547,7 +6787,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session"],
+        "one_of": [
+          "none",
+          "off_session"
+        ],
         "type": "enum"
       }
     },
@@ -6555,7 +6798,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6563,7 +6810,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6571,7 +6820,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none", "off_session", "on_session"],
+        "one_of": [
+          "none",
+          "off_session",
+          "on_session"
+        ],
         "type": "enum"
       }
     },
@@ -6579,7 +6832,10 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["automatic", "instant"],
+        "one_of": [
+          "automatic",
+          "instant"
+        ],
         "type": "enum"
       }
     },
@@ -6587,7 +6843,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["none"],
+        "one_of": [
+          "none"
+        ],
         "type": "enum"
       }
     },
@@ -6595,7 +6853,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["fixed_amount"],
+        "one_of": [
+          "fixed_amount"
+        ],
         "type": "enum"
       }
     },
@@ -6603,7 +6863,11 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["placed", "approved", "delivered"],
+        "one_of": [
+          "placed",
+          "approved",
+          "delivered"
+        ],
         "type": "enum"
       }
     },
@@ -6647,7 +6911,9 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["treasury.inbound_transfer"],
+        "one_of": [
+          "treasury.inbound_transfer"
+        ],
         "type": "enum"
       }
     },
@@ -6655,7 +6921,12 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": {
-        "one_of": ["canceled", "failed", "processing", "succeeded"],
+        "one_of": [
+          "canceled",
+          "failed",
+          "processing",
+          "succeeded"
+        ],
         "type": "enum"
       }
     },

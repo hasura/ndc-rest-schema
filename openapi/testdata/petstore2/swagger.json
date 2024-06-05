@@ -704,6 +704,14 @@
     }
   },
   "definitions": {
+    "Foo": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "integer", "format": "int32" },
+        "type": { "type": "string" },
+        "message": { "type": "string" }
+      }
+    },
     "ApiResponse": {
       "type": "object",
       "properties": {
@@ -819,6 +827,34 @@
         "client_uri": {
           "description": "ClientURI is an URL string of a web page providing information about the client.\nIf present, the server SHOULD display this URL to the end-user in\na clickable fashion.",
           "type": "string"
+        }
+      }
+    },
+    "consentRequestSession": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "id_token": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "PreviousConsentSession": {
+      "type": "object",
+      "properties": {
+        "remember": {
+          "type": "boolean"
+        },
+        "remember_for": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "session": {
+          "$ref": "#/definitions/consentRequestSession"
         }
       }
     }

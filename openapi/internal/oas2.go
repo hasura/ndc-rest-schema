@@ -16,15 +16,20 @@ import (
 	"github.com/pb33f/libopenapi/orderedmap"
 )
 
+// OAS2Builder the NDC schema builder from OpenAPI 2.0 specification
 type OAS2Builder struct {
-	schema *rest.NDCRestSchema
 	*ConvertOptions
+
+	schema           *rest.NDCRestSchema
+	typeUsageCounter TypeUsageCounter
 }
 
+// NewOAS2Builder creates an OAS3Builder instance
 func NewOAS2Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS2Builder {
 	builder := &OAS2Builder{
-		schema:         schema,
-		ConvertOptions: applyConvertOptions(options),
+		schema:           schema,
+		typeUsageCounter: TypeUsageCounter{},
+		ConvertOptions:   applyConvertOptions(options),
 	}
 
 	setDefaultSettings(builder.schema.Settings, builder.ConvertOptions)
@@ -82,6 +87,7 @@ func (oc *OAS2Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v2.
 	}
 
 	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
+	cleanUnusedSchemaTypes(oc.schema, &oc.typeUsageCounter)
 
 	return nil
 }
@@ -251,6 +257,7 @@ func (oc *OAS2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiPath s
 	if isPrimitiveScalar(param.Type) {
 		scalarName := getScalarFromType(oc.schema, []string{param.Type}, param.Format, param.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
+		oc.typeUsageCounter.Increase(scalarName)
 	} else {
 		switch param.Type {
 		case "object":
@@ -262,6 +269,7 @@ func (oc *OAS2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiPath s
 
 			itemName := getScalarFromType(oc.schema, []string{param.Items.Type}, param.Format, param.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 			result = schema.NewArrayType(schema.NewNamedType(itemName))
+			oc.typeUsageCounter.Increase(itemName)
 
 		default:
 			return nil, fmt.Errorf("unsupported schema type %s", param.Type)
@@ -287,6 +295,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 		}
+		oc.typeUsageCounter.Increase(scalarName)
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 		return schema.NewNamedType(scalarName), typeResult, nil
 	}
@@ -300,6 +309,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 	if isPrimitiveScalar(typeName) {
 		scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
+		oc.typeUsageCounter.Increase(scalarName)
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 	} else {
 
@@ -337,6 +347,8 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 					propApiSchema.Nullable = nullable
 					typeResult.Properties[propName] = *propApiSchema
 					object.Fields[propName] = objField
+
+					oc.typeUsageCounter.Increase(getNamedType(propType, true, ""))
 				}
 
 				oc.schema.ObjectTypes[refName] = object
@@ -350,6 +362,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 			itemName := getSchemaRefTypeNameV2(typeSchema.Items.A.GetReference())
 			if itemName != "" {
 				itemName := utils.ToPascalCase(itemName)
+				oc.typeUsageCounter.Increase(itemName)
 				result = schema.NewArrayType(schema.NewNamedType(itemName))
 			} else {
 				itemSchemaA := typeSchema.Items.A.Schema()
@@ -361,6 +374,7 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 
 					typeResult.Items = propType
 					result = schema.NewArrayType(itemSchema)
+					oc.typeUsageCounter.Increase(getNamedType(itemSchema, true, ""))
 				}
 			}
 
