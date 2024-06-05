@@ -189,6 +189,32 @@ const (
 	ScalarIPV6        ScalarName = "IPv6"
 )
 
+var scalarName_enums = []ScalarName{
+	ScalarBoolean,
+	ScalarString,
+	ScalarInt32,
+	ScalarInt64,
+	ScalarFloat32,
+	ScalarFloat64,
+	ScalarBigDecimal,
+	ScalarUUID,
+	ScalarDate,
+	ScalarTimestampTZ,
+	ScalarBytes,
+	ScalarBinary,
+	ScalarJSON,
+	ScalarUnixTime,
+	ScalarEmail,
+	ScalarURI,
+	ScalarIPV4,
+	ScalarIPV6,
+}
+
+// IsDefaultScalar checks if the scalar name is
+func IsDefaultScalar(name string) bool {
+	return slices.Contains(scalarName_enums, ScalarName(name))
+}
+
 const (
 	ContentTypeHeader            = "Content-Type"
 	ContentTypeJSON              = "application/json"
