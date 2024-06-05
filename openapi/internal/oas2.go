@@ -87,7 +87,7 @@ func (oc *OAS2Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v2.
 	}
 
 	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
-	cleanUnusedSchemaTypes(oc.schema, oc.typeUsageCounter)
+	cleanUnusedSchemaTypes(oc.schema, &oc.typeUsageCounter)
 
 	return nil
 }

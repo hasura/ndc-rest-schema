@@ -829,6 +829,34 @@
           "type": "string"
         }
       }
+    },
+    "consentRequestSession": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "id_token": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "PreviousConsentSession": {
+      "type": "object",
+      "properties": {
+        "remember": {
+          "type": "boolean"
+        },
+        "remember_for": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "session": {
+          "$ref": "#/definitions/consentRequestSession"
+        }
+      }
     }
   },
   "externalDocs": {

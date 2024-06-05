@@ -350,15 +350,35 @@ func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.Par
 	return results, nullable
 }
 
-func cleanUnusedSchemaTypes(schema *rest.NDCRestSchema, usageCounter TypeUsageCounter) {
+func cleanUnusedSchemaTypes(schema *rest.NDCRestSchema, usageCounter *TypeUsageCounter) {
 	for key := range schema.ObjectTypes {
-		if usageCounter.Get(key) == 0 {
-			delete(schema.ObjectTypes, key)
-		}
+		cleanUnusedObjectType(schema, usageCounter, key)
 	}
 	for key := range schema.ScalarTypes {
 		if usageCounter.Get(key) == 0 {
 			delete(schema.ScalarTypes, key)
+		}
+	}
+}
+
+// recursively clean unused objects as well as their inner properties
+func cleanUnusedObjectType(schema *rest.NDCRestSchema, usageCounter *TypeUsageCounter, key string) {
+	object, ok := schema.ObjectTypes[key]
+	if !ok {
+		return
+	}
+	if usageCounter.Get(key) > 0 {
+		return
+	}
+	delete(schema.ObjectTypes, key)
+	for _, elem := range object.Fields {
+		elemName := getNamedType(elem.Type.Interface(), true, "")
+		if elemName == "" {
+			continue
+		}
+		usageCounter.Decrease(elemName)
+		if usageCounter.Get(elemName) <= 0 {
+			cleanUnusedObjectType(schema, usageCounter, elemName)
 		}
 	}
 }
