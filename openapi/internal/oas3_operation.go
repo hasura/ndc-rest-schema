@@ -110,81 +110,15 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 		return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
 	}
 	if reqBody != nil {
-		if reqBody.ContentType == rest.ContentTypeFormURLEncoded {
-			// convert URL encoded body to parameters
-			if reqBody.Schema != nil {
-				if reqBody.Schema.Type == "object" {
-					objectType, objectTypeName, err := oc.getObjectTypeFromSchemaType(schemaType.Encode())
-					if err != nil {
-						return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
-					}
-					// remove unused request body type
-					delete(oc.builder.schema.ObjectTypes, objectTypeName)
-					for key, prop := range reqBody.Schema.Properties {
-						propType, ok := objectType.Fields[key]
-						if !ok {
-							continue
-						}
-						// renaming query parameter name `body` if exist to avoid conflicts
-						if paramData, ok := oc.Arguments[key]; ok {
-							oc.Arguments[fmt.Sprintf("param%s", key)] = paramData
-						}
+		description := fmt.Sprintf("Request body of %s %s", strings.ToUpper(oc.method), oc.pathKey)
+		// renaming query parameter name `body` if exist to avoid conflicts
+		if paramData, ok := oc.Arguments["body"]; ok {
+			oc.Arguments["paramBody"] = paramData
+		}
 
-						desc := prop.Description
-						argument := schema.ArgumentInfo{
-							Type: propType.Type,
-						}
-						if desc != "" {
-							argument.Description = &desc
-						}
-						oc.Arguments[key] = argument
-						schemaProp := prop
-						oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
-							EncodingObject: reqBody.Encoding[key],
-							Name:           key,
-							In:             rest.InQuery,
-							Schema:         &schemaProp,
-						})
-					}
-				} else {
-					description := fmt.Sprintf("Request body of %s %s", oc.method, oc.pathKey)
-					// renaming query parameter name `body` if exist to avoid conflicts
-					if paramData, ok := oc.Arguments["body"]; ok {
-						oc.Arguments["paramBody"] = paramData
-						for i, param := range oc.RequestParams {
-							if param.Name == "body" {
-								param.ArgumentName = "paramBody"
-								oc.RequestParams[i] = param
-								break
-							}
-						}
-					}
-
-					oc.Arguments["body"] = schema.ArgumentInfo{
-						Description: &description,
-						Type:        schemaType.Encode(),
-					}
-					oc.RequestParams = append(oc.RequestParams, rest.RequestParameter{
-						Name:   "body",
-						In:     rest.InQuery,
-						Schema: reqBody.Schema,
-					})
-				}
-			}
-			reqBody = &rest.RequestBody{
-				ContentType: rest.ContentTypeFormURLEncoded,
-			}
-		} else {
-			description := fmt.Sprintf("Request body of %s %s", strings.ToUpper(oc.method), oc.pathKey)
-			// renaming query parameter name `body` if exist to avoid conflicts
-			if paramData, ok := oc.Arguments["body"]; ok {
-				oc.Arguments["paramBody"] = paramData
-			}
-
-			oc.Arguments["body"] = schema.ArgumentInfo{
-				Description: &description,
-				Type:        schemaType.Encode(),
-			}
+		oc.Arguments["body"] = schema.ArgumentInfo{
+			Description: &description,
+			Type:        schemaType.Encode(),
 		}
 	}
 
@@ -418,24 +352,4 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 	}
 	oc.builder.typeUsageCounter.Increase(getNamedType(schemaType, true, ""))
 	return schemaType, nil
-}
-
-func (oc *oas3OperationBuilder) getObjectTypeFromSchemaType(schemaType schema.Type) (*schema.ObjectType, string, error) {
-	iSchemaType, err := schemaType.InterfaceT()
-
-	switch st := iSchemaType.(type) {
-	case *schema.NullableType:
-		return oc.getObjectTypeFromSchemaType(st.UnderlyingType)
-	case *schema.NamedType:
-		objectType, ok := oc.builder.schema.ObjectTypes[st.Name]
-		if !ok {
-			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
-		}
-
-		return &objectType, st.Name, nil
-	case *schema.ArrayType:
-		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
-	default:
-		return nil, "", err
-	}
 }

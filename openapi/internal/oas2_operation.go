@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
+	"github.com/hasura/ndc-rest-schema/utils"
 	"github.com/hasura/ndc-sdk-go/schema"
 	v2 "github.com/pb33f/libopenapi/datamodel/high/v2"
 )
@@ -45,7 +46,7 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 	if resultType == nil {
 		return nil, nil
 	}
-	reqBody, err := oc.convertParameters(operation.Parameters, pathKey, []string{funcName})
+	reqBody, err := oc.convertParameters(operation, pathKey, []string{funcName})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", funcName, err)
 	}
@@ -99,17 +100,9 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 		return nil, nil
 	}
 
-	reqBody, err := oc.convertParameters(operation.Parameters, pathKey, []string{procName})
+	reqBody, err := oc.convertParameters(operation, pathKey, []string{procName})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
-	}
-
-	if reqBody != nil && len(operation.Consumes) > 0 {
-		contentType := rest.ContentTypeJSON
-		if !slices.Contains(operation.Consumes, rest.ContentTypeJSON) {
-			contentType = operation.Consumes[0]
-		}
-		reqBody.ContentType = contentType
 	}
 
 	procedure := rest.RESTProcedureInfo{
@@ -134,10 +127,15 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 	return &procedure, nil
 }
 
-func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPath string, fieldPaths []string) (*rest.RequestBody, error) {
+func (oc *oas2OperationBuilder) convertParameters(operation *v2.Operation, apiPath string, fieldPaths []string) (*rest.RequestBody, error) {
 
-	if len(params) == 0 {
+	if operation == nil || len(operation.Parameters) == 0 {
 		return nil, nil
+	}
+
+	contentType := rest.ContentTypeJSON
+	if len(operation.Consumes) > 0 && !slices.Contains(operation.Consumes, rest.ContentTypeJSON) {
+		contentType = operation.Consumes[0]
 	}
 
 	var requestBody *rest.RequestBody
@@ -145,7 +143,10 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 		Type:       "object",
 		Properties: make(map[string]rest.TypeSchema),
 	}
-	for _, param := range params {
+	formDataObject := schema.ObjectType{
+		Fields: schema.ObjectTypeFields{},
+	}
+	for _, param := range operation.Parameters {
 		if param == nil {
 			continue
 		}
@@ -203,8 +204,9 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 		}
 
 		oc.builder.typeUsageCounter.Increase(getNamedType(typeEncoder, true, ""))
+		schemaType := typeEncoder.Encode()
 		argument := schema.ArgumentInfo{
-			Type: typeEncoder.Encode(),
+			Type: schemaType,
 		}
 		if param.Description != "" {
 			argument.Description = &param.Description
@@ -214,11 +216,15 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 		case rest.InBody:
 			oc.Arguments["body"] = argument
 			requestBody = &rest.RequestBody{
-				Schema: typeSchema,
+				ContentType: contentType,
+				Schema:      typeSchema,
 			}
 		case rest.InFormData:
-			oc.Arguments[paramName] = argument
 			if typeSchema != nil {
+				formDataObject.Fields[paramName] = schema.ObjectField{
+					Type:        argument.Type,
+					Description: argument.Description,
+				}
 				formData.Properties[paramName] = *typeSchema
 			}
 		default:
@@ -232,8 +238,17 @@ func (oc *oas2OperationBuilder) convertParameters(params []*v2.Parameter, apiPat
 	}
 
 	if len(formData.Properties) > 0 {
+		bodyName := fmt.Sprintf("%sBody", utils.StringSliceToPascalCase(fieldPaths))
+		oc.builder.schema.ObjectTypes[bodyName] = formDataObject
+		oc.builder.typeUsageCounter.Increase(bodyName)
+
+		desc := fmt.Sprintf("Form data of %s", apiPath)
+		oc.Arguments["body"] = schema.ArgumentInfo{
+			Type:        schema.NewNamedType(bodyName).Encode(),
+			Description: &desc,
+		}
 		requestBody = &rest.RequestBody{
-			ContentType: rest.ContentTypeMultipartFormData,
+			ContentType: contentType,
 			Schema:      &formData,
 		}
 	}

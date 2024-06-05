@@ -1036,6 +1036,7 @@
           }
         ],
         "requestBody": {
+          "contentType": "application/json",
           "schema": {
             "type": "Post"
           }
@@ -1078,6 +1079,7 @@
           }
         ],
         "requestBody": {
+          "contentType": "application/json",
           "schema": {
             "type": "Post"
           }

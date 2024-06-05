@@ -20,14 +20,14 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 		EnvPrefix string
 		Expected  string
 	}{
-		// go run . convert --log-level debug -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
+		// go run . convert  -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
 		{
 			Name:      "petstore3",
 			Source:    "testdata/petstore3/source.json",
 			Expected:  "testdata/petstore3/expected.json",
 			EnvPrefix: "PET_STORE",
 		},
-		// go run . convert --log-level debug -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
+		// go run . convert -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
 		{
 			Name:     "onesignal",
 			Source:   "testdata/onesignal/source.json",
