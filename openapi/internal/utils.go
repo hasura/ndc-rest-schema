@@ -390,23 +390,3 @@ func formatWriteObjectName(name string) string {
 func errParameterSchemaEmpty(fieldPaths []string) error {
 	return fmt.Errorf("parameter schema of $.%s is empty", strings.Join(fieldPaths, "."))
 }
-
-func getObjectTypeFromSchemaType(objectTypes schema.SchemaResponseObjectTypes, schemaType schema.Type) (*schema.ObjectType, string, error) {
-	iSchemaType, err := schemaType.InterfaceT()
-
-	switch st := iSchemaType.(type) {
-	case *schema.NullableType:
-		return getObjectTypeFromSchemaType(objectTypes, st.UnderlyingType)
-	case *schema.NamedType:
-		objectType, ok := objectTypes[st.Name]
-		if !ok {
-			return nil, "", fmt.Errorf("expect object type body, got %s", st.Name)
-		}
-
-		return &objectType, st.Name, nil
-	case *schema.ArrayType:
-		return nil, "", fmt.Errorf("expect named type body, got %s", schemaType)
-	default:
-		return nil, "", err
-	}
-}
