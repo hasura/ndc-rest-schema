@@ -663,6 +663,54 @@
         }
       }
     },
+    "UpdatePetWithFormBody": {
+      "fields": {
+        "name": {
+          "description": "Updated name of the pet",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "Updated status of the pet",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
+    "UploadFileBody": {
+      "fields": {
+        "additionalMetadata": {
+          "description": "Additional data to pass to server",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "file": {
+          "description": "file to upload",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Binary",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "User": {
       "fields": {
         "email": {
@@ -781,24 +829,11 @@
         }
       },
       "arguments": {
-        "additionalMetadata": {
-          "description": "Additional data to pass to server",
+        "body": {
+          "description": "Form data of /pet/{petId}/uploadImage",
           "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "file": {
-          "description": "file to upload",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Binary",
-              "type": "named"
-            }
+            "name": "UploadFileBody",
+            "type": "named"
           }
         },
         "petId": {
@@ -931,14 +966,11 @@
         }
       },
       "arguments": {
-        "name": {
-          "description": "Updated name of the pet",
+        "body": {
+          "description": "Form data of /pet/{petId}",
           "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
+            "name": "UpdatePetWithFormBody",
+            "type": "named"
           }
         },
         "petId": {
@@ -946,16 +978,6 @@
           "type": {
             "name": "Int64",
             "type": "named"
-          }
-        },
-        "status": {
-          "description": "Updated status of the pet",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
           }
         }
       },
