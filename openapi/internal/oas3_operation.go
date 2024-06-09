@@ -193,6 +193,7 @@ func (oc *oas3OperationBuilder) convertParameters(params []*v3.Parameter, apiPat
 			EncodingObject: encoding,
 		})
 
+		oc.builder.typeUsageCounter.Add(getNamedType(schemaType, true, ""), 1)
 		argument := schema.ArgumentInfo{
 			Type: schemaType.Encode(),
 		}
