@@ -430,51 +430,6 @@
         }
       }
     },
-    "Customer": {
-      "fields": {
-        "address": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "Address",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "id": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Int64",
-              "type": "named"
-            }
-          }
-        },
-        "username": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "Error": {
-      "description": "An error response from the Stripe API",
-      "fields": {
-        "error": {
-          "type": {
-            "name": "String",
-            "type": "named"
-          }
-        }
-      }
-    },
     "Order": {
       "fields": {
         "complete": {
@@ -3559,6 +3514,15 @@
           "type": {
             "name": "Boolean",
             "type": "named"
+          }
+        },
+        "context": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
           }
         },
         "created": {

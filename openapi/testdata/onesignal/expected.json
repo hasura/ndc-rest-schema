@@ -167,149 +167,6 @@
     }
   ],
   "object_types": {
-    "BasicNotification": {
-      "fields": {
-        "contents": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "custom_data": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "JSON",
-              "type": "named"
-            }
-          }
-        },
-        "data": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "JSON",
-              "type": "named"
-            }
-          }
-        },
-        "excluded_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "filters": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "Filter",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "headings": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "id": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "include_player_ids": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "included_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "subtitle": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "target_channel": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "PlayerNotificationTargetTargetChannel",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "Button": {
-      "fields": {
-        "icon": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "id": {
-          "type": {
-            "name": "String",
-            "type": "named"
-          }
-        },
-        "text": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
     "CancelNotificationSuccessResponse": {
       "fields": {
         "success": {
@@ -455,44 +312,6 @@
         }
       }
     },
-    "GenericError": {
-      "fields": {
-        "errors": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "GenericErrorErrors",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        }
-      }
-    },
-    "GenericErrorErrors": {
-      "fields": {
-        "code": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "title": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
     "GetNotificationHistoryBody": {
       "fields": {
         "app_id": {
@@ -520,151 +339,6 @@
             "type": "nullable",
             "underlying_type": {
               "name": "NotificationsEvents",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "InvalidIdentifierError": {
-      "fields": {
-        "invalid_external_user_ids": {
-          "description": "Returned if using include_external_user_ids",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "invalid_player_ids": {
-          "description": "Returned if using include_player_ids and some were valid and others were not.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        }
-      }
-    },
-    "Notification": {
-      "fields": {
-        "contents": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "custom_data": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "JSON",
-              "type": "named"
-            }
-          }
-        },
-        "data": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "JSON",
-              "type": "named"
-            }
-          }
-        },
-        "excluded_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "filters": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "Filter",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "headings": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "id": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "include_player_ids": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "included_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "subtitle": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "StringMap",
-              "type": "named"
-            }
-          }
-        },
-        "target_channel": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "PlayerNotificationTargetTargetChannel",
               "type": "named"
             }
           }
@@ -743,55 +417,6 @@
             "type": "nullable",
             "underlying_type": {
               "name": "Int32",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "NotificationTarget": {
-      "fields": {
-        "excluded_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "include_player_ids": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "included_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "target_channel": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "PlayerNotificationTargetTargetChannel",
               "type": "named"
             }
           }
@@ -1035,20 +660,6 @@
         }
       }
     },
-    "Operator": {
-      "fields": {
-        "operator": {
-          "description": "Strictly, this must be either `\"OR\"`, or `\"AND\"`.  It can be used to compose Filters as part of a Filters object.",
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "OperatorOperator",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
     "OutcomeData": {
       "fields": {
         "aggregation": {
@@ -1067,22 +678,6 @@
           "type": {
             "name": "Int32",
             "type": "named"
-          }
-        }
-      }
-    },
-    "OutcomesData": {
-      "fields": {
-        "outcomes": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "OutcomeData",
-                "type": "named"
-              },
-              "type": "array"
-            }
           }
         }
       }
@@ -1159,131 +754,6 @@
             "underlying_type": {
               "name": "DeliveryData",
               "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "PlayerNotificationTarget": {
-      "fields": {
-        "include_player_ids": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "target_channel": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "PlayerNotificationTargetTargetChannel",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "Purchase": {
-      "fields": {
-        "amount": {
-          "description": "The amount, in USD, spent purchasing the item.",
-          "type": {
-            "name": "String",
-            "type": "named"
-          }
-        },
-        "count": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "Float64",
-              "type": "named"
-            }
-          }
-        },
-        "iso": {
-          "description": "The 3-letter ISO 4217 currency code. Required for correct storage and conversion of amount.",
-          "type": {
-            "name": "String",
-            "type": "named"
-          }
-        },
-        "sku": {
-          "description": "The unique identifier of the purchased item.",
-          "type": {
-            "name": "String",
-            "type": "named"
-          }
-        }
-      }
-    },
-    "RateLimiterError": {
-      "fields": {
-        "errors": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "RateLimiterErrorErrors",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        }
-      }
-    },
-    "RateLimiterErrorErrors": {
-      "fields": {
-        "code": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        },
-        "title": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "name": "String",
-              "type": "named"
-            }
-          }
-        }
-      }
-    },
-    "SegmentNotificationTarget": {
-      "fields": {
-        "excluded_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
-            }
-          }
-        },
-        "included_segments": {
-          "type": {
-            "type": "nullable",
-            "underlying_type": {
-              "element_type": {
-                "name": "String",
-                "type": "named"
-              },
-              "type": "array"
             }
           }
         }
@@ -1472,13 +942,6 @@
         "type": "enum"
       }
     },
-    "Float64": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "type": "float64"
-      }
-    },
     "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -1514,17 +977,6 @@
         "one_of": [
           "sent",
           "clicked"
-        ],
-        "type": "enum"
-      }
-    },
-    "OperatorOperator": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": {
-        "one_of": [
-          "OR",
-          "AND"
         ],
         "type": "enum"
       }

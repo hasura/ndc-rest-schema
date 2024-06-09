@@ -133,11 +133,6 @@
         "type": "enum"
       }
     },
-    "Float64": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": { "type": "float64" }
-    },
     "Int32": {
       "aggregate_functions": {},
       "comparison_operators": {},
@@ -157,11 +152,6 @@
       "aggregate_functions": {},
       "comparison_operators": {},
       "representation": { "type": "json" }
-    },
-    "OperatorOperator": {
-      "aggregate_functions": {},
-      "comparison_operators": {},
-      "representation": { "one_of": ["OR", "AND"], "type": "enum" }
     },
     "OutcomeDataAggregation": {
       "aggregate_functions": {},

@@ -57,7 +57,6 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 			Type:        objectName,
 			Description: innerSchema.Description,
 		}
-		oc.builder.typeUsageCounter.Increase(objectName)
 	} else {
 		// return early object from ref
 		refName := getSchemaRefTypeNameV3(rawRefName)
@@ -72,14 +71,12 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 				return nil, nil, false, err
 			}
 			typeSchema.Description = innerSchema.Description
-			oc.builder.typeUsageCounter.Increase(getNamedType(ndcType, true, ""))
 		} else {
 			ndcType = schema.NewNamedType(objectName)
 			typeSchema = &rest.TypeSchema{
 				Type:        objectName,
 				Description: innerSchema.Description,
 			}
-			oc.builder.typeUsageCounter.Increase(objectName)
 		}
 	}
 
@@ -145,16 +142,17 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 		return oc.builder.buildScalarJSON(), typeResult, false, nil
 	}
 
-	if len(typeSchema.Type) == 0 {
-		return nil, nil, false, errParameterSchemaEmpty(fieldPaths)
-	}
-
 	var result schema.TypeEncoder
-	if len(typeSchema.Type) > 1 || isPrimitiveScalar(typeSchema.Type[0]) {
+	if len(typeSchema.Type) == 0 {
+		if oc.builder.Strict {
+			return nil, nil, false, errParameterSchemaEmpty(fieldPaths)
+		}
+		result = oc.builder.buildScalarJSON()
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, string(rest.ScalarJSON))
+	} else if len(typeSchema.Type) > 1 || isPrimitiveScalar(typeSchema.Type[0]) {
 		scalarName := getScalarFromType(oc.builder.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.builder.trimPathPrefix(oc.apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
-		oc.builder.typeUsageCounter.Increase(scalarName)
 	} else {
 		typeName := typeSchema.Type[0]
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, typeName)
@@ -200,6 +198,7 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 				if propType == nil {
 					continue
 				}
+				oc.builder.typeUsageCounter.Add(getNamedType(propType, true, ""), 1)
 				objField := schema.ObjectField{
 					Type: propType.Encode(),
 				}
@@ -222,7 +221,6 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 			if len(readObject.Fields) == 0 && len(writeObject.Fields) == 0 {
 				oc.builder.schema.ObjectTypes[refName] = object
 				result = schema.NewNamedType(refName)
-				oc.builder.typeUsageCounter.Increase(refName)
 			} else {
 				for key, field := range object.Fields {
 					readObject.Fields[key] = field
@@ -233,10 +231,8 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 				oc.builder.schema.ObjectTypes[writeRefName] = writeObject
 				if oc.writeMode {
 					result = schema.NewNamedType(writeRefName)
-					oc.builder.typeUsageCounter.Increase(writeRefName)
 				} else {
 					result = schema.NewNamedType(refName)
-					oc.builder.typeUsageCounter.Increase(refName)
 				}
 			}
 		case "array":
@@ -245,9 +241,7 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 			}
 
 			itemName := getSchemaRefTypeNameV3(typeSchema.Items.A.GetReference())
-			var refName string
 			if itemName != "" {
-				refName = itemName
 				result = schema.NewArrayType(schema.NewNamedType(utils.ToPascalCase(itemName)))
 			} else {
 				itemSchemaA := typeSchema.Items.A.Schema()
@@ -257,7 +251,6 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 						return nil, nil, isRef, err
 					}
 					if itemSchema != nil {
-						refName = getNamedType(itemSchema, true, "")
 						result = schema.NewArrayType(itemSchema)
 					} else {
 						result = schema.NewArrayType(oc.builder.buildScalarJSON())
@@ -271,7 +264,6 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 			if result == nil {
 				return nil, nil, false, fmt.Errorf("cannot parse type reference name: %s", typeSchema.Items.A.GetReference())
 			}
-			oc.builder.typeUsageCounter.Increase(refName)
 		default:
 			return nil, nil, false, fmt.Errorf("unsupported schema type %s", typeName)
 		}
@@ -339,6 +331,7 @@ func (oc *oas3SchemaBuilder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sch
 			}
 			for k, v := range readObj.Fields {
 				if _, ok := readObject.Fields[k]; !ok {
+					oc.builder.typeUsageCounter.Add(getNamedType(v.Type.Interface(), true, ""), 1)
 					readObject.Fields[k] = v
 				}
 			}
@@ -350,6 +343,7 @@ func (oc *oas3SchemaBuilder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sch
 			}
 			for k, v := range writeObj.Fields {
 				if _, ok := writeObject.Fields[k]; !ok {
+					oc.builder.typeUsageCounter.Add(getNamedType(v.Type.Interface(), true, ""), 1)
 					writeObject.Fields[k] = v
 				}
 			}
@@ -373,7 +367,6 @@ func (oc *oas3SchemaBuilder) buildAllOfAnyOfSchemaType(schemaProxies []*base.Sch
 		refName = writeRefName
 	}
 
-	oc.builder.typeUsageCounter.Increase(refName)
 	if len(typeSchema.Properties) == 0 {
 		typeSchema = &rest.TypeSchema{
 			Type: refName,

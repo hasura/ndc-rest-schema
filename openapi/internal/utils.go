@@ -376,7 +376,7 @@ func cleanUnusedObjectType(schema *rest.NDCRestSchema, usageCounter *TypeUsageCo
 		if elemName == "" {
 			continue
 		}
-		usageCounter.Decrease(elemName)
+		usageCounter.Add(elemName, -1)
 		if usageCounter.Get(elemName) <= 0 {
 			cleanUnusedObjectType(schema, usageCounter, elemName)
 		}

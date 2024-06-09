@@ -267,7 +267,6 @@ func (oc *OAS3Builder) buildScalarJSON() *schema.NamedType {
 	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 	}
-	oc.typeUsageCounter.Increase(scalarName)
 	return schema.NewNamedType(scalarName)
 }
 
@@ -319,8 +318,8 @@ func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.T
 
 		writeName := formatWriteObjectName(ty.Name)
 		if _, ok := oc.schema.ObjectTypes[writeName]; ok {
-			oc.typeUsageCounter.Increase(writeName)
-			oc.typeUsageCounter.Decrease(ty.Name)
+			oc.typeUsageCounter.Add(writeName, 1)
+			oc.typeUsageCounter.Add(ty.Name, -1)
 			return schema.NewNamedType(writeName).Encode(), writeName, true
 		}
 		if evaluated {
@@ -349,8 +348,8 @@ func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.T
 			}
 		}
 		if hasWriteField {
-			oc.typeUsageCounter.Increase(writeName)
-			oc.typeUsageCounter.Decrease(ty.Name)
+			oc.typeUsageCounter.Add(writeName, 1)
+			oc.typeUsageCounter.Add(ty.Name, -1)
 			oc.schema.ObjectTypes[writeName] = writeObject
 			return schema.NewNamedType(writeName).Encode(), writeName, true
 		}

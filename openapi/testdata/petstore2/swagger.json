@@ -799,7 +799,8 @@
       "type": "object",
       "properties": {
         "id": { "type": "integer", "format": "int64" },
-        "username": { "type": "string" }
+        "username": { "type": "string" },
+        "context": {}
       },
       "xml": { "name": "User" }
     },
@@ -857,7 +858,8 @@
           "$ref": "#/definitions/consentRequestSession"
         }
       }
-    }
+    },
+    "DefaultError": {}
   },
   "externalDocs": {
     "description": "Find out more about Swagger",

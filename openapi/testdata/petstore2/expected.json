@@ -621,6 +621,15 @@
     },
     "SnakeObject": {
       "fields": {
+        "context": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "JSON",
+              "type": "named"
+            }
+          }
+        },
         "id": {
           "type": {
             "type": "nullable",
