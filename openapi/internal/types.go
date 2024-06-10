@@ -113,6 +113,7 @@ type ConvertOptions struct {
 	MethodAlias map[string]string
 	TrimPrefix  string
 	EnvPrefix   string
+	Strict      bool
 	Logger      *slog.Logger
 }
 
@@ -120,20 +121,11 @@ type ConvertOptions struct {
 type TypeUsageCounter map[string]int
 
 // Increase increases the usage of an element
-func (tuc *TypeUsageCounter) Increase(name string) {
+func (tuc *TypeUsageCounter) Add(name string, value int) {
 	if counter, ok := (*tuc)[name]; ok {
-		(*tuc)[name] = counter + 1
+		(*tuc)[name] = counter + value
 	} else {
-		(*tuc)[name] = 1
-	}
-}
-
-// Decrease decreases the usage of an element
-func (tuc *TypeUsageCounter) Decrease(name string) {
-	if counter, ok := (*tuc)[name]; ok && counter > 1 {
-		(*tuc)[name] = counter - 1
-	} else {
-		(*tuc)[name] = 0
+		(*tuc)[name] = value
 	}
 }
 

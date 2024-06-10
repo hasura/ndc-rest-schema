@@ -21,6 +21,7 @@ type ConvertCommandArguments struct {
 	Output      string            `help:"The location where the ndc schema file will be generated. Print to stdout if not set" short:"o"`
 	Spec        string            `help:"The API specification of the file, is one of oas3 (openapi3), oas2 (openapi2)"`
 	Format      string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
+	Strict      bool              `help:"Require strict validation" default:"false"`
 	Pure        bool              `help:"Return the pure NDC schema only" default:"false"`
 	TrimPrefix  string            `help:"Trim the prefix in URL, e.g. /v1"`
 	EnvPrefix   string            `help:"The environment variable prefix for security values, e.g. PET_STORE"`
@@ -42,6 +43,7 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 		slog.String("env_prefix", args.EnvPrefix),
 		slog.Any("patch_before", args.PatchBefore),
 		slog.Any("patch_after", args.PatchAfter),
+		slog.Bool("strict", args.Strict),
 		slog.Bool("pure", args.Pure),
 	)
 
@@ -127,6 +129,7 @@ type ConvertConfig struct {
 	TrimPrefix  string                `json:"trimPrefix" yaml:"trimPrefix"`
 	EnvPrefix   string                `json:"envPrefix" yaml:"envPrefix"`
 	Pure        bool                  `json:"pure" yaml:"pure"`
+	Strict      bool                  `json:"strict" yaml:"strict"`
 	PatchBefore []utils.PatchConfig   `json:"patchBefore" yaml:"patchBefore"`
 	PatchAfter  []utils.PatchConfig   `json:"patchAfter" yaml:"patchAfter"`
 	Output      string                `json:"output" yaml:"output"`
@@ -151,6 +154,7 @@ func ConvertToNDCSchema(config *ConvertConfig, logger *slog.Logger) (*schema.NDC
 		MethodAlias: config.MethodAlias,
 		TrimPrefix:  config.TrimPrefix,
 		EnvPrefix:   config.EnvPrefix,
+		Strict:      config.Strict,
 		Logger:      logger,
 	}
 	switch config.Spec {
@@ -192,6 +196,9 @@ func ResolveConvertConfigArguments(config *ConvertConfig, configDir string, args
 		}
 		if args.Pure {
 			config.Pure = args.Pure
+		}
+		if args.Strict {
+			config.Strict = args.Strict
 		}
 	}
 	if config.Spec == "" {

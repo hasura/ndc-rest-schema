@@ -214,6 +214,7 @@ func (oc *OAS2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nul
 	if schemaProxy == nil {
 		return nil, nil, errParameterSchemaEmpty(fieldPaths)
 	}
+
 	innerSchema := schemaProxy.Schema()
 	if innerSchema == nil {
 		return nil, nil, fmt.Errorf("cannot get schema from proxy: %s", schemaProxy.GetReference())
@@ -249,28 +250,29 @@ func (oc *OAS2Builder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProxy, nul
 // get and convert an OpenAPI data type to a NDC type from parameter
 func (oc *OAS2Builder) getSchemaTypeFromParameter(param *v2.Parameter, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
 
-	if param.Type == "" {
-		return nil, errParameterSchemaEmpty(fieldPaths)
-	}
-
 	var result schema.TypeEncoder
-	if isPrimitiveScalar(param.Type) {
+	if param.Type == "" {
+		if oc.Strict {
+			return nil, errParameterSchemaEmpty(fieldPaths)
+		}
+		result = oc.buildScalarJSON()
+	} else if isPrimitiveScalar(param.Type) {
 		scalarName := getScalarFromType(oc.schema, []string{param.Type}, param.Format, param.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
 		result = schema.NewNamedType(scalarName)
-		oc.typeUsageCounter.Increase(scalarName)
 	} else {
 		switch param.Type {
 		case "object":
 			return nil, errors.New("unsupported object parameter")
 		case "array":
 			if param.Items == nil && param.Items.Type == "" {
-				return nil, errors.New("array item is empty")
+				if oc.Strict {
+					return nil, errors.New("array item is empty")
+				}
+				result = schema.NewArrayType(oc.buildScalarJSON())
+			} else {
+				itemName := getScalarFromType(oc.schema, []string{param.Items.Type}, param.Format, param.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
+				result = schema.NewArrayType(schema.NewNamedType(itemName))
 			}
-
-			itemName := getScalarFromType(oc.schema, []string{param.Items.Type}, param.Format, param.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
-			result = schema.NewArrayType(schema.NewNamedType(itemName))
-			oc.typeUsageCounter.Increase(itemName)
-
 		default:
 			return nil, fmt.Errorf("unsupported schema type %s", param.Type)
 		}
@@ -295,94 +297,98 @@ func (oc *OAS2Builder) getSchemaType(typeSchema *base.Schema, apiPath string, fi
 		if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
 			oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
 		}
-		oc.typeUsageCounter.Increase(scalarName)
 		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
 		return schema.NewNamedType(scalarName), typeResult, nil
 	}
 
-	if len(typeSchema.Type) == 0 {
-		return nil, nil, errParameterSchemaEmpty(fieldPaths)
-	}
-
 	var result schema.TypeEncoder
-	typeName := typeSchema.Type[0]
-	if isPrimitiveScalar(typeName) {
-		scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
-		result = schema.NewNamedType(scalarName)
-		oc.typeUsageCounter.Increase(scalarName)
-		typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
+	if len(typeSchema.Type) == 0 {
+		if oc.Strict {
+			return nil, nil, errParameterSchemaEmpty(fieldPaths)
+		}
+		result = oc.buildScalarJSON()
+		typeResult = createSchemaFromOpenAPISchema(typeSchema, string(rest.ScalarJSON))
 	} else {
+		typeName := typeSchema.Type[0]
+		if isPrimitiveScalar(typeName) {
+			scalarName := getScalarFromType(oc.schema, typeSchema.Type, typeSchema.Format, typeSchema.Enum, oc.trimPathPrefix(apiPath), fieldPaths)
+			result = schema.NewNamedType(scalarName)
+			typeResult = createSchemaFromOpenAPISchema(typeSchema, scalarName)
+		} else {
 
-		typeResult = createSchemaFromOpenAPISchema(typeSchema, "")
-		typeResult.Type = typeName
-		switch typeName {
-		case "object":
-			refName := utils.StringSliceToPascalCase(fieldPaths)
+			typeResult = createSchemaFromOpenAPISchema(typeSchema, "")
+			typeResult.Type = typeName
+			switch typeName {
+			case "object":
+				refName := utils.StringSliceToPascalCase(fieldPaths)
 
-			if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
-				// treat no-property objects as a JSON scalar
-				oc.schema.ScalarTypes[refName] = *defaultScalarTypes[rest.ScalarJSON]
-			} else {
-				object := schema.ObjectType{
-					Fields: make(schema.ObjectTypeFields),
-				}
-				if typeSchema.Description != "" {
-					object.Description = &typeSchema.Description
-				}
-
-				typeResult.Properties = make(map[string]rest.TypeSchema)
-				for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
-					propName := prop.Key()
-					nullable := !slices.Contains(typeSchema.Required, propName)
-					propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, apiPath, append(fieldPaths, propName))
-					if err != nil {
-						return nil, nil, err
+				if typeSchema.Properties == nil || typeSchema.Properties.IsZero() {
+					// treat no-property objects as a JSON scalar
+					oc.schema.ScalarTypes[refName] = *defaultScalarTypes[rest.ScalarJSON]
+				} else {
+					object := schema.ObjectType{
+						Fields: make(schema.ObjectTypeFields),
 					}
-					objField := schema.ObjectField{
-						Type: propType.Encode(),
-					}
-					if propApiSchema.Description != "" {
-						objField.Description = &propApiSchema.Description
-					}
-					propApiSchema.Nullable = nullable
-					typeResult.Properties[propName] = *propApiSchema
-					object.Fields[propName] = objField
-
-					oc.typeUsageCounter.Increase(getNamedType(propType, true, ""))
-				}
-
-				oc.schema.ObjectTypes[refName] = object
-			}
-			result = schema.NewNamedType(refName)
-		case "array":
-			if typeSchema.Items == nil || typeSchema.Items.A == nil {
-				return nil, nil, errors.New("array item is empty")
-			}
-
-			itemName := getSchemaRefTypeNameV2(typeSchema.Items.A.GetReference())
-			if itemName != "" {
-				itemName := utils.ToPascalCase(itemName)
-				oc.typeUsageCounter.Increase(itemName)
-				result = schema.NewArrayType(schema.NewNamedType(itemName))
-			} else {
-				itemSchemaA := typeSchema.Items.A.Schema()
-				if itemSchemaA != nil {
-					itemSchema, propType, err := oc.getSchemaType(itemSchemaA, apiPath, fieldPaths)
-					if err != nil {
-						return nil, nil, err
+					if typeSchema.Description != "" {
+						object.Description = &typeSchema.Description
 					}
 
-					typeResult.Items = propType
-					result = schema.NewArrayType(itemSchema)
-					oc.typeUsageCounter.Increase(getNamedType(itemSchema, true, ""))
-				}
-			}
+					typeResult.Properties = make(map[string]rest.TypeSchema)
+					for prop := typeSchema.Properties.First(); prop != nil; prop = prop.Next() {
+						propName := prop.Key()
+						nullable := !slices.Contains(typeSchema.Required, propName)
+						propType, propApiSchema, err := oc.getSchemaTypeFromProxy(prop.Value(), nullable, apiPath, append(fieldPaths, propName))
+						if err != nil {
+							return nil, nil, err
+						}
+						objField := schema.ObjectField{
+							Type: propType.Encode(),
+						}
+						if propApiSchema.Description != "" {
+							objField.Description = &propApiSchema.Description
+						}
+						propApiSchema.Nullable = nullable
+						typeResult.Properties[propName] = *propApiSchema
+						object.Fields[propName] = objField
 
-			if result == nil {
-				return nil, nil, fmt.Errorf("cannot parse type reference name: %s", typeSchema.Items.A.GetReference())
+						oc.typeUsageCounter.Add(getNamedType(propType, true, ""), 1)
+					}
+
+					oc.schema.ObjectTypes[refName] = object
+				}
+				result = schema.NewNamedType(refName)
+			case "array":
+				if typeSchema.Items == nil || typeSchema.Items.A == nil {
+					if oc.ConvertOptions.Strict {
+						return nil, nil, errors.New("array item is empty")
+					}
+					result = schema.NewArrayType(oc.buildScalarJSON())
+				} else {
+					itemName := getSchemaRefTypeNameV2(typeSchema.Items.A.GetReference())
+					if itemName != "" {
+						itemName := utils.ToPascalCase(itemName)
+						result = schema.NewArrayType(schema.NewNamedType(itemName))
+					} else {
+						itemSchemaA := typeSchema.Items.A.Schema()
+						if itemSchemaA != nil {
+							itemSchema, propType, err := oc.getSchemaType(itemSchemaA, apiPath, fieldPaths)
+							if err != nil {
+								return nil, nil, err
+							}
+
+							typeResult.Items = propType
+							result = schema.NewArrayType(itemSchema)
+						}
+					}
+
+					if result == nil {
+						return nil, nil, fmt.Errorf("cannot parse type reference name: %s", typeSchema.Items.A.GetReference())
+					}
+				}
+
+			default:
+				return nil, nil, fmt.Errorf("unsupported schema type %s", typeName)
 			}
-		default:
-			return nil, nil, fmt.Errorf("unsupported schema type %s", typeName)
 		}
 	}
 
@@ -410,4 +416,13 @@ func (oc *OAS2Builder) trimPathPrefix(input string) string {
 		return input
 	}
 	return strings.TrimPrefix(input, oc.ConvertOptions.TrimPrefix)
+}
+
+// build a named type for JSON scalar
+func (oc *OAS2Builder) buildScalarJSON() *schema.NamedType {
+	scalarName := string(rest.ScalarJSON)
+	if _, ok := oc.schema.ScalarTypes[scalarName]; !ok {
+		oc.schema.ScalarTypes[scalarName] = *defaultScalarTypes[rest.ScalarJSON]
+	}
+	return schema.NewNamedType(scalarName)
 }

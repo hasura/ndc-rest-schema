@@ -203,7 +203,7 @@ func (oc *oas2OperationBuilder) convertParameters(operation *v2.Operation, apiPa
 			return nil, err
 		}
 
-		oc.builder.typeUsageCounter.Increase(getNamedType(typeEncoder, true, ""))
+		oc.builder.typeUsageCounter.Add(getNamedType(typeEncoder, true, ""), 1)
 		schemaType := typeEncoder.Encode()
 		argument := schema.ArgumentInfo{
 			Type: schemaType,
@@ -240,7 +240,7 @@ func (oc *oas2OperationBuilder) convertParameters(operation *v2.Operation, apiPa
 	if len(formData.Properties) > 0 {
 		bodyName := fmt.Sprintf("%sBody", utils.StringSliceToPascalCase(fieldPaths))
 		oc.builder.schema.ObjectTypes[bodyName] = formDataObject
-		oc.builder.typeUsageCounter.Increase(bodyName)
+		oc.builder.typeUsageCounter.Add(bodyName, 1)
 
 		desc := fmt.Sprintf("Form data of %s", apiPath)
 		oc.Arguments["body"] = schema.ArgumentInfo{
@@ -279,7 +279,7 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 	// return nullable boolean type if the response content is null
 	if resp == nil || resp.Schema == nil {
 		scalarName := string(rest.ScalarBoolean)
-		oc.builder.typeUsageCounter.Increase(scalarName)
+		oc.builder.typeUsageCounter.Add(scalarName, 1)
 		return schema.NewNullableNamedType(scalarName), nil
 	}
 
@@ -287,6 +287,6 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 	if err != nil {
 		return nil, err
 	}
-	oc.builder.typeUsageCounter.Increase(getNamedType(schemaType, true, ""))
+	oc.builder.typeUsageCounter.Add(getNamedType(schemaType, true, ""), 1)
 	return schemaType, nil
 }
