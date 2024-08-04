@@ -125,7 +125,7 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 
 	oneOfLength := len(typeSchema.OneOf)
 	if oneOfLength == 1 {
-		enc, ty, isRef, err := oc.getSchemaTypeFromProxy(typeSchema.OneOf[0], *typeSchema.Nullable, fieldPaths)
+		enc, ty, isRef, err := oc.getSchemaTypeFromProxy(typeSchema.OneOf[0], nullable, fieldPaths)
 		if err != nil {
 			return nil, nil, false, err
 		}
