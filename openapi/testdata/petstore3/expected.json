@@ -430,6 +430,19 @@
         }
       }
     },
+    "CreateFineTuningJobRequest": {
+      "fields": {
+        "model": {
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "Order": {
       "fields": {
         "complete": {
@@ -5894,6 +5907,32 @@
       "name": "PostCheckoutSessions",
       "result_type": {
         "name": "Order",
+        "type": "named"
+      }
+    },
+    {
+      "request": {
+        "url": "/fine_tuning/jobs",
+        "method": "post",
+        "requestBody": {
+          "contentType": "application/json",
+          "schema": {
+            "type": "CreateFineTuningJobRequest"
+          }
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of POST /fine_tuning/jobs",
+          "type": {
+            "name": "CreateFineTuningJobRequest",
+            "type": "named"
+          }
+        }
+      },
+      "name": "createFineTuningJob",
+      "result_type": {
+        "name": "CreateFineTuningJobRequest",
         "type": "named"
       }
     }

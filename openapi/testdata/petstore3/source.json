@@ -2729,6 +2729,33 @@
           }
         }
       }
+    },
+    "/fine_tuning/jobs": {
+      "post": {
+        "operationId": "createFineTuningJob",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFineTuningJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateFineTuningJobRequest"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3205,7 +3232,23 @@
         "type": "object",
         "x-expandableFields": []
       },
-      "DefaultError": {}
+      "DefaultError": {},
+      "CreateFineTuningJobRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string",
+                "enum": ["babbage-002", "davinci-002", "gpt-3.5-turbo"]
+              }
+            ]
+          }
+        }
+      }
     },
     "requestBodies": {
       "Pet": {
