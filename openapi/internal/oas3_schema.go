@@ -274,9 +274,12 @@ func (oc *oas3SchemaBuilder) getSchemaType(typeSchema *base.Schema, fieldPaths [
 
 // Support converting allOf and anyOf to object types with merge strategy
 func (oc *oas3SchemaBuilder) buildAllOfAnyOfSchemaType(schemaProxies []*base.SchemaProxy, nullable bool, fieldPaths []string) (schema.TypeEncoder, *rest.TypeSchema, bool, error) {
-	proxies, isNullable := evalSchemaProxiesSlice(schemaProxies, oc.location)
+	proxies, mergedType, isNullable := evalSchemaProxiesSlice(schemaProxies, oc.location)
 	nullable = nullable || isNullable
 
+	if mergedType != nil {
+		return oc.getSchemaType(mergedType, fieldPaths)
+	}
 	if len(proxies) == 1 {
 		return oc.getSchemaTypeFromProxy(proxies[0], nullable, fieldPaths)
 	}

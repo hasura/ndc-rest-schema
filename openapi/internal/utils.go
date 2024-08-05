@@ -324,8 +324,9 @@ func setDefaultSettings(settings *rest.NDCRestSettings, opts *ConvertOptions) {
 }
 
 // evaluate and filter invalid types in allOf, anyOf or oneOf schemas
-func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.ParameterLocation) ([]*base.SchemaProxy, bool) {
+func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.ParameterLocation) ([]*base.SchemaProxy, *base.Schema, bool) {
 	var results []*base.SchemaProxy
+	var typeNames []string
 	nullable := false
 	for _, proxy := range schemaProxies {
 		if proxy == nil {
@@ -346,8 +347,22 @@ func evalSchemaProxiesSlice(schemaProxies []*base.SchemaProxy, location rest.Par
 			}
 		}
 		results = append(results, proxy)
+		if len(sc.Type) == 0 {
+			typeNames = append(typeNames, "any")
+		} else if !slices.Contains(typeNames, sc.Type[0]) {
+			typeNames = append(typeNames, sc.Type[0])
+		}
 	}
-	return results, nullable
+
+	if len(typeNames) == 1 && len(results) > 1 && typeNames[0] == "string" {
+		// if the anyOf array contains both string and enum
+		// we can cast them to string
+		return nil, &base.Schema{
+			Type: typeNames,
+		}, nullable
+	}
+
+	return results, nil, nullable
 }
 
 func cleanUnusedSchemaTypes(schema *rest.NDCRestSchema, usageCounter *TypeUsageCounter) {
