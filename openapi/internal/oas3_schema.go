@@ -50,34 +50,42 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 		if err != nil {
 			return nil, nil, false, err
 		}
-	} else if objectName, ok := oc.builder.evaluatingTypes[rawRefName]; ok {
+	} else if typeCache, ok := oc.builder.schemaCache[rawRefName]; ok {
 		isRef = true
-		ndcType = schema.NewNamedType(objectName)
+		ndcType = typeCache.Schema
 		typeSchema = &rest.TypeSchema{
-			Type:        objectName,
+			Type:        typeCache.Name,
 			Description: innerSchema.Description,
 		}
 	} else {
 		// return early object from ref
 		refName := getSchemaRefTypeNameV3(rawRefName)
-		objectName := utils.ToPascalCase(refName)
+		schemaName := utils.ToPascalCase(refName)
 		isRef = true
-		oc.builder.evaluatingTypes[rawRefName] = objectName
+		oc.builder.schemaCache[rawRefName] = SchemaInfoCache{
+			Name:   schemaName,
+			Schema: schema.NewNamedType(schemaName),
+		}
 
-		_, ok := oc.builder.schema.ObjectTypes[objectName]
+		_, ok := oc.builder.schema.ObjectTypes[schemaName]
 		if !ok {
 			ndcType, typeSchema, _, err = oc.getSchemaType(innerSchema, []string{refName})
 			if err != nil {
 				return nil, nil, false, err
 			}
 			typeSchema.Description = innerSchema.Description
+			oc.builder.schemaCache[rawRefName] = SchemaInfoCache{
+				Name:   schemaName,
+				Schema: ndcType,
+			}
 		} else {
-			ndcType = schema.NewNamedType(objectName)
+			ndcType = schema.NewNamedType(schemaName)
 			typeSchema = &rest.TypeSchema{
-				Type:        objectName,
+				Type:        schemaName,
 				Description: innerSchema.Description,
 			}
 		}
+
 	}
 
 	if ndcType == nil {
