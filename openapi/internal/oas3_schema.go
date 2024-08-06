@@ -62,6 +62,10 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 		refName := getSchemaRefTypeNameV3(rawRefName)
 		schemaName := utils.ToPascalCase(refName)
 		isRef = true
+		oc.builder.schemaCache[rawRefName] = SchemaInfoCache{
+			Name:   schemaName,
+			Schema: schema.NewNamedType(schemaName),
+		}
 
 		_, ok := oc.builder.schema.ObjectTypes[schemaName]
 		if !ok {
@@ -70,6 +74,10 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 				return nil, nil, false, err
 			}
 			typeSchema.Description = innerSchema.Description
+			oc.builder.schemaCache[rawRefName] = SchemaInfoCache{
+				Name:   schemaName,
+				Schema: ndcType,
+			}
 		} else {
 			ndcType = schema.NewNamedType(schemaName)
 			typeSchema = &rest.TypeSchema{
@@ -78,10 +86,6 @@ func (oc *oas3SchemaBuilder) getSchemaTypeFromProxy(schemaProxy *base.SchemaProx
 			}
 		}
 
-		oc.builder.schemaCache[rawRefName] = SchemaInfoCache{
-			Name:   schemaName,
-			Schema: ndcType,
-		}
 	}
 
 	if ndcType == nil {
