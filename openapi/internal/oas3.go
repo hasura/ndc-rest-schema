@@ -18,16 +18,26 @@ import (
 type OAS3Builder struct {
 	*ConvertOptions
 
-	schema           *rest.NDCRestSchema
-	evaluatingTypes  map[string]string
+	schema *rest.NDCRestSchema
+	// stores prebuilt and evaluating information of component schema types.
+	// some undefined schema types aren't stored in either object nor scalar,
+	// or self-reference types that haven't added into the object_types map yet.
+	// This cache temporarily stores them to avoid infinite recursive reference.
+	schemaCache      map[string]SchemaInfoCache
 	typeUsageCounter TypeUsageCounter
+}
+
+// SchemaInfoCache stores prebuilt information of component schema types.
+type SchemaInfoCache struct {
+	Name   string
+	Schema schema.TypeEncoder
 }
 
 // NewOAS3Builder creates an OAS3Builder instance
 func NewOAS3Builder(schema *rest.NDCRestSchema, options ConvertOptions) *OAS3Builder {
 	builder := &OAS3Builder{
 		schema:           schema,
-		evaluatingTypes:  make(map[string]string),
+		schemaCache:      make(map[string]SchemaInfoCache),
 		typeUsageCounter: TypeUsageCounter{},
 		ConvertOptions:   applyConvertOptions(options),
 	}
@@ -74,7 +84,7 @@ func (oc *OAS3Builder) BuildDocumentModel(docModel *libopenapi.DocumentModel[v3.
 	oc.schema.Settings.Security = convertSecurities(docModel.Model.Security)
 
 	// reevaluate write argument types
-	oc.evaluatingTypes = make(map[string]string)
+	oc.schemaCache = make(map[string]SchemaInfoCache)
 	oc.transformWriteSchema()
 	cleanUnusedSchemaTypes(oc.schema, &oc.typeUsageCounter)
 
@@ -248,7 +258,10 @@ func (oc *OAS3Builder) convertComponentSchemas(schemaItem orderedmap.Pair[string
 		scalar := schema.NewScalarType()
 		scalar.Representation = schema.NewTypeRepresentationJSON().Encode()
 		oc.schema.ScalarTypes[refName] = *scalar
-		oc.evaluatingTypes[fmt.Sprintf("#/components/schemas/%s", typeKey)] = refName
+		oc.schemaCache[fmt.Sprintf("#/components/schemas/%s", typeKey)] = SchemaInfoCache{
+			Name:   refName,
+			Schema: schema.NewNamedType(refName),
+		}
 	}
 
 	return err
@@ -311,9 +324,12 @@ func (oc *OAS3Builder) populateWriteSchemaType(schemaType schema.Type) (schema.T
 		ut, name, isInput := oc.populateWriteSchemaType(ty.ElementType)
 		return schema.NewArrayType(ut.Interface()).Encode(), name, isInput
 	case *schema.NamedType:
-		_, evaluated := oc.evaluatingTypes[ty.Name]
+		_, evaluated := oc.schemaCache[ty.Name]
 		if !evaluated {
-			oc.evaluatingTypes[ty.Name] = ""
+			oc.schemaCache[ty.Name] = SchemaInfoCache{
+				Name:   ty.Name,
+				Schema: schema.NewNamedType(ty.Name),
+			}
 		}
 
 		writeName := formatWriteObjectName(ty.Name)

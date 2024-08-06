@@ -33,6 +33,12 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			Source:   "testdata/onesignal/source.json",
 			Expected: "testdata/onesignal/expected.json",
 		},
+		// go run . convert -f ./openapi/testdata/openai/source.json -o ./openapi/testdata/openai/expected.json --spec openapi3
+		{
+			Name:     "openai",
+			Source:   "testdata/openai/source.json",
+			Expected: "testdata/openai/expected.json",
+		},
 	}
 
 	for _, tc := range testCases {
