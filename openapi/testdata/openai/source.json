@@ -17,9 +17,46 @@
   "servers": [
     {
       "url": "https://api.openai.com/v1"
+    },
+    {
+      "url": "http://{host}:{port}",
+      "variables": {
+        "host": {
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "default": "11434"
+        }
+      }
     }
   ],
   "paths": {
+    "/api/create": {
+      "post": {
+        "operationId": "createModel",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateModelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/x-ndjson": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/chat/completions": {
       "post": {
         "operationId": "createChatCompletion",
@@ -994,6 +1031,36 @@
           }
         },
         "required": ["token", "logprob", "bytes", "top_logprobs"]
+      },
+      "CreateModelRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "The name of the model to create"
+          }
+        }
+      },
+      "ProgressResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The status of the request"
+          },
+          "digest": {
+            "type": "string",
+            "description": "The SHA256 digest of the blob"
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total size of the task"
+          },
+          "completed": {
+            "type": "integer",
+            "description": "The completed size of the task"
+          }
+        }
       }
     }
   },

@@ -110,9 +110,19 @@ func (oc *OAS3Builder) convertServers(servers []*v3.Server) []rest.ServerConfig 
 				}
 			}
 
+			serverURL := server.URL
+			for variable := server.Variables.First(); variable != nil; variable = variable.Next() {
+				value := variable.Value()
+				if value == nil || value.Default == "" {
+					continue
+				}
+				key := variable.Key()
+				serverURL = strings.ReplaceAll(serverURL, fmt.Sprintf("{%s}", key), value.Default)
+			}
+
 			conf := rest.ServerConfig{
 				ID:  serverID,
-				URL: *rest.NewEnvStringTemplate(rest.NewEnvTemplateWithDefault(envName, server.URL)),
+				URL: *rest.NewEnvStringTemplate(rest.NewEnvTemplateWithDefault(envName, serverURL)),
 			}
 			results = append(results, conf)
 		}

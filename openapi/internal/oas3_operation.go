@@ -341,16 +341,35 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 		oc.builder.typeUsageCounter.Add(scalarName, 1)
 		return schema.NewNullableNamedType(scalarName), nil
 	}
-	jsonContent, ok := resp.Content.Get("application/json")
-	if !ok {
+
+	var bodyContent *v3.MediaType
+	var present bool
+	var contentType string
+	for _, ct := range []string{rest.ContentTypeJSON, rest.ContentTypeNdJSON} {
+		bodyContent, present = resp.Content.Get(ct)
+		if present {
+			contentType = ct
+			break
+		}
+	}
+
+	if !present {
 		return nil, nil
 	}
 
 	schemaType, _, _, err := newOAS3SchemaBuilder(oc.builder, apiPath, rest.InBody, false).
-		getSchemaTypeFromProxy(jsonContent.Schema, false, fieldPaths)
+		getSchemaTypeFromProxy(bodyContent.Schema, false, fieldPaths)
 	if err != nil {
 		return nil, err
 	}
 	oc.builder.typeUsageCounter.Add(getNamedType(schemaType, true, ""), 1)
-	return schemaType, nil
+
+	switch contentType {
+	case rest.ContentTypeNdJSON:
+		// Newline Delimited JSON (ndjson) format represents a stream of structured objects
+		// so the response would be wrapped with an array
+		return schema.NewArrayType(schemaType), nil
+	default:
+		return schemaType, nil
+	}
 }
