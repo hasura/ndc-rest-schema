@@ -3,6 +3,9 @@
     "servers": [
       {
         "url": "{{SERVER_URL:-https://api.openai.com/v1}}"
+      },
+      {
+        "url": "{{SERVER_URL_2:-http://127.0.0.1:11434}}"
       }
     ],
     "timeout": "{{TIMEOUT}}",
@@ -625,6 +628,20 @@
         }
       }
     },
+    "CreateModelRequest": {
+      "fields": {
+        "model": {
+          "description": "The name of the model to create",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        }
+      }
+    },
     "FunctionObject": {
       "fields": {
         "description": {
@@ -655,9 +672,82 @@
           }
         }
       }
+    },
+    "ProgressResponse": {
+      "fields": {
+        "completed": {
+          "description": "The completed size of the task",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        },
+        "digest": {
+          "description": "The SHA256 digest of the blob",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "status": {
+          "description": "The status of the request",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "String",
+              "type": "named"
+            }
+          }
+        },
+        "total": {
+          "description": "The total size of the task",
+          "type": {
+            "type": "nullable",
+            "underlying_type": {
+              "name": "Int32",
+              "type": "named"
+            }
+          }
+        }
+      }
     }
   },
   "procedures": [
+    {
+      "request": {
+        "url": "/api/create",
+        "method": "post",
+        "requestBody": {
+          "contentType": "application/json",
+          "schema": {
+            "type": "CreateModelRequest"
+          }
+        }
+      },
+      "arguments": {
+        "body": {
+          "description": "Request body of POST /api/create",
+          "type": {
+            "name": "CreateModelRequest",
+            "type": "named"
+          }
+        }
+      },
+      "name": "createModel",
+      "result_type": {
+        "element_type": {
+          "name": "ProgressResponse",
+          "type": "named"
+        },
+        "type": "array"
+      }
+    },
     {
       "request": {
         "url": "/chat/completions",

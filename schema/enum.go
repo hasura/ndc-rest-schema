@@ -218,6 +218,7 @@ func IsDefaultScalar(name string) bool {
 const (
 	ContentTypeHeader            = "Content-Type"
 	ContentTypeJSON              = "application/json"
+	ContentTypeNdJSON            = "application/x-ndjson"
 	ContentTypeXML               = "application/xml"
 	ContentTypeFormURLEncoded    = "application/x-www-form-urlencoded"
 	ContentTypeMultipartFormData = "multipart/form-data"
