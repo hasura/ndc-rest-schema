@@ -126,16 +126,16 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 // ConvertConfig represents the content of convert config file
 type ConvertConfig struct {
 	File                string                `json:"file" yaml:"file"`
-	Spec                schema.SchemaSpecType `json:"spec" yaml:"spec"`
-	MethodAlias         map[string]string     `json:"methodAlias" yaml:"methodAlias"`
-	TrimPrefix          string                `json:"trimPrefix" yaml:"trimPrefix"`
-	EnvPrefix           string                `json:"envPrefix" yaml:"envPrefix"`
-	Pure                bool                  `json:"pure" yaml:"pure"`
-	Strict              bool                  `json:"strict" yaml:"strict"`
-	PatchBefore         []utils.PatchConfig   `json:"patchBefore" yaml:"patchBefore"`
-	PatchAfter          []utils.PatchConfig   `json:"patchAfter" yaml:"patchAfter"`
-	AllowedContentTypes []string              `json:"allowedContentTypes" yaml:"allowedContentTypes"`
-	Output              string                `json:"output" yaml:"output"`
+	Spec                schema.SchemaSpecType `json:"spec,omitempty" yaml:"spec"`
+	MethodAlias         map[string]string     `json:"methodAlias,omitempty" yaml:"methodAlias"`
+	TrimPrefix          string                `json:"trimPrefix,omitempty" yaml:"trimPrefix"`
+	EnvPrefix           string                `json:"envPrefix,omitempty" yaml:"envPrefix"`
+	Pure                bool                  `json:"pure,omitempty" yaml:"pure"`
+	Strict              bool                  `json:"strict,omitempty" yaml:"strict"`
+	PatchBefore         []utils.PatchConfig   `json:"patchBefore,omitempty" yaml:"patchBefore"`
+	PatchAfter          []utils.PatchConfig   `json:"patchAfter,omitempty" yaml:"patchAfter"`
+	AllowedContentTypes []string              `json:"allowedContentTypes,omitempty" yaml:"allowedContentTypes"`
+	Output              string                `json:"output,omitempty" yaml:"output"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from config

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+
+	"github.com/invopop/jsonschema"
 )
 
 // SchemaSpecType represents the spec enum of schema
@@ -18,6 +20,14 @@ const (
 )
 
 var schemaSpecType_enums = []SchemaSpecType{OpenAPIv3Spec, OpenAPIv2Spec, NDCSpec}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j SchemaSpecType) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(schemaSpecType_enums),
+	}
+}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *SchemaSpecType) UnmarshalJSON(b []byte) error {
@@ -88,6 +98,14 @@ const (
 
 var schemaFileFormat_enums = []SchemaFileFormat{SchemaFileYAML, SchemaFileJSON}
 
+// JSONSchema is used to generate a custom jsonschema
+func (j SchemaFileFormat) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(schemaFileFormat_enums),
+	}
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *SchemaFileFormat) UnmarshalJSON(b []byte) error {
 	var rawResult string
@@ -134,6 +152,14 @@ const (
 )
 
 var parameterLocation_enums = []ParameterLocation{InQuery, InHeader, InPath, InCookie, InBody, InFormData}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j ParameterLocation) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(parameterLocation_enums),
+	}
+}
 
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *ParameterLocation) UnmarshalJSON(b []byte) error {
@@ -258,6 +284,14 @@ var parameterEncodingStyle_enums = []ParameterEncodingStyle{
 	EncodingStyleSpaceDelimited,
 	EncodingStylePipeDelimited,
 	EncodingStyleDeepObject,
+}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j ParameterEncodingStyle) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(parameterEncodingStyle_enums),
+	}
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

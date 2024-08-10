@@ -235,3 +235,11 @@ func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 func toPtr[V any](value V) *V {
 	return &value
 }
+
+func toAnySlice[T any](values []T) []any {
+	results := make([]any, len(values))
+	for i, v := range values {
+		results[i] = v
+	}
+	return results
+}

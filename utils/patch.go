@@ -28,7 +28,7 @@ const (
 // PatchConfig the configuration for JSON patch
 type PatchConfig struct {
 	Path     string        `json:"path" yaml:"path"`
-	Strategy PatchStrategy `json:"strategy" yaml:"strategy"`
+	Strategy PatchStrategy `json:"strategy" yaml:"strategy" jsonschema:"enum=merge,enum=json6902"`
 }
 
 // ApplyPatchToRestSchema applies JSON patches to NDC rest schema and validate the output

@@ -24,6 +24,10 @@ clean:
 build:
 	go build -o _output/ndc-rest-schema .
 	
+.PHONY: build-jsonschema
+build-jsonschema:
+	cd jsonschema && go run .
+
 # build the ndc-rest-schema for all given platform/arch
 .PHONY: ci-build
 ci-build: export CGO_ENABLED=0
