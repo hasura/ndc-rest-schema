@@ -63,7 +63,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -110,7 +110,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -154,7 +154,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -189,7 +189,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -218,7 +218,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {},
@@ -243,7 +243,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -283,7 +283,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -314,7 +314,7 @@
         "url": "/snake",
         "method": "get",
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {},
@@ -364,7 +364,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {

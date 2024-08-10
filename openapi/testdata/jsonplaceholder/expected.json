@@ -38,7 +38,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -87,7 +87,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -120,7 +120,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -165,7 +165,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -214,7 +214,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -256,7 +256,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -305,7 +305,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -338,7 +338,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -383,7 +383,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -432,7 +432,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -474,7 +474,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -523,7 +523,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -565,7 +565,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -614,7 +614,7 @@
           }
         ],
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -638,7 +638,7 @@
         "url": "/v1/test",
         "method": "get",
         "response": {
-          "contentType": ""
+          "contentType": "application/json"
         }
       },
       "arguments": {},

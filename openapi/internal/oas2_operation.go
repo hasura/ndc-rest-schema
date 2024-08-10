@@ -39,6 +39,19 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 		slog.String("name", funcName),
 		slog.String("path", pathKey),
 	)
+
+	responseContentType := getResponseContentTypeV2(operation.Produces)
+	if responseContentType == "" {
+		oc.builder.Logger.Info("supported response content type",
+			slog.String("name", funcName),
+			slog.String("path", pathKey),
+			slog.String("method", "get"),
+			slog.Any("produces", operation.Produces),
+			slog.Any("consumes", operation.Consumes),
+		)
+		return nil, nil
+	}
+
 	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{funcName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -57,7 +70,10 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 			Method:      "get",
 			Parameters:  oc.RequestParams,
 			RequestBody: reqBody,
-			Security:    convertSecurities(operation.Security),
+			Response: rest.Response{
+				ContentType: responseContentType,
+			},
+			Security: convertSecurities(operation.Security),
 		},
 		FunctionInfo: schema.FunctionInfo{
 			Name:       funcName,
