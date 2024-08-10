@@ -41,7 +41,7 @@ func (oc *oas3OperationBuilder) BuildFunction(itemGet *v3.Operation) (*rest.REST
 		slog.String("path", oc.pathKey),
 		slog.String("method", oc.method),
 	)
-	resultType, err := oc.convertResponse(itemGet.Responses, oc.pathKey, []string{funcName, "Result"})
+	resultType, schemaResponse, err := oc.convertResponse(itemGet.Responses, oc.pathKey, []string{funcName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
 	}
@@ -61,6 +61,7 @@ func (oc *oas3OperationBuilder) BuildFunction(itemGet *v3.Operation) (*rest.REST
 			Parameters: sortRequestParameters(oc.RequestParams),
 			Security:   convertSecurities(itemGet.Security),
 			Servers:    oc.builder.convertServers(itemGet.Servers),
+			Response:   *schemaResponse,
 		},
 		FunctionInfo: schema.FunctionInfo{
 			Name:       funcName,
@@ -91,7 +92,7 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 		slog.String("path", oc.pathKey),
 		slog.String("method", oc.method),
 	)
-	resultType, err := oc.convertResponse(operation.Responses, oc.pathKey, []string{procName, "Result"})
+	resultType, schemaResponse, err := oc.convertResponse(operation.Responses, oc.pathKey, []string{procName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", oc.pathKey, err)
 	}
@@ -130,6 +131,7 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 			Security:    convertSecurities(operation.Security),
 			Servers:     oc.builder.convertServers(operation.Servers),
 			RequestBody: reqBody,
+			Response:    *schemaResponse,
 		},
 		ProcedureInfo: schema.ProcedureInfo{
 			Name:       procName,
@@ -321,9 +323,9 @@ func (oc *oas3OperationBuilder) convertRequestBody(reqBody *v3.RequestBody, apiP
 	return bodyResult, schemaType, nil
 }
 
-func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, error) {
+func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath string, fieldPaths []string) (schema.TypeEncoder, *rest.Response, error) {
 	if responses == nil || responses.Codes == nil || responses.Codes.IsZero() {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	var resp *v3.Response
@@ -339,7 +341,9 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 	if resp == nil || resp.Content == nil {
 		scalarName := string(rest.ScalarBoolean)
 		oc.builder.typeUsageCounter.Add(scalarName, 1)
-		return schema.NewNullableNamedType(scalarName), nil
+		return schema.NewNullableNamedType(scalarName), &rest.Response{
+			ContentType: rest.ContentTypeJSON,
+		}, nil
 	}
 
 	var bodyContent *v3.MediaType
@@ -354,22 +358,25 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 	}
 
 	if !present {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	schemaType, _, _, err := newOAS3SchemaBuilder(oc.builder, apiPath, rest.InBody, false).
 		getSchemaTypeFromProxy(bodyContent.Schema, false, fieldPaths)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	oc.builder.typeUsageCounter.Add(getNamedType(schemaType, true, ""), 1)
 
+	schemaResponse := &rest.Response{
+		ContentType: contentType,
+	}
 	switch contentType {
 	case rest.ContentTypeNdJSON:
 		// Newline Delimited JSON (ndjson) format represents a stream of structured objects
 		// so the response would be wrapped with an array
-		return schema.NewArrayType(schemaType), nil
+		return schema.NewArrayType(schemaType), schemaResponse, nil
 	default:
-		return schemaType, nil
+		return schemaType, schemaResponse, nil
 	}
 }

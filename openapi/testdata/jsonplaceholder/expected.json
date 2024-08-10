@@ -36,7 +36,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -82,7 +85,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -112,7 +118,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -154,7 +163,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -200,7 +212,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -239,7 +254,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -285,7 +303,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -315,7 +336,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -357,7 +381,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "albumId": {
@@ -403,7 +430,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -442,7 +472,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -488,7 +521,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -527,7 +563,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "email": {
@@ -573,7 +612,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {
         "id": {
@@ -594,7 +636,10 @@
     {
       "request": {
         "url": "/v1/test",
-        "method": "get"
+        "method": "get",
+        "response": {
+          "contentType": ""
+        }
       },
       "arguments": {},
       "description": "Get test",
@@ -1004,6 +1049,9 @@
           "schema": {
             "type": "Post"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1040,6 +1088,9 @@
           "schema": {
             "type": "Post"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1083,6 +1134,9 @@
           "schema": {
             "type": "Post"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1120,7 +1174,10 @@
               "type": "Int32"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "id": {

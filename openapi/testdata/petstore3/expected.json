@@ -75,7 +75,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "status": {
@@ -124,7 +127,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "tags": {
@@ -174,7 +180,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "petId": {
@@ -200,7 +209,10 @@
           {
             "api_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Returns pet inventories by status",
@@ -222,7 +234,10 @@
               "type": "Int64"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "orderId": {
@@ -261,7 +276,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "password": {
@@ -304,7 +322,10 @@
               "type": "String"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "username": {
@@ -325,7 +346,10 @@
     {
       "request": {
         "url": "/snake",
-        "method": "get"
+        "method": "get",
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Get snake object",
@@ -3862,6 +3886,9 @@
           "schema": {
             "type": "Pet"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -3897,6 +3924,9 @@
           "schema": {
             "type": "Pet"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -3951,7 +3981,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "name": {
@@ -4020,7 +4053,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "api_key": {
@@ -4085,6 +4121,9 @@
             "type": "Binary",
             "nullable": true
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -4175,6 +4214,9 @@
               }
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -4212,6 +4254,9 @@
             "type": "Order",
             "nullable": true
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -4245,7 +4290,10 @@
               "type": "Int64"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "orderId": {
@@ -4276,6 +4324,9 @@
             "type": "array",
             "nullable": true
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -4312,7 +4363,10 @@
               "type": "String"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "username": {
@@ -4336,7 +4390,10 @@
     {
       "request": {
         "url": "/snake",
-        "method": "post"
+        "method": "post",
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Add snake object",
@@ -4397,6 +4454,9 @@
               "explode": true
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -4437,7 +4497,10 @@
               "maxLength": 5000
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "account": {
@@ -5890,6 +5953,9 @@
               "explode": true
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -5919,6 +5985,9 @@
           "schema": {
             "type": "CreateFineTuningJobRequest"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {

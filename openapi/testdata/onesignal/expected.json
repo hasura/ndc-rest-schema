@@ -70,7 +70,10 @@
           {
             "app_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "app_id": {
@@ -142,7 +145,10 @@
           {
             "app_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "app_id": {
@@ -789,6 +795,9 @@
           "schema": {
             "type": "NotificationInput"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -831,7 +840,10 @@
           {
             "app_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "app_id": {
@@ -891,6 +903,9 @@
               }
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {

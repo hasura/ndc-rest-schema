@@ -61,6 +61,10 @@ func (ndc NDCRestSchema) ToSchemaResponse() *schema.SchemaResponse {
 	}
 }
 
+type Response struct {
+	ContentType string `json:"contentType" yaml:"contentType" mapstructure:"contentType"`
+}
+
 // Request represents the HTTP request information of the webhook
 type Request struct {
 	URL        string               `json:"url,omitempty" yaml:"url,omitempty" mapstructure:"url"`
@@ -73,6 +77,7 @@ type Request struct {
 	Timeout     uint           `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 	Servers     []ServerConfig `json:"servers,omitempty" yaml:"servers,omitempty" mapstructure:"servers"`
 	RequestBody *RequestBody   `json:"requestBody,omitempty" yaml:"requestBody,omitempty" mapstructure:"requestBody"`
+	Response    Response       `json:"response" yaml:"response" mapstructure:"response"`
 	Retry       *RetryPolicy   `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
 }
 
@@ -89,6 +94,7 @@ func (r Request) Clone() *Request {
 		Security:    r.Security,
 		Servers:     r.Servers,
 		RequestBody: r.RequestBody,
+		Response:    r.Response,
 	}
 }
 
