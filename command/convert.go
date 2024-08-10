@@ -204,6 +204,9 @@ func ResolveConvertConfigArguments(config *ConvertConfig, configDir string, args
 		if args.Strict {
 			config.Strict = args.Strict
 		}
+		if len(args.AllowedContentTypes) > 0 {
+			config.AllowedContentTypes = args.AllowedContentTypes
+		}
 	}
 	if config.Spec == "" {
 		config.Spec = schema.OAS3Spec
