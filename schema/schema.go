@@ -10,7 +10,8 @@ import (
 //
 // [NDC schema]: https://github.com/hasura/ndc-sdk-go/blob/1d3339db29e13a170aa8be5ff7fae8394cba0e49/schema/schema.generated.go#L887
 type NDCRestSchema struct {
-	Settings *NDCRestSettings `json:"settings,omitempty" yaml:"settings,omitempty" mapstructure:"settings"`
+	SchemaRef string           `json:"$schema,omitempty" yaml:"$schema,omitempty" mapstructure:"$schema"`
+	Settings  *NDCRestSettings `json:"settings,omitempty" yaml:"settings,omitempty" mapstructure:"settings"`
 
 	// Collections which are available for queries
 	Collections []schema.CollectionInfo `json:"collections" yaml:"collections" mapstructure:"collections"`
@@ -32,6 +33,7 @@ type NDCRestSchema struct {
 // NewNDCRestSchema creates a NDCRestSchema instance
 func NewNDCRestSchema() *NDCRestSchema {
 	return &NDCRestSchema{
+		SchemaRef:   "https://raw.githubusercontent.com/hasura/ndc-rest-schema/main/jsonschema/ndc-rest-schema.jsonschema",
 		Settings:    &NDCRestSettings{},
 		Collections: []schema.CollectionInfo{},
 		Functions:   []*RESTFunctionInfo{},
@@ -68,7 +70,7 @@ type Response struct {
 // Request represents the HTTP request information of the webhook
 type Request struct {
 	URL        string               `json:"url,omitempty" yaml:"url,omitempty" mapstructure:"url"`
-	Method     string               `json:"method,omitempty" yaml:"method,omitempty" mapstructure:"method"`
+	Method     string               `json:"method,omitempty" yaml:"method,omitempty" mapstructure:"method" jsonschema:"enum=get,enum=post,enum=put,enum=patch,enum=delete"`
 	Type       RequestType          `json:"type,omitempty" yaml:"type,omitempty" mapstructure:"type"`
 	Headers    map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	Parameters []RequestParameter   `json:"parameters,omitempty" yaml:"parameters,omitempty" mapstructure:"parameters"`
@@ -234,4 +236,12 @@ func (j *RESTProcedureInfo) UnmarshalJSON(b []byte) error {
 
 func toPtr[V any](value V) *V {
 	return &value
+}
+
+func toAnySlice[T any](values []T) []any {
+	results := make([]any, len(values))
+	for i, v := range values {
+		results[i] = v
+	}
+	return results
 }

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hasura/ndc-rest-schema/command/convert-config",
+  "$ref": "#/$defs/ConvertConfig",
+  "$defs": {
+    "ConvertConfig": {
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "spec": {
+          "$ref": "#/$defs/SchemaSpecType"
+        },
+        "methodAlias": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "trimPrefix": {
+          "type": "string"
+        },
+        "envPrefix": {
+          "type": "string"
+        },
+        "pure": {
+          "type": "boolean"
+        },
+        "strict": {
+          "type": "boolean"
+        },
+        "patchBefore": {
+          "items": {
+            "$ref": "#/$defs/PatchConfig"
+          },
+          "type": "array"
+        },
+        "patchAfter": {
+          "items": {
+            "$ref": "#/$defs/PatchConfig"
+          },
+          "type": "array"
+        },
+        "allowedContentTypes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "output": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "file"
+      ]
+    },
+    "PatchConfig": {
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "merge",
+            "json6902"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "path",
+        "strategy"
+      ]
+    },
+    "SchemaSpecType": {
+      "type": "string",
+      "enum": [
+        "oas3",
+        "oas2",
+        "openapi3",
+        "openapi2",
+        "ndc"
+      ]
+    }
+  }
+}

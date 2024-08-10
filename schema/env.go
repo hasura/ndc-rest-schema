@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/invopop/jsonschema"
 	"gopkg.in/yaml.v3"
 )
 
@@ -159,6 +160,13 @@ type EnvString struct {
 	EnvTemplate
 }
 
+// JSONSchema is used to generate a custom jsonschema
+func (j EnvString) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+	}
+}
+
 // WithValue returns a new EnvString instance with new value
 func (j EnvString) WithValue(value string) *EnvString {
 	j.value = &value
@@ -274,6 +282,16 @@ func NewEnvIntValue(value int64) *EnvInt {
 func NewEnvIntTemplate(template EnvTemplate) *EnvInt {
 	return &EnvInt{
 		EnvTemplate: template,
+	}
+}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j EnvInt) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		OneOf: []*jsonschema.Schema{
+			{Type: "integer"},
+			{Type: "string"},
+		},
 	}
 }
 
@@ -406,6 +424,16 @@ func NewEnvIntsValue(value []int64) *EnvInts {
 func NewEnvIntsTemplate(template EnvTemplate) *EnvInts {
 	return &EnvInts{
 		EnvTemplate: template,
+	}
+}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j EnvInts) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		OneOf: []*jsonschema.Schema{
+			{Type: "string"},
+			{Type: "array", Items: &jsonschema.Schema{Type: "integer"}},
+		},
 	}
 }
 

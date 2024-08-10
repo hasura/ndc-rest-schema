@@ -1,0 +1,792 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hasura/ndc-rest-schema/schema/ndc-rest-schema",
+  "$ref": "#/$defs/NDCRestSchema",
+  "$defs": {
+    "AggregateFunctionDefinition": {
+      "properties": {
+        "result_type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "result_type"
+      ]
+    },
+    "ArgumentInfo": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ]
+    },
+    "AuthSecurities": {
+      "items": {
+        "$ref": "#/$defs/AuthSecurity"
+      },
+      "type": "array"
+    },
+    "AuthSecurity": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "type": "object"
+    },
+    "CollectionInfo": {
+      "properties": {
+        "arguments": {
+          "$ref": "#/$defs/CollectionInfoArguments"
+        },
+        "description": {
+          "type": "string"
+        },
+        "foreign_keys": {
+          "$ref": "#/$defs/CollectionInfoForeignKeys"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "uniqueness_constraints": {
+          "$ref": "#/$defs/CollectionInfoUniquenessConstraints"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "arguments",
+        "foreign_keys",
+        "name",
+        "type",
+        "uniqueness_constraints"
+      ]
+    },
+    "CollectionInfoArguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArgumentInfo"
+      },
+      "type": "object"
+    },
+    "CollectionInfoForeignKeys": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ForeignKeyConstraint"
+      },
+      "type": "object"
+    },
+    "CollectionInfoUniquenessConstraints": {
+      "additionalProperties": {
+        "$ref": "#/$defs/UniquenessConstraint"
+      },
+      "type": "object"
+    },
+    "ComparisonOperatorDefinition": {
+      "type": "object"
+    },
+    "EncodingObject": {
+      "properties": {
+        "style": {
+          "$ref": "#/$defs/ParameterEncodingStyle"
+        },
+        "explode": {
+          "type": "boolean"
+        },
+        "allowReserved": {
+          "type": "boolean"
+        },
+        "contentType": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "headers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/RequestParameter"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EnvInt": {
+      "oneOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "EnvInts": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      ]
+    },
+    "EnvString": {
+      "type": "string"
+    },
+    "ForeignKeyConstraint": {
+      "properties": {
+        "column_mapping": {
+          "$ref": "#/$defs/ForeignKeyConstraintColumnMapping"
+        },
+        "foreign_collection": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "column_mapping",
+        "foreign_collection"
+      ]
+    },
+    "ForeignKeyConstraintColumnMapping": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "FunctionInfoArguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArgumentInfo"
+      },
+      "type": "object"
+    },
+    "NDCRestSchema": {
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/NDCRestSettings"
+        },
+        "collections": {
+          "items": {
+            "$ref": "#/$defs/CollectionInfo"
+          },
+          "type": "array"
+        },
+        "functions": {
+          "items": {
+            "$ref": "#/$defs/RESTFunctionInfo"
+          },
+          "type": "array"
+        },
+        "object_types": {
+          "$ref": "#/$defs/SchemaResponseObjectTypes"
+        },
+        "procedures": {
+          "items": {
+            "$ref": "#/$defs/RESTProcedureInfo"
+          },
+          "type": "array"
+        },
+        "scalar_types": {
+          "$ref": "#/$defs/SchemaResponseScalarTypes"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "collections",
+        "functions",
+        "object_types",
+        "procedures",
+        "scalar_types"
+      ]
+    },
+    "NDCRestSettings": {
+      "properties": {
+        "servers": {
+          "items": {
+            "$ref": "#/$defs/ServerConfig"
+          },
+          "type": "array"
+        },
+        "headers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/EnvString"
+          },
+          "type": "object"
+        },
+        "timeout": {
+          "$ref": "#/$defs/EnvInt"
+        },
+        "retry": {
+          "$ref": "#/$defs/RetryPolicySetting"
+        },
+        "securitySchemes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SecurityScheme"
+          },
+          "type": "object"
+        },
+        "security": {
+          "$ref": "#/$defs/AuthSecurities"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "servers"
+      ]
+    },
+    "ObjectField": {
+      "properties": {
+        "arguments": {
+          "$ref": "#/$defs/ObjectFieldArguments"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ]
+    },
+    "ObjectFieldArguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArgumentInfo"
+      },
+      "type": "object"
+    },
+    "ObjectType": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "fields": {
+          "$ref": "#/$defs/ObjectTypeFields"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "fields"
+      ]
+    },
+    "ObjectTypeFields": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObjectField"
+      },
+      "type": "object"
+    },
+    "ParameterEncodingStyle": {
+      "type": "string",
+      "enum": [
+        "simple",
+        "label",
+        "matrix",
+        "form",
+        "spaceDelimited",
+        "pipeDelimited",
+        "deepObject"
+      ]
+    },
+    "ParameterLocation": {
+      "type": "string",
+      "enum": [
+        "query",
+        "header",
+        "path",
+        "cookie",
+        "body",
+        "formData"
+      ]
+    },
+    "ProcedureInfoArguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ArgumentInfo"
+      },
+      "type": "object"
+    },
+    "RESTFunctionInfo": {
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/Request"
+        },
+        "arguments": {
+          "$ref": "#/$defs/FunctionInfoArguments"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "result_type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "request",
+        "arguments",
+        "name",
+        "result_type"
+      ]
+    },
+    "RESTProcedureInfo": {
+      "properties": {
+        "request": {
+          "$ref": "#/$defs/Request"
+        },
+        "arguments": {
+          "$ref": "#/$defs/ProcedureInfoArguments"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "result_type": {
+          "$ref": "#/$defs/Type"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "request",
+        "arguments",
+        "name",
+        "result_type"
+      ]
+    },
+    "Request": {
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "get",
+            "post",
+            "put",
+            "patch",
+            "delete"
+          ]
+        },
+        "type": {
+          "type": "string"
+        },
+        "headers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/EnvString"
+          },
+          "type": "object"
+        },
+        "parameters": {
+          "items": {
+            "$ref": "#/$defs/RequestParameter"
+          },
+          "type": "array"
+        },
+        "security": {
+          "$ref": "#/$defs/AuthSecurities"
+        },
+        "timeout": {
+          "type": "integer"
+        },
+        "servers": {
+          "items": {
+            "$ref": "#/$defs/ServerConfig"
+          },
+          "type": "array"
+        },
+        "requestBody": {
+          "$ref": "#/$defs/RequestBody"
+        },
+        "response": {
+          "$ref": "#/$defs/Response"
+        },
+        "retry": {
+          "$ref": "#/$defs/RetryPolicy"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "response"
+      ]
+    },
+    "RequestBody": {
+      "properties": {
+        "contentType": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/$defs/TypeSchema"
+        },
+        "encoding": {
+          "additionalProperties": {
+            "$ref": "#/$defs/EncodingObject"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "RequestParameter": {
+      "properties": {
+        "style": {
+          "$ref": "#/$defs/ParameterEncodingStyle"
+        },
+        "explode": {
+          "type": "boolean"
+        },
+        "allowReserved": {
+          "type": "boolean"
+        },
+        "contentType": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "headers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/RequestParameter"
+          },
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "argumentName": {
+          "type": "string"
+        },
+        "in": {
+          "$ref": "#/$defs/ParameterLocation"
+        },
+        "schema": {
+          "$ref": "#/$defs/TypeSchema"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Response": {
+      "properties": {
+        "contentType": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "contentType"
+      ]
+    },
+    "RetryPolicy": {
+      "properties": {
+        "times": {
+          "type": "integer"
+        },
+        "delay": {
+          "type": "integer"
+        },
+        "httpStatus": {
+          "items": {
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "RetryPolicySetting": {
+      "properties": {
+        "times": {
+          "$ref": "#/$defs/EnvInt"
+        },
+        "delay": {
+          "$ref": "#/$defs/EnvInt"
+        },
+        "httpStatus": {
+          "$ref": "#/$defs/EnvInts"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ScalarType": {
+      "properties": {
+        "aggregate_functions": {
+          "$ref": "#/$defs/ScalarTypeAggregateFunctions"
+        },
+        "comparison_operators": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ComparisonOperatorDefinition"
+          },
+          "type": "object"
+        },
+        "representation": {
+          "$ref": "#/$defs/TypeRepresentation"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "aggregate_functions",
+        "comparison_operators"
+      ]
+    },
+    "ScalarTypeAggregateFunctions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/AggregateFunctionDefinition"
+      },
+      "type": "object"
+    },
+    "SchemaResponseObjectTypes": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ObjectType"
+      },
+      "type": "object"
+    },
+    "SchemaResponseScalarTypes": {
+      "additionalProperties": {
+        "$ref": "#/$defs/ScalarType"
+      },
+      "type": "object"
+    },
+    "SecurityScheme": {
+      "oneOf": [
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "apiKey"
+              ]
+            },
+            "value": {
+              "type": "string"
+            },
+            "in": {
+              "type": "string",
+              "enum": [
+                "header",
+                "query",
+                "cookie"
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "required": [
+            "type",
+            "value",
+            "in",
+            "name"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "http"
+              ]
+            },
+            "value": {
+              "type": "string"
+            },
+            "header": {
+              "type": "string"
+            },
+            "scheme": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "required": [
+            "type",
+            "value",
+            "header",
+            "scheme"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "oauth2"
+              ]
+            },
+            "flows": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "type": "object",
+          "required": [
+            "type",
+            "flows"
+          ]
+        },
+        {
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "openIdConnect"
+              ]
+            },
+            "openIdConnectUrl": {
+              "type": "string"
+            }
+          },
+          "type": "object",
+          "required": [
+            "type",
+            "openIdConnectUrl"
+          ]
+        }
+      ]
+    },
+    "ServerConfig": {
+      "properties": {
+        "url": {
+          "$ref": "#/$defs/EnvString"
+        },
+        "id": {
+          "type": "string"
+        },
+        "headers": {
+          "additionalProperties": {
+            "$ref": "#/$defs/EnvString"
+          },
+          "type": "object"
+        },
+        "timeout": {
+          "$ref": "#/$defs/EnvInt"
+        },
+        "retry": {
+          "$ref": "#/$defs/RetryPolicySetting"
+        },
+        "securitySchemes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SecurityScheme"
+          },
+          "type": "object"
+        },
+        "security": {
+          "$ref": "#/$defs/AuthSecurities"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "url"
+      ]
+    },
+    "Type": {
+      "type": "object"
+    },
+    "TypeRepresentation": {
+      "type": "object"
+    },
+    "TypeSchema": {
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "maximum": {
+          "type": "number"
+        },
+        "minimum": {
+          "type": "number"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
+        "minLength": {
+          "type": "integer"
+        },
+        "enum": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "items": {
+          "$ref": "#/$defs/TypeSchema"
+        },
+        "properties": {
+          "additionalProperties": {
+            "$ref": "#/$defs/TypeSchema"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "type"
+      ]
+    },
+    "UniquenessConstraint": {
+      "properties": {
+        "unique_columns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "unique_columns"
+      ]
+    }
+  }
+}

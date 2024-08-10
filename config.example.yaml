@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/hasura/ndc-rest-schema/main/jsonschema/convert-config.jsonschema
 # -- File path needs to be converted.
 file: ""
 

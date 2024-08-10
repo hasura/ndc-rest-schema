@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+
+	"github.com/invopop/jsonschema"
+	orderedmap "github.com/wk8/go-ordered-map/v2"
 )
 
 // SecuritySchemeType represents the authentication scheme enum
@@ -22,6 +25,14 @@ var securityScheme_enums = []SecuritySchemeType{
 	HTTPAuthScheme,
 	OAuth2Scheme,
 	OpenIDConnectScheme,
+}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j SecuritySchemeType) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(securityScheme_enums),
+	}
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -60,6 +71,14 @@ const (
 
 var apiKeyLocation_enums = []APIKeyLocation{APIKeyInHeader, APIKeyInQuery, APIKeyInCookie}
 
+// JSONSchema is used to generate a custom jsonschema
+func (j APIKeyLocation) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		Type: "string",
+		Enum: toAnySlice(apiKeyLocation_enums),
+	}
+}
+
 // UnmarshalJSON implements json.Unmarshaler.
 func (j *APIKeyLocation) UnmarshalJSON(b []byte) error {
 	var rawResult string
@@ -96,6 +115,81 @@ type SecurityScheme struct {
 	*HTTPAuthConfig   `yaml:",inline"`
 	*OAuth2Config     `yaml:",inline"`
 	*OpenIDConfig     `yaml:",inline"`
+}
+
+// JSONSchema is used to generate a custom jsonschema
+func (j SecurityScheme) JSONSchema() *jsonschema.Schema {
+	apiKeySchema := orderedmap.New[string, *jsonschema.Schema]()
+	apiKeySchema.Set("type", &jsonschema.Schema{
+		Type: "string",
+		Enum: []any{APIKeyScheme},
+	})
+	apiKeySchema.Set("value", &jsonschema.Schema{
+		Type: "string",
+	})
+	apiKeySchema.Set("in", (APIKeyLocation("")).JSONSchema())
+	apiKeySchema.Set("name", &jsonschema.Schema{
+		Type: "string",
+	})
+
+	httpAuthSchema := orderedmap.New[string, *jsonschema.Schema]()
+	httpAuthSchema.Set("type", &jsonschema.Schema{
+		Type: "string",
+		Enum: []any{HTTPAuthScheme},
+	})
+	httpAuthSchema.Set("value", &jsonschema.Schema{
+		Type: "string",
+	})
+	httpAuthSchema.Set("header", &jsonschema.Schema{
+		Type: "string",
+	})
+	httpAuthSchema.Set("scheme", &jsonschema.Schema{
+		Type: "string",
+	})
+
+	oauth2Schema := orderedmap.New[string, *jsonschema.Schema]()
+	oauth2Schema.Set("type", &jsonschema.Schema{
+		Type: "string",
+		Enum: []any{OAuth2Scheme},
+	})
+	oauth2Schema.Set("flows", &jsonschema.Schema{
+		Type:                 "object",
+		AdditionalProperties: &jsonschema.Schema{},
+	})
+
+	oidcSchema := orderedmap.New[string, *jsonschema.Schema]()
+	oidcSchema.Set("type", &jsonschema.Schema{
+		Type: "string",
+		Enum: []any{OpenIDConnectScheme},
+	})
+	oidcSchema.Set("openIdConnectUrl", &jsonschema.Schema{
+		Type: "string",
+	})
+
+	return &jsonschema.Schema{
+		OneOf: []*jsonschema.Schema{
+			{
+				Type:       "object",
+				Required:   []string{"type", "value", "in", "name"},
+				Properties: apiKeySchema,
+			},
+			{
+				Type:       "object",
+				Properties: httpAuthSchema,
+				Required:   []string{"type", "value", "header", "scheme"},
+			},
+			{
+				Type:       "object",
+				Properties: oauth2Schema,
+				Required:   []string{"type", "flows"},
+			},
+			{
+				Type:       "object",
+				Properties: oidcSchema,
+				Required:   []string{"type", "openIdConnectUrl"},
+			},
+		},
+	}
 }
 
 // UnmarshalJSON implements json.Unmarshaler.

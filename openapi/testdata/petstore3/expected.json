@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/hasura/ndc-rest-schema/main/jsonschema/ndc-rest-schema.jsonschema",
   "settings": {
     "servers": [
       {
