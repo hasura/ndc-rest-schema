@@ -728,6 +728,9 @@
           "schema": {
             "type": "CreateModelRequest"
           }
+        },
+        "response": {
+          "contentType": "application/x-ndjson"
         }
       },
       "arguments": {
@@ -757,6 +760,9 @@
           "schema": {
             "type": "CreateChatCompletionRequest"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {

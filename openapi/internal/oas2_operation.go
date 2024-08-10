@@ -39,6 +39,19 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 		slog.String("name", funcName),
 		slog.String("path", pathKey),
 	)
+
+	responseContentType := getResponseContentTypeV2(operation.Produces)
+	if responseContentType == "" {
+		oc.builder.Logger.Info("supported response content type",
+			slog.String("name", funcName),
+			slog.String("path", pathKey),
+			slog.String("method", "get"),
+			slog.Any("produces", operation.Produces),
+			slog.Any("consumes", operation.Consumes),
+		)
+		return nil, nil
+	}
+
 	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{funcName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -57,7 +70,10 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 			Method:      "get",
 			Parameters:  oc.RequestParams,
 			RequestBody: reqBody,
-			Security:    convertSecurities(operation.Security),
+			Response: rest.Response{
+				ContentType: responseContentType,
+			},
+			Security: convertSecurities(operation.Security),
 		},
 		FunctionInfo: schema.FunctionInfo{
 			Name:       funcName,
@@ -91,6 +107,18 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 		slog.String("method", method),
 	)
 
+	responseContentType := getResponseContentTypeV2(operation.Produces)
+	if responseContentType == "" {
+		oc.builder.Logger.Info("supported response content type",
+			slog.String("name", procName),
+			slog.String("path", pathKey),
+			slog.String("method", method),
+			slog.Any("produces", operation.Produces),
+			slog.Any("consumes", operation.Consumes),
+		)
+		return nil, nil
+	}
+
 	resultType, err := oc.convertResponse(operation.Responses, pathKey, []string{procName, "Result"})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %s", pathKey, err)
@@ -112,6 +140,9 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 			Parameters:  oc.RequestParams,
 			RequestBody: reqBody,
 			Security:    convertSecurities(operation.Security),
+			Response: rest.Response{
+				ContentType: responseContentType,
+			},
 		},
 		ProcedureInfo: schema.ProcedureInfo{
 			Name:       procName,
@@ -289,4 +320,16 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 	}
 	oc.builder.typeUsageCounter.Add(getNamedType(schemaType, true, ""), 1)
 	return schemaType, nil
+}
+
+func getResponseContentTypeV2(contentTypes []string) string {
+	if len(contentTypes) == 0 {
+		return rest.ContentTypeJSON
+	}
+	for _, ct := range rest.SupportedResponseContentTypes() {
+		if slices.Contains(contentTypes, ct) {
+			return ct
+		}
+	}
+	return ""
 }

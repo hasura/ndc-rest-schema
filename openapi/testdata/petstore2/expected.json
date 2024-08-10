@@ -61,7 +61,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "status": {
@@ -105,7 +108,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "tags": {
@@ -146,7 +152,10 @@
           {
             "api_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "petId": {
@@ -178,7 +187,10 @@
               "minimum": 1
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "orderId": {
@@ -204,7 +216,10 @@
           {
             "api_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Returns pet inventories by status",
@@ -226,7 +241,10 @@
               "type": "String"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "username": {
@@ -263,7 +281,10 @@
               "type": "String"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "password": {
@@ -291,7 +312,10 @@
     {
       "request": {
         "url": "/snake",
-        "method": "get"
+        "method": "get",
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Get snake",
@@ -338,7 +362,10 @@
               "nullable": true
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "client_name": {
@@ -835,6 +862,9 @@
               }
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -877,6 +907,9 @@
           "schema": {
             "type": "Pet"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -915,6 +948,9 @@
           "schema": {
             "type": "Pet"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -972,6 +1008,9 @@
               }
             }
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1028,7 +1067,10 @@
               "read:pets"
             ]
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "api_key": {
@@ -1067,6 +1109,9 @@
           "schema": {
             "type": "Order"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1098,7 +1143,10 @@
               "minimum": 1
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "orderId": {
@@ -1137,6 +1185,9 @@
           "schema": {
             "type": "User"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -1177,7 +1228,10 @@
               "type": "String"
             }
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "username": {
@@ -1201,7 +1255,10 @@
     {
       "request": {
         "url": "/snake",
-        "method": "post"
+        "method": "post",
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {},
       "description": "Create snake",
@@ -1220,6 +1277,9 @@
           "schema": {
             "type": "OAuth2Client"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {

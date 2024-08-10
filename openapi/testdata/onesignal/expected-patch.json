@@ -44,6 +44,9 @@
           "schema": {
             "type": "NotificationInput"
           }
+        },
+        "response": {
+          "contentType": "application/json"
         }
       },
       "arguments": {
@@ -86,7 +89,10 @@
           {
             "app_key": []
           }
-        ]
+        ],
+        "response": {
+          "contentType": "application/json"
+        }
       },
       "arguments": {
         "app_id": {
