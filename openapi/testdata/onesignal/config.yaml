@@ -15,3 +15,5 @@ methodAlias:
   put: put
   patch: patch
   delete: delete
+allowedContentTypes:
+  - application/json

@@ -17,17 +17,18 @@ var nopLogger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{})
 
 func TestConvertToNDCSchema(t *testing.T) {
 	testCases := []struct {
-		name        string
-		config      string
-		filePath    string
-		spec        schema.SchemaSpecType
-		pure        bool
-		noOutput    bool
-		format      schema.SchemaFileFormat
-		patchBefore []string
-		patchAfter  []string
-		expected    string
-		errorMsg    string
+		name                string
+		config              string
+		filePath            string
+		spec                schema.SchemaSpecType
+		pure                bool
+		noOutput            bool
+		format              schema.SchemaFileFormat
+		patchBefore         []string
+		patchAfter          []string
+		allowedContentTypes []string
+		expected            string
+		errorMsg            string
 	}{
 		{
 			name:     "file_not_found",
@@ -70,12 +71,13 @@ func TestConvertToNDCSchema(t *testing.T) {
 			errorMsg: "unable to build openapi document, supplied spec is a different version (oas2)",
 		},
 		{
-			name:        "patch",
-			filePath:    "../openapi/testdata/onesignal/source.json",
-			spec:        schema.OAS3Spec,
-			patchBefore: []string{"../openapi/testdata/onesignal/patch-before.json"},
-			patchAfter:  []string{"../openapi/testdata/onesignal/patch-after.json"},
-			expected:    "../openapi/testdata/onesignal/expected-patch.json",
+			name:                "patch",
+			filePath:            "../openapi/testdata/onesignal/source.json",
+			spec:                schema.OAS3Spec,
+			patchBefore:         []string{"../openapi/testdata/onesignal/patch-before.json"},
+			patchAfter:          []string{"../openapi/testdata/onesignal/patch-after.json"},
+			expected:            "../openapi/testdata/onesignal/expected-patch.json",
+			allowedContentTypes: []string{schema.ContentTypeJSON},
 		},
 		{
 			name:     "config",
@@ -92,13 +94,14 @@ func TestConvertToNDCSchema(t *testing.T) {
 				outputFilePath = fmt.Sprintf("%s/output.json", tempDir)
 			}
 			args := &ConvertCommandArguments{
-				File:        tc.filePath,
-				Output:      outputFilePath,
-				Pure:        tc.pure,
-				Spec:        string(tc.spec),
-				Format:      string(tc.format),
-				PatchBefore: tc.patchBefore,
-				PatchAfter:  tc.patchAfter,
+				File:                tc.filePath,
+				Output:              outputFilePath,
+				Pure:                tc.pure,
+				Spec:                string(tc.spec),
+				Format:              string(tc.format),
+				PatchBefore:         tc.patchBefore,
+				PatchAfter:          tc.patchAfter,
+				AllowedContentTypes: tc.allowedContentTypes,
 			}
 			if tc.config != "" {
 				args = &ConvertCommandArguments{

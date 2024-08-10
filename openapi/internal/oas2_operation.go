@@ -40,7 +40,7 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 		slog.String("path", pathKey),
 	)
 
-	responseContentType := getResponseContentTypeV2(operation.Produces)
+	responseContentType := oc.getResponseContentTypeV2(operation.Produces)
 	if responseContentType == "" {
 		oc.builder.Logger.Info("supported response content type",
 			slog.String("name", funcName),
@@ -107,7 +107,7 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 		slog.String("method", method),
 	)
 
-	responseContentType := getResponseContentTypeV2(operation.Produces)
+	responseContentType := oc.getResponseContentTypeV2(operation.Produces)
 	if responseContentType == "" {
 		oc.builder.Logger.Info("supported response content type",
 			slog.String("name", procName),
@@ -322,11 +322,16 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 	return schemaType, nil
 }
 
-func getResponseContentTypeV2(contentTypes []string) string {
-	if len(contentTypes) == 0 {
-		return rest.ContentTypeJSON
+func (oc *oas2OperationBuilder) getResponseContentTypeV2(contentTypes []string) string {
+	contentType := rest.ContentTypeJSON
+	if len(contentTypes) == 0 || slices.Contains(contentTypes, contentType) {
+		return contentType
 	}
-	for _, ct := range rest.SupportedResponseContentTypes() {
+	if len(oc.builder.ConvertOptions.AllowedContentTypes) == 0 {
+		return contentTypes[0]
+	}
+
+	for _, ct := range oc.builder.ConvertOptions.AllowedContentTypes {
 		if slices.Contains(contentTypes, ct) {
 			return ct
 		}
