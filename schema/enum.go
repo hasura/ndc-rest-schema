@@ -19,7 +19,7 @@ const (
 	NDCSpec       SchemaSpecType = "ndc"
 )
 
-var schemaSpecType_enums = []SchemaSpecType{OpenAPIv3Spec, OpenAPIv2Spec, NDCSpec}
+var schemaSpecType_enums = []SchemaSpecType{OAS3Spec, OAS2Spec, OpenAPIv3Spec, OpenAPIv2Spec, NDCSpec}
 
 // JSONSchema is used to generate a custom jsonschema
 func (j SchemaSpecType) JSONSchema() *jsonschema.Schema {

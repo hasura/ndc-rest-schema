@@ -80,6 +80,8 @@
     "SchemaSpecType": {
       "type": "string",
       "enum": [
+        "oas3",
+        "oas2",
         "openapi3",
         "openapi2",
         "ndc"

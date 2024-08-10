@@ -391,7 +391,14 @@
           "type": "string"
         },
         "method": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "get",
+            "post",
+            "put",
+            "patch",
+            "delete"
+          ]
         },
         "type": {
           "type": "string"
