@@ -346,14 +346,22 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 		}, nil
 	}
 
-	var bodyContent *v3.MediaType
-	var present bool
-	var contentType string
-	for _, ct := range []string{rest.ContentTypeJSON, rest.ContentTypeNdJSON} {
-		bodyContent, present = resp.Content.Get(ct)
-		if present {
-			contentType = ct
-			break
+	contentType := rest.ContentTypeJSON
+	bodyContent, present := resp.Content.Get(contentType)
+	if !present {
+		if len(oc.builder.AllowedContentTypes) == 0 {
+			firstContent := resp.Content.First()
+			bodyContent = firstContent.Value()
+			contentType = firstContent.Key()
+			present = true
+		} else {
+			for _, ct := range oc.builder.AllowedContentTypes {
+				bodyContent, present = resp.Content.Get(ct)
+				if present {
+					contentType = ct
+					break
+				}
+			}
 		}
 	}
 

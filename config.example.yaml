@@ -36,3 +36,7 @@ strict: false
 #   put: put
 #   patch: patch
 #   delete: delete
+
+# -- Allowed content types. All content types are allowed by default
+# allowedContentTypes:
+#   - application/json

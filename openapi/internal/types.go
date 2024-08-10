@@ -110,11 +110,12 @@ var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
 
 // ConvertOptions represent the common convert options for both OpenAPI v2 and v3
 type ConvertOptions struct {
-	MethodAlias map[string]string
-	TrimPrefix  string
-	EnvPrefix   string
-	Strict      bool
-	Logger      *slog.Logger
+	MethodAlias         map[string]string
+	AllowedContentTypes []string
+	TrimPrefix          string
+	EnvPrefix           string
+	Strict              bool
+	Logger              *slog.Logger
 }
 
 // TypeUsageCounter tracks the list of reference types and number of usage of them in other models

@@ -226,13 +226,6 @@ const (
 	ContentTypeTextHTML          = "text/html"
 )
 
-var response_supportedContentTypes = []string{ContentTypeJSON, ContentTypeNdJSON}
-
-// SupportedResponseContentTypes returns the list of supported content types for the response
-func SupportedResponseContentTypes() []string {
-	return response_supportedContentTypes
-}
-
 // ParameterEncodingStyle represents the encoding style of the parameter.
 // style defines how multiple values are delimited. Possible styles depend on the parameter location – path, query, header or cookie.
 type ParameterEncodingStyle string
