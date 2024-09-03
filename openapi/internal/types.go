@@ -112,6 +112,7 @@ var defaultScalarTypes = map[rest.ScalarName]*schema.ScalarType{
 type ConvertOptions struct {
 	MethodAlias         map[string]string
 	AllowedContentTypes []string
+	Prefix              string
 	TrimPrefix          string
 	EnvPrefix           string
 	Strict              bool

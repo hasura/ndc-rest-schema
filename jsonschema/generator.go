@@ -20,7 +20,12 @@ func main() {
 }
 
 func jsonSchemaConvertConfig() error {
-	reflectSchema := jsonschema.Reflect(&command.ConvertConfig{})
+	r := new(jsonschema.Reflector)
+	if err := r.AddGoComments("github.com/hasura/ndc-rest-schema/command", "../command"); err != nil {
+		return err
+	}
+	reflectSchema := r.Reflect(&command.ConvertConfig{})
+
 	schemaBytes, err := json.MarshalIndent(reflectSchema, "", "  ")
 	if err != nil {
 		return err
@@ -30,7 +35,12 @@ func jsonSchemaConvertConfig() error {
 }
 
 func jsonSchemaNdcRESTSchema() error {
-	reflectSchema := jsonschema.Reflect(&schema.NDCRestSchema{})
+	r := new(jsonschema.Reflector)
+	if err := r.AddGoComments("github.com/hasura/ndc-rest-schema/schema", "../schema"); err != nil {
+		return err
+	}
+
+	reflectSchema := r.Reflect(&schema.NDCRestSchema{})
 	schemaBytes, err := json.MarshalIndent(reflectSchema, "", "  ")
 	if err != nil {
 		return err

@@ -10,6 +10,9 @@ output: ""
 # @enum: oas2, oas3
 spec: oas3
 
+# -- Add a prefix to the function and procedure names
+# prefix: ""
+
 # -- Trim the prefix in URL, e.g. /v1
 # trimPrefix: ""
 
