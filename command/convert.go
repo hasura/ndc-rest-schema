@@ -23,6 +23,7 @@ type ConvertCommandArguments struct {
 	Format              string            `help:"The output format, is one of json, yaml. If the output is set, automatically detect the format in the output file extension" default:"json"`
 	Strict              bool              `help:"Require strict validation" default:"false"`
 	Pure                bool              `help:"Return the pure NDC schema only" default:"false"`
+	Prefix              string            `help:"Add a prefix to the function and procedure names"`
 	TrimPrefix          string            `help:"Trim the prefix in URL, e.g. /v1"`
 	EnvPrefix           string            `help:"The environment variable prefix for security values, e.g. PET_STORE"`
 	MethodAlias         map[string]string `help:"Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser"`
@@ -40,6 +41,7 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 		slog.String("output", args.Output),
 		slog.String("spec", args.Spec),
 		slog.String("format", args.Format),
+		slog.String("prefix", args.Prefix),
 		slog.String("trim_prefix", args.TrimPrefix),
 		slog.String("env_prefix", args.EnvPrefix),
 		slog.Any("patch_before", args.PatchBefore),
@@ -125,17 +127,30 @@ func CommandConvertToNDCSchema(args *ConvertCommandArguments, logger *slog.Logge
 
 // ConvertConfig represents the content of convert config file
 type ConvertConfig struct {
-	File                string                `json:"file" yaml:"file"`
-	Spec                schema.SchemaSpecType `json:"spec,omitempty" yaml:"spec"`
-	MethodAlias         map[string]string     `json:"methodAlias,omitempty" yaml:"methodAlias"`
-	TrimPrefix          string                `json:"trimPrefix,omitempty" yaml:"trimPrefix"`
-	EnvPrefix           string                `json:"envPrefix,omitempty" yaml:"envPrefix"`
-	Pure                bool                  `json:"pure,omitempty" yaml:"pure"`
-	Strict              bool                  `json:"strict,omitempty" yaml:"strict"`
-	PatchBefore         []utils.PatchConfig   `json:"patchBefore,omitempty" yaml:"patchBefore"`
-	PatchAfter          []utils.PatchConfig   `json:"patchAfter,omitempty" yaml:"patchAfter"`
-	AllowedContentTypes []string              `json:"allowedContentTypes,omitempty" yaml:"allowedContentTypes"`
-	Output              string                `json:"output,omitempty" yaml:"output"`
+	// File path needs to be converted
+	File string `json:"file" yaml:"file" jsonschema:"required"`
+	// The API specification of the file, is one of oas3 (openapi3), oas2 (openapi2)
+	Spec schema.SchemaSpecType `json:"spec,omitempty" yaml:"spec" jsonschema:"default=oas3"`
+	// Alias names for HTTP method. Used for prefix renaming, e.g. getUsers, postUser
+	MethodAlias map[string]string `json:"methodAlias,omitempty" yaml:"methodAlias"`
+	// Add a prefix to the function and procedure names
+	Prefix string `json:"prefix,omitempty" yaml:"prefix"`
+	// Trim the prefix in URL, e.g. /v1
+	TrimPrefix string `json:"trimPrefix,omitempty" yaml:"trimPrefix"`
+	// The environment variable prefix for security values, e.g. PET_STORE
+	EnvPrefix string `json:"envPrefix,omitempty" yaml:"envPrefix"`
+	// Return the pure NDC schema only
+	Pure bool `json:"pure,omitempty" yaml:"pure"`
+	// Require strict validation
+	Strict bool `json:"strict,omitempty" yaml:"strict"`
+	// Patch files to be applied into the input file before converting
+	PatchBefore []utils.PatchConfig `json:"patchBefore,omitempty" yaml:"patchBefore"`
+	// Patch files to be applied into the input file after converting
+	PatchAfter []utils.PatchConfig `json:"patchAfter,omitempty" yaml:"patchAfter"`
+	// Allowed content types. All content types are allowed by default
+	AllowedContentTypes []string `json:"allowedContentTypes,omitempty" yaml:"allowedContentTypes"`
+	// The location where the ndc schema file will be generated. Print to stdout if not set
+	Output string `json:"output,omitempty" yaml:"output"`
 }
 
 // ConvertToNDCSchema converts to NDC REST schema from config
@@ -155,6 +170,7 @@ func ConvertToNDCSchema(config *ConvertConfig, logger *slog.Logger) (*schema.NDC
 	var errs []error
 	options := openapi.ConvertOptions{
 		MethodAlias:         config.MethodAlias,
+		Prefix:              config.Prefix,
 		TrimPrefix:          config.TrimPrefix,
 		EnvPrefix:           config.EnvPrefix,
 		AllowedContentTypes: config.AllowedContentTypes,
@@ -191,6 +207,9 @@ func ResolveConvertConfigArguments(config *ConvertConfig, configDir string, args
 		}
 		if len(args.MethodAlias) > 0 {
 			config.MethodAlias = args.MethodAlias
+		}
+		if args.Prefix != "" {
+			config.Prefix = args.Prefix
 		}
 		if args.TrimPrefix != "" {
 			config.TrimPrefix = args.TrimPrefix

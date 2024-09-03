@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
@@ -17,6 +18,11 @@ func ToCamelCase(input string) string {
 		return pascalCase
 	}
 	return strings.ToLower(pascalCase[:1]) + pascalCase[1:]
+}
+
+// StringSliceToCamelCase convert a slice of strings to camelCase
+func StringSliceToCamelCase(inputs []string) string {
+	return fmt.Sprintf("%s%s", ToCamelCase(inputs[0]), StringSliceToPascalCase(inputs[1:]))
 }
 
 // ToPascalCase convert a string to PascalCase
@@ -108,7 +114,7 @@ func ToConstantCase(input string) string {
 	return strings.ToUpper(ToSnakeCase(input))
 }
 
-// StringSliceToConstantCase convert a slice of string to PascalCase
+// StringSliceToConstantCase convert a slice of string to CONSTANT_CASE
 func StringSliceToConstantCase(inputs []string) string {
 	return strings.ToUpper(StringSliceToSnakeCase(inputs))
 }

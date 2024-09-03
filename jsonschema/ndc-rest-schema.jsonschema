@@ -34,7 +34,8 @@
       "items": {
         "$ref": "#/$defs/AuthSecurity"
       },
-      "type": "array"
+      "type": "array",
+      "description": "AuthSecurities wraps list of security requirements with helpers"
     },
     "AuthSecurity": {
       "additionalProperties": {
@@ -43,7 +44,8 @@
         },
         "type": "array"
       },
-      "type": "object"
+      "type": "object",
+      "description": "AuthSecurity wraps the raw security requirement with helpers"
     },
     "CollectionInfo": {
       "properties": {
@@ -100,29 +102,35 @@
     "EncodingObject": {
       "properties": {
         "style": {
-          "$ref": "#/$defs/ParameterEncodingStyle"
+          "$ref": "#/$defs/ParameterEncodingStyle",
+          "description": "Describes how a specific property value will be serialized depending on its type.\nSee Parameter Object for details on the style property.\nThe behavior follows the same values as query parameters, including default values.\nThis property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.\nIf a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored"
         },
         "explode": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "When this is true, property values of type array or object generate separate parameters for each value of the array, or key-value-pair of the map.\nFor other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.\nThis property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.\nIf a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored"
         },
         "allowReserved": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "By default, reserved characters :/?#[]@!$\u0026'()*+,;= in form field values within application/x-www-form-urlencoded bodies are percent-encoded when sent.\nAllowReserved allows these characters to be sent as is:"
         },
         "contentType": {
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "description": "For more complex scenarios, such as nested arrays or JSON in form data, use the contentType keyword to specify the media type for encoding the value of a complex field."
         },
         "headers": {
           "additionalProperties": {
             "$ref": "#/$defs/RequestParameter"
           },
-          "type": "object"
+          "type": "object",
+          "description": "A map allowing additional information to be provided as headers, for example Content-Disposition.\nContent-Type is described separately and SHALL be ignored in this section.\nThis property SHALL be ignored if the request body media type is not a multipart."
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "EncodingObject represents the Encoding Object that contains serialization strategy for application/x-www-form-urlencoded\n\n[Encoding Object]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#encoding-object"
     },
     "EnvInt": {
       "oneOf": [
@@ -180,6 +188,9 @@
     },
     "NDCRestSchema": {
       "properties": {
+        "$schema": {
+          "type": "string"
+        },
         "settings": {
           "$ref": "#/$defs/NDCRestSettings"
         },
@@ -187,25 +198,30 @@
           "items": {
             "$ref": "#/$defs/CollectionInfo"
           },
-          "type": "array"
+          "type": "array",
+          "description": "Collections which are available for queries"
         },
         "functions": {
           "items": {
             "$ref": "#/$defs/RESTFunctionInfo"
           },
-          "type": "array"
+          "type": "array",
+          "description": "Functions (i.e. collections which return a single column and row)"
         },
         "object_types": {
-          "$ref": "#/$defs/SchemaResponseObjectTypes"
+          "$ref": "#/$defs/SchemaResponseObjectTypes",
+          "description": "A list of object types which can be used as the types of arguments, or return\ntypes of procedures. Names should not overlap with scalar type names."
         },
         "procedures": {
           "items": {
             "$ref": "#/$defs/RESTProcedureInfo"
           },
-          "type": "array"
+          "type": "array",
+          "description": "Procedures which are available for execution as part of mutations"
         },
         "scalar_types": {
-          "$ref": "#/$defs/SchemaResponseScalarTypes"
+          "$ref": "#/$defs/SchemaResponseScalarTypes",
+          "description": "A list of scalar types which will be used as the types of collection columns"
         }
       },
       "additionalProperties": false,
@@ -216,7 +232,8 @@
         "object_types",
         "procedures",
         "scalar_types"
-      ]
+      ],
+      "description": "NDCRestSchema extends the [NDC SchemaResponse] with OpenAPI REST information"
     },
     "NDCRestSettings": {
       "properties": {
@@ -233,7 +250,8 @@
           "type": "object"
         },
         "timeout": {
-          "$ref": "#/$defs/EnvInt"
+          "$ref": "#/$defs/EnvInt",
+          "description": "configure the request timeout in seconds, default 30s"
         },
         "retry": {
           "$ref": "#/$defs/RetryPolicySetting"
@@ -255,7 +273,8 @@
       "type": "object",
       "required": [
         "servers"
-      ]
+      ],
+      "description": "NDCRestSettings represent global settings of the REST API, including base URL, headers, etc..."
     },
     "ObjectField": {
       "properties": {
@@ -356,7 +375,8 @@
         "arguments",
         "name",
         "result_type"
-      ]
+      ],
+      "description": "RESTFunctionInfo extends NDC query function with OpenAPI REST information"
     },
     "RESTProcedureInfo": {
       "properties": {
@@ -383,7 +403,8 @@
         "arguments",
         "name",
         "result_type"
-      ]
+      ],
+      "description": "RESTProcedureInfo extends NDC mutation procedure with OpenAPI REST information"
     },
     "Request": {
       "properties": {
@@ -419,7 +440,8 @@
           "$ref": "#/$defs/AuthSecurities"
         },
         "timeout": {
-          "type": "integer"
+          "type": "integer",
+          "description": "configure the request timeout in seconds, default 30s"
         },
         "servers": {
           "items": {
@@ -441,7 +463,8 @@
       "type": "object",
       "required": [
         "response"
-      ]
+      ],
+      "description": "Request represents the HTTP request information of the webhook"
     },
     "RequestBody": {
       "properties": {
@@ -459,30 +482,36 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "RequestBody defines flexible request body with content types"
     },
     "RequestParameter": {
       "properties": {
         "style": {
-          "$ref": "#/$defs/ParameterEncodingStyle"
+          "$ref": "#/$defs/ParameterEncodingStyle",
+          "description": "Describes how a specific property value will be serialized depending on its type.\nSee Parameter Object for details on the style property.\nThe behavior follows the same values as query parameters, including default values.\nThis property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.\nIf a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored"
         },
         "explode": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "When this is true, property values of type array or object generate separate parameters for each value of the array, or key-value-pair of the map.\nFor other types of properties this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.\nThis property SHALL be ignored if the request body media type is not application/x-www-form-urlencoded or multipart/form-data.\nIf a value is explicitly defined, then the value of contentType (implicit or explicit) SHALL be ignored"
         },
         "allowReserved": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "By default, reserved characters :/?#[]@!$\u0026'()*+,;= in form field values within application/x-www-form-urlencoded bodies are percent-encoded when sent.\nAllowReserved allows these characters to be sent as is:"
         },
         "contentType": {
           "items": {
             "type": "string"
           },
-          "type": "array"
+          "type": "array",
+          "description": "For more complex scenarios, such as nested arrays or JSON in form data, use the contentType keyword to specify the media type for encoding the value of a complex field."
         },
         "headers": {
           "additionalProperties": {
             "$ref": "#/$defs/RequestParameter"
           },
-          "type": "object"
+          "type": "object",
+          "description": "A map allowing additional information to be provided as headers, for example Content-Disposition.\nContent-Type is described separately and SHALL be ignored in this section.\nThis property SHALL be ignored if the request body media type is not a multipart."
         },
         "name": {
           "type": "string"
@@ -498,7 +527,8 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "RequestParameter represents an HTTP request parameter"
     },
     "Response": {
       "properties": {
@@ -515,35 +545,43 @@
     "RetryPolicy": {
       "properties": {
         "times": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Number of retry times"
         },
         "delay": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Delay retry delay in milliseconds"
         },
         "httpStatus": {
           "items": {
             "type": "integer"
           },
-          "type": "array"
+          "type": "array",
+          "description": "HTTPStatus retries if the remote service returns one of these http status"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "RetryPolicy represents the retry policy of request"
     },
     "RetryPolicySetting": {
       "properties": {
         "times": {
-          "$ref": "#/$defs/EnvInt"
+          "$ref": "#/$defs/EnvInt",
+          "description": "Number of retry times"
         },
         "delay": {
-          "$ref": "#/$defs/EnvInt"
+          "$ref": "#/$defs/EnvInt",
+          "description": "Delay retry delay in milliseconds"
         },
         "httpStatus": {
-          "$ref": "#/$defs/EnvInts"
+          "$ref": "#/$defs/EnvInts",
+          "description": "HTTPStatus retries if the remote service returns one of these http status"
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "RetryPolicySetting represents retry policy settings"
     },
     "ScalarType": {
       "properties": {
@@ -698,7 +736,8 @@
           "type": "object"
         },
         "timeout": {
-          "$ref": "#/$defs/EnvInt"
+          "$ref": "#/$defs/EnvInt",
+          "description": "configure the request timeout in seconds, default 30s"
         },
         "retry": {
           "$ref": "#/$defs/RetryPolicySetting"
@@ -717,7 +756,8 @@
       "type": "object",
       "required": [
         "url"
-      ]
+      ],
+      "description": "ServerConfig contains server configurations"
     },
     "Type": {
       "type": "object"
@@ -771,7 +811,8 @@
       "type": "object",
       "required": [
         "type"
-      ]
+      ],
+      "description": "TypeSchema represents a serializable object of OpenAPI schema that is used for validation"
     },
     "UniquenessConstraint": {
       "properties": {

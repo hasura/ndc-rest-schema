@@ -15,29 +15,52 @@ import (
 func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 
 	testCases := []struct {
-		Name      string
-		Source    string
-		EnvPrefix string
-		Expected  string
+		Name     string
+		Source   string
+		Expected string
+		Options  ConvertOptions
 	}{
 		// go run . convert  -f ./openapi/testdata/petstore3/source.json -o ./openapi/testdata/petstore3/expected.json --trim-prefix /v1 --spec openapi3 --env-prefix PET_STORE
 		{
-			Name:      "petstore3",
-			Source:    "testdata/petstore3/source.json",
-			Expected:  "testdata/petstore3/expected.json",
-			EnvPrefix: "PET_STORE",
+			Name:     "petstore3",
+			Source:   "testdata/petstore3/source.json",
+			Expected: "testdata/petstore3/expected.json",
+			Options: ConvertOptions{
+				TrimPrefix: "/v1",
+				EnvPrefix:  "PET_STORE",
+			},
 		},
 		// go run . convert -f ./openapi/testdata/onesignal/source.json -o ./openapi/testdata/onesignal/expected.json --spec openapi3
 		{
 			Name:     "onesignal",
 			Source:   "testdata/onesignal/source.json",
 			Expected: "testdata/onesignal/expected.json",
+			Options:  ConvertOptions{},
 		},
 		// go run . convert -f ./openapi/testdata/openai/source.json -o ./openapi/testdata/openai/expected.json --spec openapi3
 		{
 			Name:     "openai",
 			Source:   "testdata/openai/source.json",
 			Expected: "testdata/openai/expected.json",
+			Options:  ConvertOptions{},
+		},
+		// go run . convert -f ./openapi/testdata/prefix3/source.json -o ./openapi/testdata/prefix3/expected_single_word.json --spec openapi3 --prefix hasura
+		{
+			Name:     "prefix3_single_word",
+			Source:   "testdata/prefix3/source.json",
+			Expected: "testdata/prefix3/expected_single_word.json",
+			Options: ConvertOptions{
+				Prefix: "hasura",
+			},
+		},
+		// go run . convert -f ./openapi/testdata/prefix3/source.json -o ./openapi/testdata/prefix3/expected_multi_words.json --spec openapi3 --prefix hasura_one_signal
+		{
+			Name:     "prefix3_multi_words",
+			Source:   "testdata/prefix3/source.json",
+			Expected: "testdata/prefix3/expected_multi_words.json",
+			Options: ConvertOptions{
+				Prefix: "hasura_one_signal",
+			},
 		},
 	}
 
@@ -51,10 +74,7 @@ func TestOpenAPIv3ToRESTSchema(t *testing.T) {
 			var expected schema.NDCRestSchema
 			assertNoError(t, json.Unmarshal(expectedBytes, &expected))
 
-			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, ConvertOptions{
-				EnvPrefix:  tc.EnvPrefix,
-				TrimPrefix: "/v1",
-			})
+			output, errs := OpenAPIv3ToNDCSchema(sourceBytes, tc.Options)
 			if output == nil {
 				t.Fatal(errors.Join(errs...))
 			}

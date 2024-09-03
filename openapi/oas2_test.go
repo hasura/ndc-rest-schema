@@ -32,6 +32,24 @@ func TestOpenAPIv2ToRESTSchema(t *testing.T) {
 			Source:   "testdata/petstore2/swagger.json",
 			Expected: "testdata/petstore2/expected.json",
 		},
+		// go run . convert -f ./openapi/testdata/prefix2/source.json -o ./openapi/testdata/prefix2/expected_single_word.json --spec oas2 --prefix hasura
+		{
+			Name:     "prefix2_single_word",
+			Source:   "testdata/prefix2/source.json",
+			Expected: "testdata/prefix2/expected_single_word.json",
+			Options: ConvertOptions{
+				Prefix: "hasura",
+			},
+		},
+		// go run . convert -f ./openapi/testdata/prefix2/source.json -o ./openapi/testdata/prefix2/expected_multi_words.json --spec oas2 --prefix hasura_mock_json
+		{
+			Name:     "prefix2_single_word",
+			Source:   "testdata/prefix2/source.json",
+			Expected: "testdata/prefix2/expected_multi_words.json",
+			Options: ConvertOptions{
+				Prefix: "hasura_mock_json",
+			},
+		},
 	}
 
 	for _, tc := range testCases {
