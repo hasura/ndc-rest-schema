@@ -548,6 +548,14 @@
         "responses": { "default": { "description": "successful operation" } }
       }
     },
+    "/user/logout-redirect": {
+      "get": {
+        "operationId": "logoutUserRedirect",
+        "produces": [],
+        "parameters": [],
+        "responses": { "302": { "description": "successful operation" } }
+      }
+    },
     "/user": {
       "post": {
         "tags": ["user"],

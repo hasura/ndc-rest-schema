@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
@@ -36,7 +37,7 @@ func (oc *oas3OperationBuilder) BuildFunction(itemGet *v3.Operation) (*rest.REST
 		funcName = buildPathMethodName(oc.pathKey, "get", oc.builder.ConvertOptions)
 	}
 
-	oc.builder.Logger.Debug("function",
+	oc.builder.Logger.Info("function",
 		slog.String("name", funcName),
 		slog.String("path", oc.pathKey),
 		slog.String("method", oc.method),
@@ -87,7 +88,7 @@ func (oc *oas3OperationBuilder) BuildProcedure(operation *v3.Operation) (*rest.R
 		procName = buildPathMethodName(oc.pathKey, oc.method, oc.builder.ConvertOptions)
 	}
 
-	oc.builder.Logger.Debug("procedure",
+	oc.builder.Logger.Info("procedure",
 		slog.String("name", procName),
 		slog.String("path", oc.pathKey),
 		slog.String("method", oc.method),
@@ -329,11 +330,22 @@ func (oc *oas3OperationBuilder) convertResponse(responses *v3.Responses, apiPath
 	}
 
 	var resp *v3.Response
-	for _, code := range []int{200, 201, 204} {
-		res := responses.FindResponseByCode(code)
-		if res != nil {
-			resp = res
-			break
+	if responses.Codes != nil && !responses.Codes.IsZero() {
+		for r := responses.Codes.First(); r != nil; r = r.Next() {
+			if r.Key() == "" {
+				continue
+			}
+			code, err := strconv.ParseInt(r.Key(), 10, 32)
+			if err != nil {
+				continue
+			}
+
+			if isUnsupportedResponseCodes(code) {
+				return nil, nil, nil
+			} else if code >= 200 && code < 300 {
+				resp = r.Value()
+				break
+			}
 		}
 	}
 
