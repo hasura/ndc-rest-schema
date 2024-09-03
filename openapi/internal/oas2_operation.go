@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strconv"
 
 	rest "github.com/hasura/ndc-rest-schema/schema"
 	"github.com/hasura/ndc-rest-schema/utils"
@@ -35,7 +36,7 @@ func (oc *oas2OperationBuilder) BuildFunction(pathKey string, operation *v2.Oper
 	if funcName == "" {
 		funcName = buildPathMethodName(pathKey, "get", oc.builder.ConvertOptions)
 	}
-	oc.builder.Logger.Debug("function",
+	oc.builder.Logger.Info("function",
 		slog.String("name", funcName),
 		slog.String("path", pathKey),
 	)
@@ -101,7 +102,7 @@ func (oc *oas2OperationBuilder) BuildProcedure(pathKey string, method string, op
 		procName = buildPathMethodName(pathKey, method, oc.builder.ConvertOptions)
 	}
 
-	oc.builder.Logger.Debug("procedure",
+	oc.builder.Logger.Info("procedure",
 		slog.String("name", procName),
 		slog.String("path", pathKey),
 		slog.String("method", method),
@@ -295,13 +296,22 @@ func (oc *oas2OperationBuilder) convertResponse(responses *v2.Responses, apiPath
 
 	var resp *v2.Response
 	if responses.Codes == nil || responses.Codes.IsZero() {
-		// the response is alway success
+		// the response is always successful
 		resp = responses.Default
 	} else {
-		for _, code := range []string{"200", "201", "204"} {
-			res := responses.Codes.GetOrZero(code)
-			if res != nil {
-				resp = res
+		for r := responses.Codes.First(); r != nil; r = r.Next() {
+			if r.Key() == "" {
+				continue
+			}
+			code, err := strconv.ParseInt(r.Key(), 10, 32)
+			if err != nil {
+				continue
+			}
+
+			if isUnsupportedResponseCodes(code) {
+				return nil, nil
+			} else if code >= 200 && code < 300 {
+				resp = r.Value()
 				break
 			}
 		}

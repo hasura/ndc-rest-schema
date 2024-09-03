@@ -405,3 +405,8 @@ func formatWriteObjectName(name string) string {
 func errParameterSchemaEmpty(fieldPaths []string) error {
 	return fmt.Errorf("parameter schema of $.%s is empty", strings.Join(fieldPaths, "."))
 }
+
+// redirection and information response status codes aren't supported
+func isUnsupportedResponseCodes[T int | int64](code T) bool {
+	return code < 200 || (code >= 300 && code < 400)
+}
