@@ -18,6 +18,7 @@ const (
 	HTTPAuthScheme      SecuritySchemeType = "http"
 	OAuth2Scheme        SecuritySchemeType = "oauth2"
 	OpenIDConnectScheme SecuritySchemeType = "openIdConnect"
+	MutualTLSScheme     SecuritySchemeType = "mutualTLS"
 )
 
 var securityScheme_enums = []SecuritySchemeType{
@@ -25,6 +26,7 @@ var securityScheme_enums = []SecuritySchemeType{
 	HTTPAuthScheme,
 	OAuth2Scheme,
 	OpenIDConnectScheme,
+	MutualTLSScheme,
 }
 
 // JSONSchema is used to generate a custom jsonschema
@@ -218,22 +220,22 @@ func (ss SecurityScheme) Validate() error {
 	switch ss.Type {
 	case APIKeyScheme:
 		if ss.APIKeyAuthConfig == nil {
-			return (APIKeyAuthConfig{}).Validate()
+			ss.APIKeyAuthConfig = &APIKeyAuthConfig{}
 		}
 		return ss.APIKeyAuthConfig.Validate()
 	case HTTPAuthScheme:
 		if ss.HTTPAuthConfig == nil {
-			return (HTTPAuthConfig{}).Validate()
+			ss.HTTPAuthConfig = &HTTPAuthConfig{}
 		}
 		return ss.HTTPAuthConfig.Validate()
 	case OAuth2Scheme:
 		if ss.OAuth2Config == nil {
-			return (OAuth2Config{}).Validate()
+			ss.OAuth2Config = &OAuth2Config{}
 		}
 		return ss.OAuth2Config.Validate()
 	case OpenIDConnectScheme:
 		if ss.OpenIDConfig == nil {
-			return (OpenIDConfig{}).Validate()
+			ss.OpenIDConfig = &OpenIDConfig{}
 		}
 		return ss.OpenIDConfig.Validate()
 	}

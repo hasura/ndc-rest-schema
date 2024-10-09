@@ -132,6 +132,16 @@
       "type": "object",
       "description": "EncodingObject represents the Encoding Object that contains serialization strategy for application/x-www-form-urlencoded\n\n[Encoding Object]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md#encoding-object"
     },
+    "EnvBoolean": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "EnvInt": {
       "oneOf": [
         {
@@ -157,6 +167,19 @@
     },
     "EnvString": {
       "type": "string"
+    },
+    "EnvStrings": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      ]
     },
     "ForeignKeyConstraint": {
       "properties": {
@@ -750,6 +773,9 @@
         },
         "security": {
           "$ref": "#/$defs/AuthSecurities"
+        },
+        "tls": {
+          "$ref": "#/$defs/TLSConfig"
         }
       },
       "additionalProperties": false,
@@ -758,6 +784,61 @@
         "url"
       ],
       "description": "ServerConfig contains server configurations"
+    },
+    "TLSConfig": {
+      "properties": {
+        "certFile": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Path to the TLS cert to use for TLS required connections."
+        },
+        "certPem": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Alternative to cert_file. Provide the certificate contents as a string instead of a filepath."
+        },
+        "keyFile": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Path to the TLS key to use for TLS required connections."
+        },
+        "keyPem": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Alternative to key_file. Provide the key contents as a string instead of a filepath."
+        },
+        "caFile": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Path to the CA cert. For a client this verifies the server certificate. For a server this verifies client certificates.\nIf empty uses system root CA."
+        },
+        "caPem": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Alternative to ca_file. Provide the CA cert contents as a string instead of a filepath."
+        },
+        "insecureSkipVerify": {
+          "$ref": "#/$defs/EnvBoolean",
+          "description": "Additionally you can configure TLS to be enabled but skip verifying the server's certificate chain."
+        },
+        "includeSystemCACertsPool": {
+          "$ref": "#/$defs/EnvBoolean",
+          "description": "Whether to load the system certificate authorities pool alongside the certificate authority."
+        },
+        "minVersion": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Minimum acceptable TLS version."
+        },
+        "maxVersion": {
+          "$ref": "#/$defs/EnvString",
+          "description": "Maximum acceptable TLS version."
+        },
+        "cipherSuites": {
+          "$ref": "#/$defs/EnvStrings",
+          "description": "Explicit cipher suites can be set. If left blank, a safe default list is used.\nSee https://go.dev/src/crypto/tls/cipher_suites.go for a list of supported cipher suites."
+        },
+        "reloadInterval": {
+          "$ref": "#/$defs/EnvInt",
+          "description": "Specifies the duration after which the certificate will be reloaded. If not set, it will never be reloaded.\nThe interval unit is minute"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TLSConfig represents the transport layer security (LTS) configuration for the mutualTLS authentication"
     },
     "Type": {
       "type": "object"
