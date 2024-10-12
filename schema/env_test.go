@@ -147,6 +147,7 @@ func TestEnvString(t *testing.T) {
 				t.Fatal(t, err)
 			}
 			assertDeepEqual(t, strings.Trim(tc.input, `"`), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
+			result.JSONSchema()
 		})
 	}
 }
@@ -198,6 +199,7 @@ func TestEnvInt(t *testing.T) {
 				t.Fatal(t, err)
 			}
 			assertDeepEqual(t, strings.Trim(tc.input, `"`), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
+			result.JSONSchema()
 		})
 	}
 }
@@ -256,6 +258,143 @@ func TestEnvInts(t *testing.T) {
 				t.Fatal(t, err)
 			}
 			assertDeepEqual(t, tc.expectedYaml, strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
+			result.JSONSchema()
+		})
+	}
+}
+
+func TestEnvBoolean(t *testing.T) {
+	t.Setenv("TEST_BOOL", "false")
+	testCases := []struct {
+		input    string
+		expected EnvBoolean
+	}{
+		{
+			input:    `false`,
+			expected: *NewEnvBooleanValue(false),
+		},
+		{
+			input:    `"true"`,
+			expected: *NewEnvBooleanValue(true),
+		},
+		{
+			input: `"{{FOO:-true}}"`,
+			expected: EnvBoolean{
+				value: toPtr(true),
+				EnvTemplate: EnvTemplate{
+					Name:         "FOO",
+					DefaultValue: toPtr("true"),
+				},
+			},
+		},
+		{
+			input: fmt.Sprintf(`"%s"`, NewEnvBooleanTemplate(EnvTemplate{
+				Name: "TEST_BOOL",
+			}).String()),
+			expected: EnvBoolean{
+				value: toPtr(false),
+				EnvTemplate: EnvTemplate{
+					Name: "TEST_BOOL",
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.input, func(t *testing.T) {
+			var result EnvBoolean
+			if err := json.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.value, result.value)
+
+			if err := yaml.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.value, result.value)
+			assertDeepEqual(t, strings.Trim(tc.input, "\""), tc.expected.String())
+			bs, err := yaml.Marshal(result)
+			if err != nil {
+				t.Fatal(t, err)
+			}
+			assertDeepEqual(t, strings.Trim(tc.input, `"`), strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
+			result.JSONSchema()
+			if err = (&EnvBoolean{}).UnmarshalText([]byte(strings.Trim(tc.input, `"`))); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+		})
+	}
+}
+
+func TestEnvStrings(t *testing.T) {
+	t.Setenv("TEST_STRINGS", "a,b,c")
+	testCases := []struct {
+		input        string
+		expected     EnvStrings
+		expectedYaml string
+	}{
+		{
+			input:    `["foo", "bar"]`,
+			expected: *NewEnvStringsValue([]string{"foo", "bar"}),
+			expectedYaml: `- foo
+- bar`,
+		},
+		{
+			input:    `"foo, baz"`,
+			expected: *NewEnvStringsValue(nil).WithValue([]string{"foo", "baz"}),
+			expectedYaml: `- foo
+- baz`,
+		},
+		{
+			input: fmt.Sprintf(`"%s"`, NewEnvStringsTemplate(NewEnvTemplate("TEST_STRINGS")).String()),
+			expected: EnvStrings{
+				value: []string{"a", "b", "c"},
+				EnvTemplate: EnvTemplate{
+					Name: "TEST_STRINGS",
+				},
+			},
+			expectedYaml: `{{TEST_STRINGS}}`,
+		},
+		{
+			input: `"{{FOO:-foo, bar}}"`,
+			expected: EnvStrings{
+				value: []string{"foo", "bar"},
+				EnvTemplate: EnvTemplate{
+					Name:         "FOO",
+					DefaultValue: toPtr("foo, bar"),
+				},
+			},
+			expectedYaml: `{{FOO:-foo, bar}}`,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.input, func(t *testing.T) {
+			var result EnvStrings
+			if err := json.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.EnvTemplate, result.EnvTemplate)
+			assertDeepEqual(t, tc.expected.value, result.value)
+
+			if err := yaml.Unmarshal([]byte(tc.input), &result); err != nil {
+				t.Error(t, err)
+				t.FailNow()
+			}
+			assertDeepEqual(t, tc.expected.String(), result.String())
+			assertDeepEqual(t, tc.expected.value, result.value)
+			bs, err := yaml.Marshal(result)
+			if err != nil {
+				t.Fatal(t, err)
+			}
+			assertDeepEqual(t, tc.expectedYaml, strings.TrimSpace(strings.ReplaceAll(string(bs), "'", "")))
+			result.JSONSchema()
 		})
 	}
 }

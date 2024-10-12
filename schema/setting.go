@@ -104,13 +104,14 @@ func (rs RetryPolicySetting) Validate() error {
 // ServerConfig contains server configurations
 type ServerConfig struct {
 	URL     EnvString            `json:"url" yaml:"url" mapstructure:"url"`
-	ID      string               `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"group"`
+	ID      string               `json:"id,omitempty" yaml:"id,omitempty" mapstructure:"id"`
 	Headers map[string]EnvString `json:"headers,omitempty" yaml:"headers,omitempty" mapstructure:"headers"`
 	// configure the request timeout in seconds, default 30s
 	Timeout         *EnvInt                   `json:"timeout,omitempty" yaml:"timeout,omitempty" mapstructure:"timeout"`
 	Retry           *RetryPolicySetting       `json:"retry,omitempty" yaml:"retry,omitempty" mapstructure:"retry"`
 	SecuritySchemes map[string]SecurityScheme `json:"securitySchemes,omitempty" yaml:"securitySchemes,omitempty" mapstructure:"securitySchemes"`
 	Security        AuthSecurities            `json:"security,omitempty" yaml:"security,omitempty" mapstructure:"security"`
+	TLS             *TLSConfig                `json:"tls,omitempty" yaml:"tls,omitempty" mapstructure:"tls"`
 }
 
 // Validate if the current instance is valid
@@ -143,4 +144,40 @@ func parseRelativeOrHttpURL(input string) (*url.URL, error) {
 		return &url.URL{Path: input}, nil
 	}
 	return parseHttpURL(input)
+}
+
+// TLSConfig represents the transport layer security (LTS) configuration for the mutualTLS authentication
+type TLSConfig struct {
+	// Path to the TLS cert to use for TLS required connections.
+	CertFile *EnvString `json:"certFile,omitempty" yaml:"certFile,omitempty" mapstructure:"certFile"`
+	// Alternative to cert_file. Provide the certificate contents as a string instead of a filepath.
+	CertPem *EnvString `json:"certPem,omitempty" yaml:"certPem,omitempty" mapstructure:"certPem"`
+	// Path to the TLS key to use for TLS required connections.
+	KeyFile *EnvString `json:"keyFile,omitempty" yaml:"keyFile,omitempty" mapstructure:"keyFile"`
+	// Alternative to key_file. Provide the key contents as a string instead of a filepath.
+	KeyPem *EnvString `json:"keyPem,omitempty" yaml:"keyPem,omitempty" mapstructure:"keyPem"`
+	// Path to the CA cert. For a client this verifies the server certificate. For a server this verifies client certificates.
+	// If empty uses system root CA.
+	CAFile *EnvString `json:"caFile,omitempty" yaml:"caFile,omitempty" mapstructure:"caFile"`
+	// Alternative to ca_file. Provide the CA cert contents as a string instead of a filepath.
+	CAPem *EnvString `json:"caPem,omitempty" yaml:"caPem,omitempty" mapstructure:"caPem"`
+	// Additionally you can configure TLS to be enabled but skip verifying the server's certificate chain.
+	InsecureSkipVerify *EnvBoolean `json:"insecureSkipVerify,omitempty" yaml:"insecureSkipVerify,omitempty" mapstructure:"insecureSkipVerify"`
+	// Whether to load the system certificate authorities pool alongside the certificate authority.
+	IncludeSystemCACertsPool *EnvBoolean `json:"includeSystemCACertsPool,omitempty" yaml:"includeSystemCACertsPool,omitempty" mapstructure:"includeSystemCACertsPool"`
+	// Minimum acceptable TLS version.
+	MinVersion *EnvString `json:"minVersion,omitempty" yaml:"minVersion,omitempty" mapstructure:"minVersion"`
+	// Maximum acceptable TLS version.
+	MaxVersion *EnvString `json:"maxVersion,omitempty" yaml:"maxVersion,omitempty" mapstructure:"maxVersion"`
+	// Explicit cipher suites can be set. If left blank, a safe default list is used.
+	// See https://go.dev/src/crypto/tls/cipher_suites.go for a list of supported cipher suites.
+	CipherSuites *EnvStrings `json:"cipherSuites,omitempty" yaml:"cipherSuites,omitempty" mapstructure:"cipherSuites"`
+	// Specifies the duration after which the certificate will be reloaded. If not set, it will never be reloaded.
+	// The interval unit is minute
+	ReloadInterval *EnvInt `json:"reloadInterval,omitempty" yaml:"reloadInterval,omitempty" mapstructure:"reloadInterval"`
+}
+
+// Validate if the current instance is valid
+func (ss TLSConfig) Validate() error {
+	return nil
 }
