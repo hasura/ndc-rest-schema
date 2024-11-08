@@ -1,5 +1,8 @@
 # NDC REST Schema
 
+> [!IMPORTANT]
+> This repository is deprecated. It was moved to the [NDC REST](https://github.com/hasura/ndc-rest) monorepo.
+
 This module includes libraries and tools to convert other API schemas to Native Data Connector (NDC) schema, as well as extend the NDC spec with REST request information.
 
 ## Features
